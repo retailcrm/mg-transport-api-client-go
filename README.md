@@ -1,2 +1,3 @@
-# mg-api-client-go
+# MG API Go client
+
 Go client for MG
