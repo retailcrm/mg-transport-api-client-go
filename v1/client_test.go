@@ -5,7 +5,6 @@ import (
 	"os"
 	"strconv"
 	"testing"
-	"time"
 )
 
 var (
@@ -68,7 +67,7 @@ func TestMgClient_DeactivateTransportChannel(t *testing.T) {
 	}
 }
 
-func TestMgClient_Messages(t *testing.T) {
+/*func TestMgClient_Messages(t *testing.T) {
 	c := client()
 
 	snd := SendData{
@@ -95,4 +94,4 @@ func TestMgClient_Messages(t *testing.T) {
 	if data.Time.String() == "" {
 		t.Errorf("%v", err)
 	}
-}
+}*/

@@ -169,7 +169,7 @@ func (c *MgClient) Messages(request SendData) (MessagesResponse, int, Failure) {
 	outgoing, _ := json.Marshal(&request)
 	p := []byte(outgoing)
 
-	data, status, err := c.PostRequest("/messages", p)
+	data, status, err := c.PostRequest("/transport/messages", p)
 	if err.RuntimeErr != nil {
 		return resp, status, err
 	}
@@ -211,16 +211,10 @@ func (c *MgClient) Messages(request SendData) (MessagesResponse, int, Failure) {
 // 	}
 //
 //	fmt.Printf("%s\n", data.MessageID)
-/*func (c *MgClient) UpdateMessages(message UpdateMessage, user User) (MessagesResponse, int, Failure) {
+func (c *MgClient) UpdateMessages(request UpdateMessage) (MessagesResponse, int, Failure) {
 	var resp MessagesResponse
-
-	msg, _ := json.Marshal(&message)
-	usr, _ := json.Marshal(&user)
-
-	p := url.Values{
-		"message": {string(msg[:])},
-		"user":    {string(usr[:])},
-	}
+	outgoing, _ := json.Marshal(&request)
+	p := []byte(outgoing)
 
 	data, status, err := c.PutRequest("/messages", p)
 	if err.RuntimeErr != nil {
@@ -234,7 +228,7 @@ func (c *MgClient) Messages(request SendData) (MessagesResponse, int, Failure) {
 	}
 
 	return resp, status, err
-}*/
+}
 
 // DeleteMessage implement delete message
 //
