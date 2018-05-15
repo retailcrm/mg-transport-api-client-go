@@ -24,12 +24,27 @@ import (
 )
 
 func main() {
-	var client = v1.New("https://token.url", "09jIJ09j0JKhgyfvyuUIKhiugF")
+	var client = v1.New("https://token.url", "cb8ccf05e38a47543ad8477d49bcba99be73bff503ea6")
+    ch := Channel{
+        Type: "telegram",
+        Events: []string{
+            "message_sent",
+            "message_updated",
+            "message_deleted",
+            "message_read",
+        },
+    }
+
+    data, status, err := c.ActivateTransportChannel(ch)
+
+    if status > http.StatusCreated {
+        t.Errorf("%v", err)
+    }
+
+	fmt.Printf("%v", data.ChannelID)
 }
 ```
 
 ## Documentation
 
-* [English](http://www.retailcrm.pro/docs/Developers/Index)
-* [Russian](http://www.retailcrm.ru/docs/Developers/Index)
 * [GoDoc](https://godoc.org/github.com/retailcrm/mg-transport-api-client-go)
