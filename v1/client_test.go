@@ -5,6 +5,7 @@ import (
 	"os"
 	"strconv"
 	"testing"
+	"time"
 )
 
 var (
@@ -67,22 +68,23 @@ func TestMgClient_DeactivateTransportChannel(t *testing.T) {
 	}
 }
 
-/*func TestMgClient_Messages(t *testing.T) {
+func TestMgClient_Messages(t *testing.T) {
 	c := client()
 
 	snd := SendData{
 		SendMessage{
-			ExternalID: "qwerty",
+			ExternalID: "23e23e23",
 			Channel:    channelId,
 			Type:       "text",
 			Text:       "hello!",
 			SentAt:     time.Now(),
 		},
 		User{
-			ExternalID: "1927391739217391",
+			ExternalID: "8",
 			Nickname:   "@octopulus",
-			Firstname:  "Alex",
+			Firstname:  "Joe",
 		},
+		channelId,
 	}
 
 	data, status, err := c.Messages(snd)
@@ -94,4 +96,4 @@ func TestMgClient_DeactivateTransportChannel(t *testing.T) {
 	if data.Time.String() == "" {
 		t.Errorf("%v", err)
 	}
-}*/
+}

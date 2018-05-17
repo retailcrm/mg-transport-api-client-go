@@ -10,115 +10,71 @@ import (
 var prefix = "/api/v1"
 
 // GetRequest implements GET Request
-func (c *MgClient) GetRequest(urlWithParameters string) ([]byte, int, Failure) {
+func (c *MgClient) GetRequest(urlWithParameters string) ([]byte, int, error) {
 	var res []byte
-	var cerr Failure
 
 	req, err := http.NewRequest("GET", fmt.Sprintf("%s%s%s", c.URL, prefix, urlWithParameters), nil)
 	if err != nil {
-		cerr.RuntimeErr = err
-		return res, 0, cerr
+		return res, 0, err
 	}
 
 	req.Header.Set("X-Transport-Token", c.Token)
 
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
-		cerr.RuntimeErr = err
-		return res, 0, cerr
+		return res, 0, err
 	}
 
 	if resp.StatusCode >= http.StatusInternalServerError {
-		cerr.ApiErr = fmt.Sprintf("HTTP request error. Status code: %d.\n", resp.StatusCode)
-		return res, resp.StatusCode, cerr
+		err = fmt.Errorf("HTTP request error. Status code: %d.\n", resp.StatusCode)
+		return res, resp.StatusCode, err
 	}
 
 	res, err = buildRawResponse(resp)
 	if err != nil {
-		cerr.RuntimeErr = err
+		return res, resp.StatusCode, err
 	}
 
-	return res, resp.StatusCode, cerr
+	return res, resp.StatusCode, err
 }
 
 // PostRequest implements POST Request
-func (c *MgClient) PostRequest(url string, parameters []byte) ([]byte, int, Failure) {
-	var res []byte
-	var cerr Failure
-
-	req, err := http.NewRequest("POST", fmt.Sprintf("%s%s%s", c.URL, prefix, url), bytes.NewBuffer(parameters))
-	if err != nil {
-		cerr.RuntimeErr = err
-		return res, 0, cerr
-	}
-
-	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("X-Transport-Token", c.Token)
-
-	resp, err := c.httpClient.Do(req)
-	if err != nil {
-		cerr.RuntimeErr = err
-		return res, 0, cerr
-	}
-
-	if resp.StatusCode >= http.StatusInternalServerError {
-		cerr.ApiErr = fmt.Sprintf("HTTP request error. Status code: %d.\n", resp.StatusCode)
-		return res, resp.StatusCode, cerr
-	}
-
-	res, err = buildRawResponse(resp)
-	if err != nil {
-		cerr.RuntimeErr = err
-		return res, 0, cerr
-	}
-
-	return res, resp.StatusCode, cerr
+func (c *MgClient) PostRequest(url string, parameters []byte) ([]byte, int, error) {
+	return makeRequest(
+		"POST",
+		fmt.Sprintf("%s%s%s", c.URL, prefix, url),
+		bytes.NewBuffer(parameters),
+		c,
+	)
 }
 
 // PutRequest implements PUT Request
-func (c *MgClient) PutRequest(url string, parameters []byte) ([]byte, int, Failure) {
-	var res []byte
-	var cerr Failure
-
-	req, err := http.NewRequest("PUT", fmt.Sprintf("%s%s%s", c.URL, prefix, url), bytes.NewBuffer(parameters))
-	if err != nil {
-		cerr.RuntimeErr = err
-		return res, 0, cerr
-	}
-
-	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("X-Transport-Token", c.Token)
-
-	resp, err := c.httpClient.Do(req)
-	if err != nil {
-		cerr.RuntimeErr = err
-		return res, 0, cerr
-	}
-
-	if resp.StatusCode >= http.StatusInternalServerError {
-		cerr.ApiErr = fmt.Sprintf("HTTP request error. Status code: %d.\n", resp.StatusCode)
-		return res, resp.StatusCode, cerr
-	}
-
-	res, err = buildRawResponse(resp)
-	if err != nil {
-		cerr.RuntimeErr = err
-		return res, 0, cerr
-	}
-
-	return res, resp.StatusCode, cerr
+func (c *MgClient) PutRequest(url string, parameters []byte) ([]byte, int, error) {
+	return makeRequest(
+		"PUT",
+		fmt.Sprintf("%s%s%s", c.URL, prefix, url),
+		bytes.NewBuffer(parameters),
+		c,
+	)
 }
 
 // DeleteRequest implements DELETE Request
-func (c *MgClient) DeleteRequest(url string) ([]byte, int, Failure) {
-	var res []byte
+func (c *MgClient) DeleteRequest(url string) ([]byte, int, error) {
 	var buf []byte
-	var cerr Failure
 
-	req, err := http.NewRequest("DELETE", fmt.Sprintf("%s%s%s", c.URL, prefix, url), bytes.NewBuffer(buf))
+	return makeRequest(
+		"DELETE",
+		fmt.Sprintf("%s%s%s", c.URL, prefix, url),
+		bytes.NewBuffer(buf),
+		c,
+	)
+}
+
+func makeRequest(reqType, url string, buf *bytes.Buffer, c *MgClient) ([]byte, int, error) {
+	var res []byte
+	req, err := http.NewRequest(reqType, url, buf)
 	if err != nil {
-		cerr.RuntimeErr = err
-		return res, 0, cerr
+		return res, 0, err
 	}
 
 	req.Header.Set("Content-Type", "application/json")
@@ -126,22 +82,20 @@ func (c *MgClient) DeleteRequest(url string) ([]byte, int, Failure) {
 
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
-		cerr.RuntimeErr = err
-		return res, 0, cerr
+		return res, 0, err
 	}
 
 	if resp.StatusCode >= http.StatusInternalServerError {
-		cerr.ApiErr = fmt.Sprintf("HTTP request error. Status code: %d.\n", resp.StatusCode)
-		return res, resp.StatusCode, cerr
+		err = fmt.Errorf("HTTP request error. Status code: %d.\n", resp.StatusCode)
+		return res, resp.StatusCode, err
 	}
 
 	res, err = buildRawResponse(resp)
 	if err != nil {
-		cerr.RuntimeErr = err
-		return res, 0, cerr
+		return res, 0, err
 	}
 
-	return res, resp.StatusCode, cerr
+	return res, resp.StatusCode, err
 }
 
 func buildRawResponse(resp *http.Response) ([]byte, error) {
@@ -153,18 +107,4 @@ func buildRawResponse(resp *http.Response) ([]byte, error) {
 	}
 
 	return res, nil
-}
-
-func buildErr(data []byte) Failure {
-	var err = Failure{}
-
-	eresp, errr := ErrorResponse(data)
-	err.RuntimeErr = errr
-	err.ApiErr = eresp.ErrorMsg
-
-	if eresp.Errors != nil {
-		err.ApiErrs = eresp.Errors
-	}
-
-	return err
 }

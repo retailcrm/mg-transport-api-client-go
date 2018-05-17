@@ -30,29 +30,30 @@ func New(url string, token string) *MgClient {
 //
 // 	data, status, err := client.ActivateTransportChannel(request)
 //
-// 	if err.RuntimeErr != nil {
-// 		fmt.Printf("%v", err.RuntimeErr)
+// 	if err != nil {
+// 		fmt.Printf("%v", err)
 // 	}
 //
 // 	if status >= http.StatusBadRequest {
-// 		fmt.Printf("%v", err.ApiErr())
+// 		fmt.Printf("%v", err)
 // 	}
 //
 //	fmt.Printf("%s\n", data.CreatedAt)
-func (c *MgClient) ActivateTransportChannel(request Channel) (ActivateResponse, int, Failure) {
+func (c *MgClient) ActivateTransportChannel(request Channel) (ActivateResponse, int, error) {
 	var resp ActivateResponse
 	outgoing, _ := json.Marshal(&request)
-	p := []byte(outgoing)
 
-	data, status, err := c.PostRequest("/transports/channels", p)
-	if err.RuntimeErr != nil {
+	data, status, err := c.PostRequest("/transport/channels", []byte(outgoing))
+	if err != nil {
 		return resp, status, err
 	}
 
-	json.Unmarshal(data, &resp)
+	if err := json.Unmarshal(data, &resp); err != nil {
+		return resp, status, err
+	}
 
-	if status != 200 && status != 201 {
-		return resp, status, buildErr(data)
+	if status > http.StatusCreated || status < http.StatusOK {
+		return resp, status, err
 	}
 
 	return resp, status, err
@@ -72,30 +73,30 @@ func (c *MgClient) ActivateTransportChannel(request Channel) (ActivateResponse, 
 //
 // 	data, status, err := client.UpdateTransportChannel(request)
 //
-// 	if err.RuntimeErr != nil {
-// 		fmt.Printf("%v", err.RuntimeErr)
+// 	if err != nil {
+// 		fmt.Printf("%v", err)
 // 	}
 //
 // 	if status >= http.StatusBadRequest {
-// 		fmt.Printf("%v", err.ApiErr())
+// 		fmt.Printf("%v", err)
 // 	}
 //
 //	fmt.Printf("%s\n", data.UpdatedAt)
-func (c *MgClient) UpdateTransportChannel(request Channel) (UpdateResponse, int, Failure) {
+func (c *MgClient) UpdateTransportChannel(request Channel) (UpdateResponse, int, error) {
 	var resp UpdateResponse
-	var url = fmt.Sprintf("/transports/channels/%d", request.ID)
 	outgoing, _ := json.Marshal(&request)
-	p := []byte(outgoing)
 
-	data, status, err := c.PutRequest(url, p)
-	if err.RuntimeErr != nil {
+	data, status, err := c.PutRequest(fmt.Sprintf("/transport/channels/%d", request.ID), []byte(outgoing))
+	if err != nil {
 		return resp, status, err
 	}
 
-	json.Unmarshal(data, &resp)
+	if err := json.Unmarshal(data, &resp); err != nil {
+		return resp, status, err
+	}
 
-	if status != 200 {
-		return resp, status, buildErr(data)
+	if status != http.StatusOK {
+		return resp, status, err
 	}
 
 	return resp, status, err
@@ -109,28 +110,29 @@ func (c *MgClient) UpdateTransportChannel(request Channel) (UpdateResponse, int,
 //
 // 	data, status, err := client.DeactivateTransportChannel(3053450384)
 //
-// 	if err.RuntimeErr != nil {
-// 		fmt.Printf("%v", err.RuntimeErr)
+// 	if err != nil {
+// 		fmt.Printf("%v", err)
 // 	}
 //
 // 	if status >= http.StatusBadRequest {
-// 		fmt.Printf("%v", err.ApiErr())
+// 		fmt.Printf("%v", err)
 // 	}
 //
-//	fmt.Printf("%s\n", data.DectivatedAt)
-func (c *MgClient) DeactivateTransportChannel(id uint64) (DeleteResponse, int, Failure) {
+//	fmt.Printf("%s\n", data.DeactivatedAt)
+func (c *MgClient) DeactivateTransportChannel(id uint64) (DeleteResponse, int, error) {
 	var resp DeleteResponse
-	var url = fmt.Sprintf("/transports/channels/%s", strconv.FormatUint(id, 10))
 
-	data, status, err := c.DeleteRequest(url)
-	if err.RuntimeErr != nil {
+	data, status, err := c.DeleteRequest(fmt.Sprintf("/transport/channels/%s", strconv.FormatUint(id, 10)))
+	if err != nil {
 		return resp, status, err
 	}
 
-	json.Unmarshal(data, &resp)
+	if err := json.Unmarshal(data, &resp); err != nil {
+		return resp, status, err
+	}
 
-	if status != 200 {
-		return resp, status, buildErr(data)
+	if status != http.StatusOK {
+		return resp, status, err
 	}
 
 	return resp, status, err
@@ -155,29 +157,30 @@ func (c *MgClient) DeactivateTransportChannel(id uint64) (DeleteResponse, int, F
 //
 // 	data, status, err := client.Messages(message, user)
 //
-// 	if err.RuntimeErr != nil {
-// 		fmt.Printf("%v", err.RuntimeErr)
+// 	if err != nil {
+// 		fmt.Printf("%v", err)
 // 	}
 //
 // 	if status >= http.StatusBadRequest {
-// 		fmt.Printf("%v", err.ApiErr())
+// 		fmt.Printf("%v", err)
 // 	}
 //
 //	fmt.Printf("%s\n", data.MessageID)
-func (c *MgClient) Messages(request SendData) (MessagesResponse, int, Failure) {
+func (c *MgClient) Messages(request SendData) (MessagesResponse, int, error) {
 	var resp MessagesResponse
 	outgoing, _ := json.Marshal(&request)
-	p := []byte(outgoing)
 
-	data, status, err := c.PostRequest("/transport/messages", p)
-	if err.RuntimeErr != nil {
+	data, status, err := c.PostRequest("/transport/messages", []byte(outgoing))
+	if err != nil {
 		return resp, status, err
 	}
 
-	json.Unmarshal(data, &resp)
+	if err := json.Unmarshal(data, &resp); err != nil {
+		return resp, status, err
+	}
 
-	if status != 200 {
-		return resp, status, buildErr(data)
+	if status != http.StatusOK {
+		return resp, status, err
 	}
 
 	return resp, status, err
@@ -202,29 +205,30 @@ func (c *MgClient) Messages(request SendData) (MessagesResponse, int, Failure) {
 //
 // 	data, status, err := client.UpdateMessages(message, user)
 //
-// 	if err.RuntimeErr != nil {
-// 		fmt.Printf("%v", err.RuntimeErr)
+// 	if err != nil {
+// 		fmt.Printf("%v", err)
 // 	}
 //
 // 	if status >= http.StatusBadRequest {
-// 		fmt.Printf("%v", err.ApiErr())
+// 		fmt.Printf("%v", err)
 // 	}
 //
 //	fmt.Printf("%s\n", data.MessageID)
-func (c *MgClient) UpdateMessages(request UpdateMessage) (MessagesResponse, int, Failure) {
+func (c *MgClient) UpdateMessages(request UpdateMessage) (MessagesResponse, int, error) {
 	var resp MessagesResponse
 	outgoing, _ := json.Marshal(&request)
-	p := []byte(outgoing)
 
-	data, status, err := c.PutRequest("/messages", p)
-	if err.RuntimeErr != nil {
+	data, status, err := c.PutRequest("/transport/messages", []byte(outgoing))
+	if err != nil {
 		return resp, status, err
 	}
 
-	json.Unmarshal(data, &resp)
+	if err := json.Unmarshal(data, &resp); err != nil {
+		return resp, status, err
+	}
 
-	if status != 200 {
-		return resp, status, buildErr(data)
+	if status != http.StatusOK {
+		return resp, status, err
 	}
 
 	return resp, status, err
@@ -238,27 +242,29 @@ func (c *MgClient) UpdateMessages(request UpdateMessage) (MessagesResponse, int,
 //
 // 	data, status, err := client.DeleteMessage("3053450384")
 //
-// 	if err.RuntimeErr != nil {
-// 		fmt.Printf("%v", err.RuntimeErr)
+// 	if err != nil {
+// 		fmt.Printf("%v", err)
 // 	}
 //
 // 	if status >= http.StatusBadRequest {
-// 		fmt.Printf("%v", err.ApiErr())
+// 		fmt.Printf("%v", err)
 // 	}
 //
 //	fmt.Printf("%s\n", data.MessageID)
-func (c *MgClient) DeleteMessage(id string) (MessagesResponse, int, Failure) {
+func (c *MgClient) DeleteMessage(id string) (MessagesResponse, int, error) {
 	var resp MessagesResponse
 
-	data, status, err := c.DeleteRequest(fmt.Sprintf("/messages/%s", id))
-	if err.RuntimeErr != nil {
+	data, status, err := c.DeleteRequest(fmt.Sprintf("/transport/messages/%s", id))
+	if err != nil {
 		return resp, status, err
 	}
 
-	json.Unmarshal(data, &resp)
+	if err := json.Unmarshal(data, &resp); err != nil {
+		return resp, status, err
+	}
 
-	if status != 200 {
-		return resp, status, buildErr(data)
+	if status != http.StatusOK {
+		return resp, status, err
 	}
 
 	return resp, status, err

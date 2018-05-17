@@ -44,6 +44,7 @@ type DeleteResponse struct {
 type SendData struct {
 	Message SendMessage `url:"message"`
 	User    User        `url:"user"`
+	Channel uint64      `url:"channel"`
 }
 
 // User struct
@@ -89,4 +90,8 @@ type UpdateMessage struct {
 type MessagesResponse struct {
 	MessageID string    `json:"message_id"`
 	Time      time.Time `json:"time"`
+}
+
+type ErrorResponse struct {
+	Errors map[string][]string `json:"errors"`
 }
