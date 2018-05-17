@@ -24,10 +24,10 @@ func New(url string, token string) *MgClient {
 //
 // 	var client = v1.New("https://token.url", "cb8ccf05e38a47543ad8477d49bcba99be73bff503ea6")
 //
-//  request := ActivateRequest{
+//	request := ActivateRequest{
 //		Type: "telegram",
 //		Events: [2]int{"message_sent", "message_sent"}
-//  }
+//	}
 //
 // 	data, status, err := client.ActivateTransportChannel(request)
 //
