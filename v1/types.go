@@ -25,7 +25,7 @@ type Channel struct {
 
 // ActivateResponse channel activation response
 type ActivateResponse struct {
-	ChannelID   uint64    `json:"channel_id"`
+	ChannelID   uint64    `json:"id"`
 	ActivatedAt time.Time `json:"activated_at"`
 }
 
@@ -39,12 +39,6 @@ type UpdateResponse struct {
 type DeleteResponse struct {
 	ChannelID    uint64    `json:"channel_id"`
 	DectivatedAt time.Time `json:"deactivated_at"`
-}
-
-type SendData struct {
-	Message SendMessage `url:"message"`
-	User    User        `url:"user"`
-	Channel uint64      `url:"channel"`
 }
 
 // User struct
@@ -70,28 +64,24 @@ type Message struct {
 
 // SendMessage struct
 type SendMessage struct {
-	ExternalID string    `url:"external_id"`
-	Channel    uint64    `url:"channel"`
-	Type       string    `url:"type"`
-	Text       string    `url:"text,omitempty"`
-	SentAt     time.Time `url:"sent_at,omitempty"`
+	Message
+	SentAt time.Time `url:"sent_at,omitempty"`
 }
 
 // UpdateMessage struct
 type UpdateMessage struct {
-	ExternalID string    `url:"external_id"`
-	Channel    uint64    `url:"channel"`
-	Type       string    `url:"type"`
-	Text       string    `url:"text,omitempty"`
-	EditedAt   time.Time `url:"edited_at,omitempty"`
+	Message
+	EditedAt time.Time `url:"edited_at,omitempty"`
+}
+
+type SendData struct {
+	Message SendMessage `url:"message"`
+	User    User        `url:"user"`
+	Channel uint64      `url:"channel"`
 }
 
 // MessagesResponse message event response
 type MessagesResponse struct {
 	MessageID string    `json:"message_id"`
 	Time      time.Time `json:"time"`
-}
-
-type ErrorResponse struct {
-	Errors map[string][]string `json:"errors"`
 }

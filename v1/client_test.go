@@ -33,9 +33,30 @@ func TestMgClient_ActivateTransportChannel(t *testing.T) {
 
 	_, status, err := c.ActivateTransportChannel(ch)
 
-	if status > http.StatusCreated {
-		t.Errorf("%v", err)
+	if err != nil {
+		t.Errorf("%d %v", status, err)
 	}
+}
+
+func TestMgClient_ActivateNewTransportChannel(t *testing.T) {
+	c := client()
+	ch := Channel{
+		Type: "telegram",
+		Events: []string{
+			"message_sent",
+			"message_updated",
+			"message_deleted",
+			"message_read",
+		},
+	}
+
+	data, status, err := c.ActivateTransportChannel(ch)
+
+	if err != nil {
+		t.Errorf("%d %v", status, err)
+	}
+
+	t.Logf("%v", data.ChannelID)
 }
 
 func TestMgClient_UpdateTransportChannel(t *testing.T) {
@@ -73,11 +94,13 @@ func TestMgClient_Messages(t *testing.T) {
 
 	snd := SendData{
 		SendMessage{
-			ExternalID: "23e23e23",
-			Channel:    channelId,
-			Type:       "text",
-			Text:       "hello!",
-			SentAt:     time.Now(),
+			Message{
+				ExternalID: "23e23e23",
+				Channel:    channelId,
+				Type:       "text",
+				Text:       "hello!",
+			},
+			time.Now(),
 		},
 		User{
 			ExternalID: "8",

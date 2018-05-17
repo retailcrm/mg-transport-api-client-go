@@ -2,6 +2,7 @@ package v1
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -53,7 +54,7 @@ func (c *MgClient) ActivateTransportChannel(request Channel) (ActivateResponse, 
 	}
 
 	if status > http.StatusCreated || status < http.StatusOK {
-		return resp, status, err
+		return resp, status, c.Error(data)
 	}
 
 	return resp, status, err
@@ -96,7 +97,7 @@ func (c *MgClient) UpdateTransportChannel(request Channel) (UpdateResponse, int,
 	}
 
 	if status != http.StatusOK {
-		return resp, status, err
+		return resp, status, c.Error(data)
 	}
 
 	return resp, status, err
@@ -132,7 +133,7 @@ func (c *MgClient) DeactivateTransportChannel(id uint64) (DeleteResponse, int, e
 	}
 
 	if status != http.StatusOK {
-		return resp, status, err
+		return resp, status, c.Error(data)
 	}
 
 	return resp, status, err
@@ -180,7 +181,7 @@ func (c *MgClient) Messages(request SendData) (MessagesResponse, int, error) {
 	}
 
 	if status != http.StatusOK {
-		return resp, status, err
+		return resp, status, c.Error(data)
 	}
 
 	return resp, status, err
@@ -228,7 +229,7 @@ func (c *MgClient) UpdateMessages(request UpdateMessage) (MessagesResponse, int,
 	}
 
 	if status != http.StatusOK {
-		return resp, status, err
+		return resp, status, c.Error(data)
 	}
 
 	return resp, status, err
@@ -264,8 +265,20 @@ func (c *MgClient) DeleteMessage(id string) (MessagesResponse, int, error) {
 	}
 
 	if status != http.StatusOK {
-		return resp, status, err
+		return resp, status, c.Error(data)
 	}
 
 	return resp, status, err
+}
+
+func (c *MgClient) Error(info []byte) error {
+	var data map[string]interface{}
+
+	if err := json.Unmarshal(info, &data); err != nil {
+		panic(err)
+	}
+
+	values := data["errors"].([]interface{})
+
+	return errors.New(values[0].(string))
 }
