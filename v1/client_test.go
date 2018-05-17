@@ -80,8 +80,8 @@ func TestMgClient_DeactivateTransportChannel(t *testing.T) {
 	c := client()
 	deleteData, status, err := c.DeactivateTransportChannel(channelId)
 
-	if status != http.StatusOK {
-		t.Errorf("%v", err)
+	if err != nil {
+		t.Errorf("%d %v", status, err)
 	}
 
 	if deleteData.DectivatedAt.String() == "" {
