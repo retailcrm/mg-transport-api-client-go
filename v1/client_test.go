@@ -30,11 +30,13 @@ func TestMgClient_ActivateTransportChannel(t *testing.T) {
 		},
 	}
 
-	_, status, err := c.ActivateTransportChannel(ch)
+	data, status, err := c.ActivateTransportChannel(ch)
 
 	if err != nil {
 		t.Errorf("%d %v", status, err)
 	}
+
+	t.Logf("%v", data.ChannelID)
 }
 
 func TestMgClient_ActivateNewTransportChannel(t *testing.T) {
@@ -68,11 +70,13 @@ func TestMgClient_UpdateTransportChannel(t *testing.T) {
 		},
 	}
 
-	_, status, err := c.UpdateTransportChannel(ch)
+	data, status, err := c.UpdateTransportChannel(ch)
 
 	if status != http.StatusOK {
 		t.Errorf("%v", err)
 	}
+
+	t.Logf("%v", data.ChannelID)
 }
 
 func TestMgClient_DeactivateTransportChannel(t *testing.T) {
@@ -86,6 +90,8 @@ func TestMgClient_DeactivateTransportChannel(t *testing.T) {
 	if deleteData.DectivatedAt.String() == "" {
 		t.Errorf("%v", err)
 	}
+
+	t.Logf("%v", deleteData.ChannelID)
 }
 
 /*func TestMgClient_Messages(t *testing.T) {

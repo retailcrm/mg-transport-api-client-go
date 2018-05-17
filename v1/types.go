@@ -14,13 +14,9 @@ type MgClient struct {
 
 // Channel type
 type Channel struct {
-	ID           uint64    `url:"id,omitempty"`
-	Type         string    `url:"type,omitempty"`
-	Events       []string  `url:"events,omitempty,brackets"`
-	CreatedAt    time.Time `url:"created_at,omitempty"`
-	UpdatedAt    time.Time `url:"updated_at,omitempty"`
-	ActivatedAt  time.Time `url:"activated_at,omitempty"`
-	DectivatedAt time.Time `url:"deactivated_at,omitempty"`
+	ID     uint64   `url:"id,omitempty"`
+	Type   string   `url:"type,omitempty"`
+	Events []string `url:"events,omitempty,brackets"`
 }
 
 // ActivateResponse channel activation response
@@ -31,13 +27,13 @@ type ActivateResponse struct {
 
 // UpdateResponse channel update response
 type UpdateResponse struct {
-	ChannelID uint64    `json:"channel_id"`
+	ChannelID uint64    `json:"id"`
 	UpdatedAt time.Time `json:"updated_at"`
 }
 
 // DeleteResponse channel deactivation response
 type DeleteResponse struct {
-	ChannelID    uint64    `json:"channel_id"`
+	ChannelID    uint64    `json:"id"`
 	DectivatedAt time.Time `json:"deactivated_at"`
 }
 

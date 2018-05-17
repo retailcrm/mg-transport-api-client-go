@@ -37,8 +37,8 @@ func main() {
 
     data, status, err := c.ActivateTransportChannel(ch)
 
-    if status > http.StatusCreated {
-        t.Errorf("%v", err)
+    if err != nil {
+        t.Errorf("%d %v", status, err)
     }
 
     fmt.Printf("%v", data.ChannelID)

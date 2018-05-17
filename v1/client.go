@@ -22,7 +22,7 @@ func New(url string, token string) *MgClient {
 //
 // Example:
 //
-// 	var client = v1.New("https://demo.url", "09jIJ")
+// 	var client = v1.New("https://token.url", "cb8ccf05e38a47543ad8477d49bcba99be73bff503ea6")
 //
 //  request := ActivateRequest{
 //		Type: "telegram",
@@ -32,10 +32,6 @@ func New(url string, token string) *MgClient {
 // 	data, status, err := client.ActivateTransportChannel(request)
 //
 // 	if err != nil {
-// 		fmt.Printf("%v", err)
-// 	}
-//
-// 	if status >= http.StatusBadRequest {
 // 		fmt.Printf("%v", err)
 // 	}
 //
@@ -64,21 +60,17 @@ func (c *MgClient) ActivateTransportChannel(request Channel) (ActivateResponse, 
 //
 // Example:
 //
-// 	var client = v1.New("https://demo.url", "09jIJ")
+//	var client = v1.New("https://token.url", "cb8ccf05e38a47543ad8477d49bcba99be73bff503ea6")
 //
-//  request := ActivateRequest{
+//	request := ActivateRequest{
 //		ID:   3053450384,
 //		Type: "telegram",
 //		Events: [2]int{"message_sent", "message_sent"}
-//  }
+//	}
 //
 // 	data, status, err := client.UpdateTransportChannel(request)
 //
 // 	if err != nil {
-// 		fmt.Printf("%v", err)
-// 	}
-//
-// 	if status >= http.StatusBadRequest {
 // 		fmt.Printf("%v", err)
 // 	}
 //
@@ -107,15 +99,11 @@ func (c *MgClient) UpdateTransportChannel(request Channel) (UpdateResponse, int,
 //
 // Example:
 //
-// 	var client = v1.New("https://demo.url", "09jIJ")
+// 	var client = v1.New("https://token.url", "cb8ccf05e38a47543ad8477d49bcba99be73bff503ea6")
 //
 // 	data, status, err := client.DeactivateTransportChannel(3053450384)
 //
 // 	if err != nil {
-// 		fmt.Printf("%v", err)
-// 	}
-//
-// 	if status >= http.StatusBadRequest {
 // 		fmt.Printf("%v", err)
 // 	}
 //
@@ -143,26 +131,28 @@ func (c *MgClient) DeactivateTransportChannel(id uint64) (DeleteResponse, int, e
 //
 // Example:
 //
-// 	var client = v1.New("https://demo.url", "09jIJ")
-//	var message = Message{
-//		ExternalID: "92784982374239847293",
-//		Сhannel: "3053450384",
-//		Type: "text",
-//		Text: "Hello!",
+// 	var client = v1.New("https://token.url", "cb8ccf05e38a47543ad8477d49bcba99be73bff503ea6")
+//	snd := SendData{
+//		SendMessage{
+//			Message{
+//				ExternalID: "23e23e23",
+//				Channel:    channelId,
+//				Type:       "text",
+//				Text:       "hello!",
+//			},
+//			time.Now(),
+//		},
+//		User{
+//			ExternalID: "8",
+//			Nickname:   "@octopulus",
+//			Firstname:  "Joe",
+//		},
+//		channelId,
 //	}
 //
-//	var user = User{
-//		ExternalID: "453535434535",
-//		Nickname: "John_Doe",
-//	}
-//
-// 	data, status, err := client.Messages(message, user)
+// 	data, status, err := client.Messages(snd)
 //
 // 	if err != nil {
-// 		fmt.Printf("%v", err)
-// 	}
-//
-// 	if status >= http.StatusBadRequest {
 // 		fmt.Printf("%v", err)
 // 	}
 //
@@ -191,26 +181,28 @@ func (c *MgClient) Messages(request SendData) (MessagesResponse, int, error) {
 //
 // Example:
 //
-// 	var client = v1.New("https://demo.url", "09jIJ")
-//	var message = Message{
-//		ExternalID: "92784982374239847293",
-//		Сhannel: "3053450384",
-//		Type: "text",
-//		Text: "Hello!",
+// 	var client = v1.New("https://token.url", "cb8ccf05e38a47543ad8477d49bcba99be73bff503ea6")
+//	snd := SendData{
+//		SendMessage{
+//			Message{
+//				ExternalID: "23e23e23",
+//				Channel:    channelId,
+//				Type:       "text",
+//				Text:       "hello!",
+//			},
+//			time.Now(),
+//		},
+//		User{
+//			ExternalID: "8",
+//			Nickname:   "@octopulus",
+//			Firstname:  "Joe",
+//		},
+//		channelId,
 //	}
 //
-//	var user = User{
-//		ExternalID: "453535434535",
-//		Nickname: "John_Doe",
-//	}
-//
-// 	data, status, err := client.UpdateMessages(message, user)
+// 	data, status, err := client.UpdateMessages(snd)
 //
 // 	if err != nil {
-// 		fmt.Printf("%v", err)
-// 	}
-//
-// 	if status >= http.StatusBadRequest {
 // 		fmt.Printf("%v", err)
 // 	}
 //
@@ -239,15 +231,11 @@ func (c *MgClient) UpdateMessages(request UpdateMessage) (MessagesResponse, int,
 //
 // Example:
 //
-// 	var client = v1.New("https://demo.url", "09jIJ")
+// 	var client = v1.New("https://token.url", "cb8ccf05e38a47543ad8477d49bcba99be73bff503ea6")
 //
 // 	data, status, err := client.DeleteMessage("3053450384")
 //
 // 	if err != nil {
-// 		fmt.Printf("%v", err)
-// 	}
-//
-// 	if status >= http.StatusBadRequest {
 // 		fmt.Printf("%v", err)
 // 	}
 //
@@ -275,7 +263,7 @@ func (c *MgClient) Error(info []byte) error {
 	var data map[string]interface{}
 
 	if err := json.Unmarshal(info, &data); err != nil {
-		panic(err)
+		return err
 	}
 
 	values := data["errors"].([]interface{})
