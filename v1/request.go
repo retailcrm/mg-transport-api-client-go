@@ -59,13 +59,11 @@ func (c *MgClient) PutRequest(url string, parameters []byte) ([]byte, int, error
 }
 
 // DeleteRequest implements DELETE Request
-func (c *MgClient) DeleteRequest(url string) ([]byte, int, error) {
-	var buf []byte
-
+func (c *MgClient) DeleteRequest(url string, parameters []byte) ([]byte, int, error) {
 	return makeRequest(
 		"DELETE",
 		fmt.Sprintf("%s%s%s", c.URL, prefix, url),
-		bytes.NewBuffer(buf),
+		bytes.NewBuffer(parameters),
 		c,
 	)
 }

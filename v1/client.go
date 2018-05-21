@@ -110,8 +110,12 @@ func (c *MgClient) UpdateTransportChannel(request Channel) (UpdateResponse, int,
 //	fmt.Printf("%s\n", data.DeactivatedAt)
 func (c *MgClient) DeactivateTransportChannel(id uint64) (DeleteResponse, int, error) {
 	var resp DeleteResponse
+	var buf []byte
 
-	data, status, err := c.DeleteRequest(fmt.Sprintf("/transport/channels/%s", strconv.FormatUint(id, 10)))
+	data, status, err := c.DeleteRequest(
+		fmt.Sprintf("/transport/channels/%s", strconv.FormatUint(id, 10)),
+		buf,
+	)
 	if err != nil {
 		return resp, status, err
 	}
@@ -207,7 +211,7 @@ func (c *MgClient) Messages(request SendData) (MessagesResponse, int, error) {
 // 	}
 //
 //	fmt.Printf("%s\n", data.MessageID)
-func (c *MgClient) UpdateMessages(request UpdateMessage) (MessagesResponse, int, error) {
+func (c *MgClient) UpdateMessages(request UpdateData) (MessagesResponse, int, error) {
 	var resp MessagesResponse
 	outgoing, _ := json.Marshal(&request)
 
@@ -240,10 +244,14 @@ func (c *MgClient) UpdateMessages(request UpdateMessage) (MessagesResponse, int,
 // 	}
 //
 //	fmt.Printf("%s\n", data.MessageID)
-func (c *MgClient) DeleteMessage(id string) (MessagesResponse, int, error) {
+func (c *MgClient) DeleteMessage(request DeleteData) (MessagesResponse, int, error) {
 	var resp MessagesResponse
+	outgoing, _ := json.Marshal(&request)
 
-	data, status, err := c.DeleteRequest(fmt.Sprintf("/transport/messages/%s", id))
+	data, status, err := c.DeleteRequest(
+		"/transport/messages/",
+		[]byte(outgoing),
+	)
 	if err != nil {
 		return resp, status, err
 	}
