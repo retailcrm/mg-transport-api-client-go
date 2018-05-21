@@ -45,6 +45,8 @@ func TestMgClient_ActivateNewTransportChannel(t *testing.T) {
 		Type: "telegram",
 		Events: []string{
 			"message_sent",
+			"message_updated",
+			"message_deleted",
 			"message_read",
 		},
 	}
@@ -166,7 +168,6 @@ func TestMgClient_DeleteMessage(t *testing.T) {
 	}
 
 	data, status, err := c.DeleteMessage(snd)
-
 	if status != http.StatusOK {
 		t.Errorf("%v", err)
 	}
