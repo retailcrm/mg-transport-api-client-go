@@ -136,11 +136,10 @@ func (c *MgClient) DeactivateTransportChannel(id uint64) (DeleteResponse, int, e
 // Example:
 //
 // 	var client = v1.New("https://token.url", "cb8ccf05e38a47543ad8477d49bcba99be73bff503ea6")
-//	snd := SendData{
+//	msg := SendData{
 //		SendMessage{
 //			Message{
-//				ExternalID: "23e23e23",
-//				Channel:    channelId,
+//				ExternalID: "274628",
 //				Type:       "text",
 //				Text:       "hello!",
 //			},
@@ -148,13 +147,13 @@ func (c *MgClient) DeactivateTransportChannel(id uint64) (DeleteResponse, int, e
 //		},
 //		User{
 //			ExternalID: "8",
-//			Nickname:   "@octopulus",
+//			Nickname:   "@octopus",
 //			Firstname:  "Joe",
 //		},
-//		channelId,
+//		10,
 //	}
 //
-// 	data, status, err := client.Messages(snd)
+// 	data, status, err := client.Messages(msg)
 //
 // 	if err != nil {
 // 		fmt.Printf("%v", err)
@@ -186,25 +185,19 @@ func (c *MgClient) Messages(request SendData) (MessagesResponse, int, error) {
 // Example:
 //
 // 	var client = v1.New("https://token.url", "cb8ccf05e38a47543ad8477d49bcba99be73bff503ea6")
-//	snd := SendData{
-//		SendMessage{
+//	msg := UpdateData{
+//		UpdateMessage{
 //			Message{
-//				ExternalID: "23e23e23",
-//				Channel:    channelId,
+//				ExternalID: "274628",
 //				Type:       "text",
-//				Text:       "hello!",
+//				Text:       "hello hello!",
 //			},
 //			time.Now(),
 //		},
-//		User{
-//			ExternalID: "8",
-//			Nickname:   "@octopulus",
-//			Firstname:  "Joe",
-//		},
-//		channelId,
+//		10,
 //	}
 //
-// 	data, status, err := client.UpdateMessages(snd)
+// 	data, status, err := client.UpdateMessages(msg)
 //
 // 	if err != nil {
 // 		fmt.Printf("%v", err)
@@ -237,7 +230,14 @@ func (c *MgClient) UpdateMessages(request UpdateData) (MessagesResponse, int, er
 //
 // 	var client = v1.New("https://token.url", "cb8ccf05e38a47543ad8477d49bcba99be73bff503ea6")
 //
-// 	data, status, err := client.DeleteMessage("3053450384")
+//	msg := DeleteData{
+//		Message{
+//			ExternalID: "274628",
+//		},
+//		10,
+//	}
+//
+// 	data, status, err := client.DeleteMessage(msg)
 //
 // 	if err != nil {
 // 		fmt.Printf("%v", err)
