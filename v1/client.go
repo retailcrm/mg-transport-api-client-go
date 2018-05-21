@@ -110,8 +110,12 @@ func (c *MgClient) UpdateTransportChannel(request Channel) (UpdateResponse, int,
 //	fmt.Printf("%s\n", data.DeactivatedAt)
 func (c *MgClient) DeactivateTransportChannel(id uint64) (DeleteResponse, int, error) {
 	var resp DeleteResponse
+	var buf []byte
 
-	data, status, err := c.DeleteRequest(fmt.Sprintf("/transport/channels/%s", strconv.FormatUint(id, 10)))
+	data, status, err := c.DeleteRequest(
+		fmt.Sprintf("/transport/channels/%s", strconv.FormatUint(id, 10)),
+		buf,
+	)
 	if err != nil {
 		return resp, status, err
 	}
@@ -132,11 +136,10 @@ func (c *MgClient) DeactivateTransportChannel(id uint64) (DeleteResponse, int, e
 // Example:
 //
 // 	var client = v1.New("https://token.url", "cb8ccf05e38a47543ad8477d49bcba99be73bff503ea6")
-//	snd := SendData{
+//	msg := SendData{
 //		SendMessage{
 //			Message{
-//				ExternalID: "23e23e23",
-//				Channel:    channelId,
+//				ExternalID: "274628",
 //				Type:       "text",
 //				Text:       "hello!",
 //			},
@@ -144,13 +147,13 @@ func (c *MgClient) DeactivateTransportChannel(id uint64) (DeleteResponse, int, e
 //		},
 //		User{
 //			ExternalID: "8",
-//			Nickname:   "@octopulus",
+//			Nickname:   "@octopus",
 //			Firstname:  "Joe",
 //		},
-//		channelId,
+//		10,
 //	}
 //
-// 	data, status, err := client.Messages(snd)
+// 	data, status, err := client.Messages(msg)
 //
 // 	if err != nil {
 // 		fmt.Printf("%v", err)
@@ -182,32 +185,26 @@ func (c *MgClient) Messages(request SendData) (MessagesResponse, int, error) {
 // Example:
 //
 // 	var client = v1.New("https://token.url", "cb8ccf05e38a47543ad8477d49bcba99be73bff503ea6")
-//	snd := SendData{
-//		SendMessage{
+//	msg := UpdateData{
+//		UpdateMessage{
 //			Message{
-//				ExternalID: "23e23e23",
-//				Channel:    channelId,
+//				ExternalID: "274628",
 //				Type:       "text",
-//				Text:       "hello!",
+//				Text:       "hello hello!",
 //			},
 //			time.Now(),
 //		},
-//		User{
-//			ExternalID: "8",
-//			Nickname:   "@octopulus",
-//			Firstname:  "Joe",
-//		},
-//		channelId,
+//		10,
 //	}
 //
-// 	data, status, err := client.UpdateMessages(snd)
+// 	data, status, err := client.UpdateMessages(msg)
 //
 // 	if err != nil {
 // 		fmt.Printf("%v", err)
 // 	}
 //
 //	fmt.Printf("%s\n", data.MessageID)
-func (c *MgClient) UpdateMessages(request UpdateMessage) (MessagesResponse, int, error) {
+func (c *MgClient) UpdateMessages(request UpdateData) (MessagesResponse, int, error) {
 	var resp MessagesResponse
 	outgoing, _ := json.Marshal(&request)
 
@@ -233,17 +230,28 @@ func (c *MgClient) UpdateMessages(request UpdateMessage) (MessagesResponse, int,
 //
 // 	var client = v1.New("https://token.url", "cb8ccf05e38a47543ad8477d49bcba99be73bff503ea6")
 //
-// 	data, status, err := client.DeleteMessage("3053450384")
+//	msg := DeleteData{
+//		Message{
+//			ExternalID: "274628",
+//		},
+//		10,
+//	}
+//
+// 	data, status, err := client.DeleteMessage(msg)
 //
 // 	if err != nil {
 // 		fmt.Printf("%v", err)
 // 	}
 //
 //	fmt.Printf("%s\n", data.MessageID)
-func (c *MgClient) DeleteMessage(id string) (MessagesResponse, int, error) {
+func (c *MgClient) DeleteMessage(request DeleteData) (MessagesResponse, int, error) {
 	var resp MessagesResponse
+	outgoing, _ := json.Marshal(&request)
 
-	data, status, err := c.DeleteRequest(fmt.Sprintf("/transport/messages/%s", id))
+	data, status, err := c.DeleteRequest(
+		"/transport/messages/",
+		[]byte(outgoing),
+	)
 	if err != nil {
 		return resp, status, err
 	}

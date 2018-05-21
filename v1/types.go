@@ -39,7 +39,7 @@ type DeleteResponse struct {
 
 // User struct
 type User struct {
-	ExternalID string `url:"external_id"`
+	ExternalID string `url:"external_id" json:"external_id"`
 	Nickname   string `url:"nickname"`
 	Firstname  string `url:"first_name,omitempty"`
 	Lastname   string `url:"last_name,omitempty"`
@@ -52,9 +52,8 @@ type User struct {
 
 // Message struct
 type Message struct {
-	ExternalID string `url:"external_id"`
-	Channel    uint64 `url:"channel"`
-	Type       string `url:"type"`
+	ExternalID string `url:"external_id" json:"external_id"`
+	Type       string `url:"type,omitempty"`
 	Text       string `url:"text,omitempty"`
 }
 
@@ -70,14 +69,27 @@ type UpdateMessage struct {
 	EditedAt time.Time `url:"edited_at,omitempty"`
 }
 
+// SendData struct
 type SendData struct {
 	Message SendMessage `url:"message"`
 	User    User        `url:"user"`
 	Channel uint64      `url:"channel"`
 }
 
+// UpdateData struct
+type UpdateData struct {
+	Message UpdateMessage `url:"message"`
+	Channel uint64        `url:"channel"`
+}
+
+// DeleteData struct
+type DeleteData struct {
+	Message Message `url:"message"`
+	Channel uint64  `url:"channel"`
+}
+
 // MessagesResponse message event response
 type MessagesResponse struct {
-	MessageID string    `json:"message_id"`
+	MessageID int       `json:"message_id"`
 	Time      time.Time `json:"time"`
 }
