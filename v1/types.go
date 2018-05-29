@@ -97,7 +97,7 @@ type MessagesResponse struct {
 // Webhook request
 type WebhookRequest struct {
 	Type string               `json:"type"`
-	Meta transportRequestMeta `json:"meta"`
+	Meta TransportRequestMeta `json:"meta"`
 	Data WebhookData          `json:"data"`
 }
 
@@ -106,11 +106,12 @@ type WebhookData struct {
 	ExternalUserID         string `json:"external_user_id"`
 	ExternalMessageID      string `json:"external_message_id,omitempty"`
 	ChannelID              uint64 `json:"channel_id"`
+	ChatID                 int64  `json:"channel_id"` // TODO: add to webhook request
 	Content                string `json:"content"`
 	QuoteMessageExternalID string `json:"quote_message_external_id,omitempty"`
 }
 
-type transportRequestMeta struct {
+type TransportRequestMeta struct {
 	ID        uint64 `json:"id"`
 	Timestamp int64  `json:"timestamp"`
 }
