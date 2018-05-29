@@ -93,3 +93,24 @@ type MessagesResponse struct {
 	MessageID int       `json:"message_id"`
 	Time      time.Time `json:"time"`
 }
+
+// Webhook request
+type WebhookRequest struct {
+	Type string               `json:"type"`
+	Meta transportRequestMeta `json:"meta"`
+	Data WebhookData          `json:"data"`
+}
+
+// WebhookData request data
+type WebhookData struct {
+	ExternalUserID         string `json:"external_user_id"`
+	ExternalMessageID      string `json:"external_message_id,omitempty"`
+	ChannelID              uint64 `json:"channel_id"`
+	Content                string `json:"content"`
+	QuoteMessageExternalID string `json:"quote_message_external_id,omitempty"`
+}
+
+type transportRequestMeta struct {
+	ID        uint64 `json:"id"`
+	Timestamp int64  `json:"timestamp"`
+}
