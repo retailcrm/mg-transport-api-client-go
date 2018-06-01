@@ -105,7 +105,7 @@ type WebhookRequest struct {
 type WebhookData struct {
 	ExternalUserID         string `json:"external_user_id"`
 	ExternalMessageID      string `json:"external_message_id,omitempty"`
-	ExternalChatID         int64  `json:"external_chat_id"`
+	ExternalChatID         string  `json:"external_chat_id"`
 	ChannelID              uint64 `json:"channel_id"`
 	Content                string `json:"content"`
 	QuoteMessageExternalID string `json:"quote_message_external_id,omitempty"`
