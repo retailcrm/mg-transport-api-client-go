@@ -105,13 +105,27 @@ type WebhookRequest struct {
 type WebhookData struct {
 	ExternalUserID         string `json:"external_user_id"`
 	ExternalMessageID      string `json:"external_message_id,omitempty"`
-	ExternalChatID         string  `json:"external_chat_id"`
+	ExternalChatID         string `json:"external_chat_id"`
 	ChannelID              uint64 `json:"channel_id"`
 	Content                string `json:"content"`
 	QuoteMessageExternalID string `json:"quote_message_external_id,omitempty"`
 }
 
+// TransportRequestMeta request metadata
 type TransportRequestMeta struct {
 	ID        uint64 `json:"id"`
 	Timestamp int64  `json:"timestamp"`
+}
+
+// ActivityCallback activation callback
+type ActivityCallback struct {
+	ClientId  string   `json:"clientId"`
+	Activity  Activity `json:"activity"`
+	SystemUrl string   `json:"systemUrl,omitempty"`
+}
+
+// Activity struct
+type Activity struct {
+	Active bool `json:"active"`
+	Freeze bool `json:"freeze"`
 }
