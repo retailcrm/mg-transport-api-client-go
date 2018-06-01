@@ -40,21 +40,21 @@ type DeleteResponse struct {
 // User struct
 type User struct {
 	ExternalID string `url:"external_id" json:"external_id"`
-	Nickname   string `url:"nickname"`
-	Firstname  string `url:"first_name,omitempty"`
-	Lastname   string `url:"last_name,omitempty"`
-	Avatar     string `url:"avatar,omitempty"`
-	ProfileURL string `url:"profile_url,omitempty"`
-	Country    string `url:"country,omitempty"`
-	Language   string `url:"language,omitempty"`
-	Phone      string `url:"phone,omitempty"`
+	Nickname   string `url:"nickname" json:"nickname"`
+	Firstname  string `url:"first_name,omitempty" json:"first_name"`
+	Lastname   string `url:"last_name,omitempty" json:"last_name"`
+	Avatar     string `url:"avatar,omitempty" json:"avatar"`
+	ProfileURL string `url:"profile_url,omitempty" json:"profile_url"`
+	Country    string `url:"country,omitempty" json:"country"`
+	Language   string `url:"language,omitempty" json:"language"`
+	Phone      string `url:"phone,omitempty" json:"phone"`
 }
 
 // Message struct
 type Message struct {
 	ExternalID string `url:"external_id" json:"external_id"`
-	Type       string `url:"type,omitempty"`
-	Text       string `url:"text,omitempty"`
+	Type       string `url:"type,omitempty" json:"type"`
+	Text       string `url:"text,omitempty" json:"text"`
 }
 
 // SendMessage struct
