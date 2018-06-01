@@ -112,6 +112,7 @@ func TestMgClient_Messages(t *testing.T) {
 			Firstname:  "Joe",
 		},
 		channelId,
+		"24798237492374",
 	}
 
 	data, status, err := c.Messages(snd)
