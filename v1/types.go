@@ -71,9 +71,10 @@ type UpdateMessage struct {
 
 // SendData struct
 type SendData struct {
-	Message SendMessage `url:"message"`
-	User    User        `url:"user"`
-	Channel uint64      `url:"channel"`
+	Message        SendMessage `url:"message"`
+	User           User        `url:"user"`
+	Channel        uint64      `url:"channel"`
+	ExternalChatID string      `url:"external_chat_id"`
 }
 
 // UpdateData struct
