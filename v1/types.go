@@ -71,9 +71,10 @@ type UpdateMessage struct {
 
 // SendData struct
 type SendData struct {
-	Message SendMessage `url:"message"`
-	User    User        `url:"user"`
-	Channel uint64      `url:"channel"`
+	Message        SendMessage `url:"message"`
+	User           User        `url:"user"`
+	Channel        uint64      `url:"channel"`
+	ExternalChatID string      `url:"external_chat_id"`
 }
 
 // UpdateData struct
@@ -115,17 +116,4 @@ type WebhookData struct {
 type TransportRequestMeta struct {
 	ID        uint64 `json:"id"`
 	Timestamp int64  `json:"timestamp"`
-}
-
-// ActivityCallback activation callback
-type ActivityCallback struct {
-	ClientId  string   `json:"clientId"`
-	Activity  Activity `json:"activity"`
-	SystemUrl string   `json:"systemUrl,omitempty"`
-}
-
-// Activity struct
-type Activity struct {
-	Active bool `json:"active"`
-	Freeze bool `json:"freeze"`
 }
