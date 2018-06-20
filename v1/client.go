@@ -12,9 +12,9 @@ import (
 // New initialize client
 func New(url string, token string) *MgClient {
 	return &MgClient{
-		url,
-		token,
-		&http.Client{Timeout: 20 * time.Second},
+		URL:        url,
+		Token:      token,
+		httpClient: &http.Client{Timeout: 20 * time.Second},
 	}
 }
 
