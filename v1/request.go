@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 )
 
@@ -78,6 +79,10 @@ func makeRequest(reqType, url string, buf *bytes.Buffer, c *MgClient) ([]byte, i
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("X-Transport-Token", c.Token)
 
+	if c.Debug {
+		log.Printf("MG TRANSPORT API Request: %s %s %s %s", reqType, url, c.Token, buf.String())
+	}
+
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
 		return res, 0, err
@@ -91,6 +96,10 @@ func makeRequest(reqType, url string, buf *bytes.Buffer, c *MgClient) ([]byte, i
 	res, err = buildRawResponse(resp)
 	if err != nil {
 		return res, 0, err
+	}
+
+	if c.Debug {
+		log.Printf("MG TRANSPORT API Response: %s", res)
 	}
 
 	return res, resp.StatusCode, err

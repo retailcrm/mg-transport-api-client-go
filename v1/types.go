@@ -7,9 +7,10 @@ import (
 
 // MgClient type
 type MgClient struct {
-	URL        string
-	Token      string
-	httpClient *http.Client
+	URL        string       `json:"url"`
+	Token      string       `json:"token"`
+	Debug      bool         `json:"debug"`
+	httpClient *http.Client `json:"-"`
 }
 
 // Channel type
