@@ -98,7 +98,7 @@ func TestMgClient_Messages(t *testing.T) {
 	t.Logf("%v", ext)
 
 	snd := SendData{
-		SendMessage{
+		Message: SendMessage{
 			Message{
 				ExternalID: ext,
 				Type:       "text",
@@ -106,13 +106,13 @@ func TestMgClient_Messages(t *testing.T) {
 			},
 			time.Now(),
 		},
-		User{
+		User: User{
 			ExternalID: "6",
 			Nickname:   "octopus",
 			Firstname:  "Joe",
 		},
-		channelId,
-		"24798237492374",
+		Channel:        channelId,
+		ExternalChatID: "24798237492374",
 	}
 
 	data, status, err := c.Messages(snd)

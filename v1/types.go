@@ -72,10 +72,15 @@ type UpdateMessage struct {
 
 // SendData struct
 type SendData struct {
-	Message        SendMessage `url:"message" json:"message"`
-	User           User        `url:"user" json:"user"`
-	Channel        uint64      `url:"channel" json:"channel"`
-	ExternalChatID string      `url:"external_chat_id" json:"external_chat_id"`
+	Message        SendMessage              `url:"message" json:"message"`
+	User           User                     `url:"user" json:"user"`
+	Channel        uint64                   `url:"channel" json:"channel"`
+	ExternalChatID string                   `url:"external_chat_id" json:"external_chat_id"`
+	Quote          *SendMessageRequestQuote `url:"quote,omitempty" json:"quote,omitempty"`
+}
+
+type SendMessageRequestQuote struct {
+	ExternalID string `json:"external_id"`
 }
 
 // UpdateData struct
