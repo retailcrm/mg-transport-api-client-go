@@ -40,7 +40,7 @@ func (c *MgClient) ActivateTransportChannel(request Channel) (ActivateResponse, 
 	var resp ActivateResponse
 	outgoing, _ := json.Marshal(&request)
 
-	data, status, err := c.PostRequest("/transport/channels", []byte(outgoing))
+	data, status, err := c.PostRequest("/channels", []byte(outgoing))
 	if err != nil {
 		return resp, status, err
 	}
@@ -79,7 +79,7 @@ func (c *MgClient) UpdateTransportChannel(request Channel) (UpdateResponse, int,
 	var resp UpdateResponse
 	outgoing, _ := json.Marshal(&request)
 
-	data, status, err := c.PutRequest(fmt.Sprintf("/transport/channels/%d", request.ID), []byte(outgoing))
+	data, status, err := c.PutRequest(fmt.Sprintf("/channels/%d", request.ID), []byte(outgoing))
 	if err != nil {
 		return resp, status, err
 	}
@@ -113,7 +113,7 @@ func (c *MgClient) DeactivateTransportChannel(id uint64) (DeleteResponse, int, e
 	var buf []byte
 
 	data, status, err := c.DeleteRequest(
-		fmt.Sprintf("/transport/channels/%s", strconv.FormatUint(id, 10)),
+		fmt.Sprintf("/channels/%s", strconv.FormatUint(id, 10)),
 		buf,
 	)
 	if err != nil {
@@ -164,7 +164,7 @@ func (c *MgClient) Messages(request SendData) (MessagesResponse, int, error) {
 	var resp MessagesResponse
 	outgoing, _ := json.Marshal(&request)
 
-	data, status, err := c.PostRequest("/transport/messages", []byte(outgoing))
+	data, status, err := c.PostRequest("/messages", []byte(outgoing))
 	if err != nil {
 		return resp, status, err
 	}
@@ -208,7 +208,7 @@ func (c *MgClient) UpdateMessages(request UpdateData) (MessagesResponse, int, er
 	var resp MessagesResponse
 	outgoing, _ := json.Marshal(&request)
 
-	data, status, err := c.PutRequest("/transport/messages", []byte(outgoing))
+	data, status, err := c.PutRequest("/messages", []byte(outgoing))
 	if err != nil {
 		return resp, status, err
 	}
@@ -249,7 +249,7 @@ func (c *MgClient) DeleteMessage(request DeleteData) (MessagesResponse, int, err
 	outgoing, _ := json.Marshal(&request)
 
 	data, status, err := c.DeleteRequest(
-		"/transport/messages/",
+		"/messages/",
 		[]byte(outgoing),
 	)
 	if err != nil {
