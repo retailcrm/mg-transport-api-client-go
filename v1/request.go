@@ -8,7 +8,7 @@ import (
 	"net/http"
 )
 
-var prefix = "/api/v1"
+var prefix = "/api/transport/v1"
 
 // GetRequest implements GET Request
 func (c *MgClient) GetRequest(urlWithParameters string) ([]byte, int, error) {
