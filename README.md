@@ -29,9 +29,18 @@ func main() {
         Type: "telegram",
         Events: []string{
             "message_sent",
-            "message_updated",
-            "message_deleted",
             "message_read",
+        },
+        Settings: ChannelSettings{
+            ReceiveMessageMode: "always",
+            SpamAllowed: false,
+            Features: ChannelFeatures{
+            	StatusDelivered: "none",
+        	    MessageDeleting: "send",
+        	    MessageEditing: "both",
+        	    MessageQuoting: "both",
+        	    ImageMessage: "receive",
+            },
         },
     }
 

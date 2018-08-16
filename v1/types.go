@@ -15,9 +15,28 @@ type MgClient struct {
 
 // Channel type
 type Channel struct {
-	ID     uint64   `url:"id,omitempty"`
-	Type   string   `url:"type,omitempty"`
-	Events []string `url:"events,omitempty,brackets"`
+	ID       uint64          `json:"id,omitempty"`
+	Type     string          `json:"type,omitempty"`
+	Events   []string        `json:"events,omitempty,brackets"`
+	Settings ChannelSettings `json:"settings,omitempty,brackets"`
+}
+
+// ChannelSettings struct
+type ChannelSettings struct {
+	Features           ChannelFeatures `json:"features"`
+	ReceiveMessageMode string          `json:"receive_message_mode"`
+	SpamAllowed        bool            `json:"spam_allowed"`
+}
+
+// ChannelFeatures struct
+type ChannelFeatures struct {
+	StatusDelivered string `json:"status_delivered"`
+	StatusRead      string `json:"status_read"`
+	MessageDeleting string `json:"message_deleting"`
+	MessageEditing  string `json:"message_editing"`
+	MessageQuoting  string `json:"message_quoting"`
+	ImageMessage    string `json:"image_message"`
+	FileMessage     string `json:"file_message"`
 }
 
 // ActivateResponse channel activation response
@@ -40,43 +59,43 @@ type DeleteResponse struct {
 
 // User struct
 type User struct {
-	ExternalID string `url:"external_id" json:"external_id"`
-	Nickname   string `url:"nickname" json:"nickname"`
-	Firstname  string `url:"first_name,omitempty" json:"first_name"`
-	Lastname   string `url:"last_name,omitempty" json:"last_name"`
-	Avatar     string `url:"avatar,omitempty" json:"avatar"`
-	ProfileURL string `url:"profile_url,omitempty" json:"profile_url"`
-	Country    string `url:"country,omitempty" json:"country"`
-	Language   string `url:"language,omitempty" json:"language"`
-	Phone      string `url:"phone,omitempty" json:"phone"`
+	ExternalID string `json:"external_id" json:"external_id"`
+	Nickname   string `json:"nickname" json:"nickname"`
+	Firstname  string `json:"first_name,omitempty" json:"first_name"`
+	Lastname   string `json:"last_name,omitempty" json:"last_name"`
+	Avatar     string `json:"avatar,omitempty" json:"avatar"`
+	ProfileURL string `json:"profile_url,omitempty" json:"profile_url"`
+	Country    string `json:"country,omitempty" json:"country"`
+	Language   string `json:"language,omitempty" json:"language"`
+	Phone      string `json:"phone,omitempty" json:"phone"`
 }
 
 // Message struct
 type Message struct {
-	ExternalID string `url:"external_id" json:"external_id"`
-	Type       string `url:"type,omitempty" json:"type"`
-	Text       string `url:"text,omitempty" json:"text"`
+	ExternalID string `json:"external_id" json:"external_id"`
+	Type       string `json:"type,omitempty" json:"type"`
+	Text       string `json:"text,omitempty" json:"text"`
 }
 
 // SendMessage struct
 type SendMessage struct {
 	Message
-	SentAt time.Time `url:"sent_at,omitempty"`
+	SentAt time.Time `json:"sent_at,omitempty"`
 }
 
 // UpdateMessage struct
 type UpdateMessage struct {
 	Message
-	EditedAt time.Time `url:"edited_at,omitempty"`
+	EditedAt int64 `json:"edited_at,omitempty"`
 }
 
 // SendData struct
 type SendData struct {
-	Message        SendMessage              `url:"message" json:"message"`
-	User           User                     `url:"user" json:"user"`
-	Channel        uint64                   `url:"channel" json:"channel"`
-	ExternalChatID string                   `url:"external_chat_id" json:"external_chat_id"`
-	Quote          *SendMessageRequestQuote `url:"quote,omitempty" json:"quote,omitempty"`
+	Message        SendMessage              `json:"message" json:"message"`
+	User           User                     `json:"user" json:"user"`
+	Channel        uint64                   `json:"channel" json:"channel"`
+	ExternalChatID string                   `json:"external_chat_id" json:"external_chat_id"`
+	Quote          *SendMessageRequestQuote `json:"quote,omitempty" json:"quote,omitempty"`
 }
 
 type SendMessageRequestQuote struct {
@@ -85,14 +104,14 @@ type SendMessageRequestQuote struct {
 
 // UpdateData struct
 type UpdateData struct {
-	Message UpdateMessage `url:"message"`
-	Channel uint64        `url:"channel"`
+	Message UpdateMessage `json:"message"`
+	Channel uint64        `json:"channel"`
 }
 
 // DeleteData struct
 type DeleteData struct {
-	Message Message `url:"message"`
-	Channel uint64  `url:"channel"`
+	Message Message `json:"message"`
+	Channel uint64  `json:"channel"`
 }
 
 // MessagesResponse message event response
