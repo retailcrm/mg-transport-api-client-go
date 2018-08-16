@@ -28,6 +28,17 @@ func TestMgClient_ActivateTransportChannel(t *testing.T) {
 			"message_sent",
 			"message_read",
 		},
+		Settings: ChannelSettings{
+			ReceiveMessageMode: "always",
+			SpamAllowed:        false,
+			Features: ChannelFeatures{
+				StatusDelivered: "none",
+				MessageDeleting: "send",
+				MessageEditing:  "both",
+				MessageQuoting:  "both",
+				ImageMessage:    "receive",
+			},
+		},
 	}
 
 	data, status, err := c.ActivateTransportChannel(ch)
@@ -48,6 +59,17 @@ func TestMgClient_ActivateNewTransportChannel(t *testing.T) {
 			"message_updated",
 			"message_deleted",
 			"message_read",
+		},
+		Settings: ChannelSettings{
+			ReceiveMessageMode: "always",
+			SpamAllowed:        false,
+			Features: ChannelFeatures{
+				StatusDelivered: "none",
+				MessageDeleting: "send",
+				MessageEditing:  "both",
+				MessageQuoting:  "both",
+				ImageMessage:    "receive",
+			},
 		},
 	}
 
@@ -81,6 +103,17 @@ func TestMgClient_UpdateTransportChannel(t *testing.T) {
 			"message_updated",
 			"message_deleted",
 			"message_read",
+		},
+		Settings: ChannelSettings{
+			ReceiveMessageMode: "always",
+			SpamAllowed:        false,
+			Features: ChannelFeatures{
+				StatusDelivered: "none",
+				MessageDeleting: "send",
+				MessageEditing:  "both",
+				MessageQuoting:  "both",
+				ImageMessage:    "receive",
+			},
 		},
 	}
 
@@ -139,7 +172,7 @@ func TestMgClient_UpdateMessages(t *testing.T) {
 				Type:       "text",
 				Text:       "hello hello!",
 			},
-			time.Now(),
+			MakeTimestamp(),
 		},
 		channelId,
 	}

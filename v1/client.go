@@ -26,7 +26,21 @@ func New(url string, token string) *MgClient {
 //
 //	request := ActivateRequest{
 //		Type: "telegram",
-//		Events: [2]int{"message_sent", "message_sent"}
+//		Events: []string{
+// 			"message_sent",
+// 			"message_read",
+// 		},
+//		Settings: ChannelSettings{
+// 			ReceiveMessageMode: "always",
+//			SpamAllowed: false,
+//			Features: ChannelFeatures{
+//				StatusDelivered: "none",
+//				MessageDeleting: "send",
+//				MessageEditing: "both",
+//				MessageQuoting: "both",
+//				ImageMessage: "receive",
+// 			},
+// 		},
 //	}
 //
 // 	data, status, err := client.ActivateTransportChannel(request)
@@ -65,7 +79,21 @@ func (c *MgClient) ActivateTransportChannel(request Channel) (ActivateResponse, 
 //	request := ActivateRequest{
 //		ID:   3053450384,
 //		Type: "telegram",
-//		Events: [2]int{"message_sent", "message_sent"}
+//		Events: []string{
+// 			"message_sent",
+// 			"message_read",
+// 		},
+//		Settings: ChannelSettings{
+// 			ReceiveMessageMode: "always",
+//			SpamAllowed: false,
+//			Features: ChannelFeatures{
+//				StatusDelivered: "none",
+//				MessageDeleting: "send",
+//				MessageEditing: "both",
+//				MessageQuoting: "both",
+//				ImageMessage: "receive",
+// 			},
+// 		},
 //	}
 //
 // 	data, status, err := client.UpdateTransportChannel(request)
@@ -192,7 +220,7 @@ func (c *MgClient) Messages(request SendData) (MessagesResponse, int, error) {
 //				Type:       "text",
 //				Text:       "hello hello!",
 //			},
-//			time.Now(),
+//			MakeTimestamp(),
 //		},
 //		10,
 //	}
@@ -277,4 +305,8 @@ func (c *MgClient) Error(info []byte) error {
 	values := data["errors"].([]interface{})
 
 	return errors.New(values[0].(string))
+}
+
+func MakeTimestamp() int64 {
+	return time.Now().UnixNano() / (int64(time.Millisecond) / int64(time.Nanosecond))
 }
