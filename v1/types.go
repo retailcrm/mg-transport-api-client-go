@@ -12,7 +12,6 @@ const (
 	ChannelFeatureBoth    string = "both"
 
 	MsgModeNever       string = "never"
-	MsgModeTimeLimited string = "time-limited"
 	MsgModeAlways      string = "always"
 )
 
