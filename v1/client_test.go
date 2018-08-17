@@ -61,7 +61,7 @@ func TestMgClient_ActivateNewTransportChannel(t *testing.T) {
 			"message_read",
 		},
 		Settings: ChannelSettings{
-			ReceiveMessageMode: MsgModeTimeLimited,
+			ReceiveMessageMode: MsgModeNever,
 			SpamAllowed:        false,
 			Features: ChannelFeatures{
 				StatusDelivered: ChannelFeatureNone,
