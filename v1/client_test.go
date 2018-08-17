@@ -29,14 +29,14 @@ func TestMgClient_ActivateTransportChannel(t *testing.T) {
 			"message_read",
 		},
 		Settings: ChannelSettings{
-			ReceiveMessageMode: "always",
+			ReceiveMessageMode: MsgModeAlways,
 			SpamAllowed:        false,
 			Features: ChannelFeatures{
-				StatusDelivered: "none",
-				MessageDeleting: "send",
-				MessageEditing:  "both",
-				MessageQuoting:  "both",
-				ImageMessage:    "receive",
+				StatusDelivered: ChannelFeatureNone,
+				MessageDeleting: ChannelFeatureSend,
+				MessageEditing:  ChannelFeatureBoth,
+				MessageQuoting:  ChannelFeatureBoth,
+				ImageMessage:    ChannelFeatureReceive,
 			},
 		},
 	}
@@ -61,14 +61,14 @@ func TestMgClient_ActivateNewTransportChannel(t *testing.T) {
 			"message_read",
 		},
 		Settings: ChannelSettings{
-			ReceiveMessageMode: "always",
+			ReceiveMessageMode: MsgModeTimeLimited,
 			SpamAllowed:        false,
 			Features: ChannelFeatures{
-				StatusDelivered: "none",
-				MessageDeleting: "send",
-				MessageEditing:  "both",
-				MessageQuoting:  "both",
-				ImageMessage:    "receive",
+				StatusDelivered: ChannelFeatureNone,
+				MessageDeleting: ChannelFeatureSend,
+				MessageEditing:  ChannelFeatureBoth,
+				MessageQuoting:  ChannelFeatureBoth,
+				ImageMessage:    ChannelFeatureReceive,
 			},
 		},
 	}
@@ -108,11 +108,11 @@ func TestMgClient_UpdateTransportChannel(t *testing.T) {
 			ReceiveMessageMode: "always",
 			SpamAllowed:        false,
 			Features: ChannelFeatures{
-				StatusDelivered: "none",
-				MessageDeleting: "send",
-				MessageEditing:  "both",
-				MessageQuoting:  "both",
-				ImageMessage:    "receive",
+				StatusDelivered: ChannelFeatureNone,
+				MessageDeleting: ChannelFeatureSend,
+				MessageEditing:  ChannelFeatureBoth,
+				MessageQuoting:  ChannelFeatureBoth,
+				ImageMessage:    ChannelFeatureReceive,
 			},
 		},
 	}

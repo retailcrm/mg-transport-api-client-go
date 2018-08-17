@@ -32,14 +32,14 @@ func main() {
             "message_read",
         },
         Settings: ChannelSettings{
-            ReceiveMessageMode: "always",
+            ReceiveMessageMode: MsgModeAlways,
             SpamAllowed: false,
             Features: ChannelFeatures{
-            	StatusDelivered: "none",
-        	    MessageDeleting: "send",
-        	    MessageEditing: "both",
-        	    MessageQuoting: "both",
-        	    ImageMessage: "receive",
+            	StatusDelivered: ChannelFeatureNone,
+                MessageDeleting: ChannelFeatureSend,
+                MessageEditing:  ChannelFeatureBoth,
+                MessageQuoting:  ChannelFeatureBoth,
+                ImageMessage:    ChannelFeatureReceive,
             },
         },
     }
