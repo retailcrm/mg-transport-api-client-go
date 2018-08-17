@@ -31,14 +31,14 @@ func New(url string, token string) *MgClient {
 // 			"message_read",
 // 		},
 //		Settings: ChannelSettings{
-// 			ReceiveMessageMode: "always",
+// 			ReceiveMessageMode: MsgModeAlways,
 //			SpamAllowed: false,
 //			Features: ChannelFeatures{
-//				StatusDelivered: "none",
-//				MessageDeleting: "send",
-//				MessageEditing: "both",
-//				MessageQuoting: "both",
-//				ImageMessage: "receive",
+//				StatusDelivered: ChannelFeatureNone,
+// 				MessageDeleting: ChannelFeatureSend,
+// 				MessageEditing:  ChannelFeatureBoth,
+// 				MessageQuoting:  ChannelFeatureBoth,
+// 				ImageMessage:    ChannelFeatureReceive,
 // 			},
 // 		},
 //	}
@@ -84,14 +84,14 @@ func (c *MgClient) ActivateTransportChannel(request Channel) (ActivateResponse, 
 // 			"message_read",
 // 		},
 //		Settings: ChannelSettings{
-// 			ReceiveMessageMode: "always",
+// 			ReceiveMessageMode: MsgModeTimeLimited,
 //			SpamAllowed: false,
 //			Features: ChannelFeatures{
-//				StatusDelivered: "none",
-//				MessageDeleting: "send",
-//				MessageEditing: "both",
-//				MessageQuoting: "both",
-//				ImageMessage: "receive",
+//				StatusDelivered: ChannelFeatureNone,
+// 				MessageDeleting: ChannelFeatureSend,
+// 				MessageEditing:  ChannelFeatureBoth,
+// 				MessageQuoting:  ChannelFeatureBoth,
+// 				ImageMessage:    ChannelFeatureReceive,
 // 			},
 // 		},
 //	}
@@ -277,7 +277,7 @@ func (c *MgClient) DeleteMessage(request DeleteData) (MessagesResponse, int, err
 	outgoing, _ := json.Marshal(&request)
 
 	data, status, err := c.DeleteRequest(
-		"/messages/",
+		"/messages",
 		[]byte(outgoing),
 	)
 	if err != nil {
