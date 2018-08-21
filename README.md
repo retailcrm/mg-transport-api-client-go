@@ -27,19 +27,17 @@ func main() {
     var client = v1.New("https://token.url", "cb8ccf05e38a47543ad8477d49bcba99be73bff503ea6")
     ch := Channel{
         Type: "telegram",
-        Events: []string{
-            "message_sent",
-            "message_read",
-        },
         Settings: ChannelSettings{
-            ReceiveMessageMode: MsgModeAlways,
             SpamAllowed: false,
-            Features: ChannelFeatures{
-            	StatusDelivered: ChannelFeatureNone,
-                MessageDeleting: ChannelFeatureSend,
-                MessageEditing:  ChannelFeatureBoth,
-                MessageQuoting:  ChannelFeatureBoth,
-                ImageMessage:    ChannelFeatureReceive,
+            Status: Status{
+                Delivered: ChannelFeatureNone,
+                Read: ChannelFeatureReceive,
+            },
+            Text: ChannelSettingsText{
+                Creating: ChannelFeatureBoth,
+                Editing:  ChannelFeatureSend,
+                Quoting:  ChannelFeatureReceive,
+                Deleting: ChannelFeatureBoth,
             },
         },
     }

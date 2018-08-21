@@ -10,9 +10,6 @@ const (
 	ChannelFeatureReceive string = "receive"
 	ChannelFeatureSend    string = "send"
 	ChannelFeatureBoth    string = "both"
-
-	MsgModeNever       string = "never"
-	MsgModeAlways      string = "always"
 )
 
 // MgClient type
@@ -27,26 +24,28 @@ type MgClient struct {
 type Channel struct {
 	ID       uint64          `json:"id,omitempty"`
 	Type     string          `json:"type,omitempty"`
-	Events   []string        `json:"events,omitempty,brackets"`
 	Settings ChannelSettings `json:"settings,omitempty,brackets"`
 }
 
 // ChannelSettings struct
 type ChannelSettings struct {
-	Features           ChannelFeatures `json:"features"`
-	ReceiveMessageMode string          `json:"receive_message_mode"`
-	SpamAllowed        bool            `json:"spam_allowed"`
+	SpamAllowed bool                `json:"spam_allowed"`
+	Status      Status              `json:"status"`
+	Text        ChannelSettingsText `json:"text"`
 }
 
-// ChannelFeatures struct
-type ChannelFeatures struct {
-	StatusDelivered string `json:"status_delivered"`
-	StatusRead      string `json:"status_read"`
-	MessageDeleting string `json:"message_deleting"`
-	MessageEditing  string `json:"message_editing"`
-	MessageQuoting  string `json:"message_quoting"`
-	ImageMessage    string `json:"image_message"`
-	FileMessage     string `json:"file_message"`
+// Status struct
+type Status struct {
+	Delivered string `json:"delivered"`
+	Read      string `json:"read"`
+}
+
+// ChannelSettingsText struct
+type ChannelSettingsText struct {
+	Creating string `json:"creating"`
+	Editing  string `json:"editing"`
+	Quoting  string `json:"quoting"`
+	Deleting string `json:"deleting"`
 }
 
 // ActivateResponse channel activation response

@@ -24,19 +24,17 @@ func TestMgClient_ActivateTransportChannel(t *testing.T) {
 	ch := Channel{
 		ID:   channelId,
 		Type: "telegram",
-		Events: []string{
-			"message_sent",
-			"message_read",
-		},
 		Settings: ChannelSettings{
-			ReceiveMessageMode: MsgModeAlways,
-			SpamAllowed:        false,
-			Features: ChannelFeatures{
-				StatusDelivered: ChannelFeatureNone,
-				MessageDeleting: ChannelFeatureSend,
-				MessageEditing:  ChannelFeatureBoth,
-				MessageQuoting:  ChannelFeatureBoth,
-				ImageMessage:    ChannelFeatureReceive,
+			SpamAllowed: false,
+			Status: Status{
+				Delivered: ChannelFeatureNone,
+				Read:      ChannelFeatureReceive,
+			},
+			Text: ChannelSettingsText{
+				Creating: ChannelFeatureBoth,
+				Editing:  ChannelFeatureSend,
+				Quoting:  ChannelFeatureReceive,
+				Deleting: ChannelFeatureBoth,
 			},
 		},
 	}
@@ -54,21 +52,17 @@ func TestMgClient_ActivateNewTransportChannel(t *testing.T) {
 	c := client()
 	ch := Channel{
 		Type: "telegram",
-		Events: []string{
-			"message_sent",
-			"message_updated",
-			"message_deleted",
-			"message_read",
-		},
 		Settings: ChannelSettings{
-			ReceiveMessageMode: MsgModeNever,
-			SpamAllowed:        false,
-			Features: ChannelFeatures{
-				StatusDelivered: ChannelFeatureNone,
-				MessageDeleting: ChannelFeatureSend,
-				MessageEditing:  ChannelFeatureBoth,
-				MessageQuoting:  ChannelFeatureBoth,
-				ImageMessage:    ChannelFeatureReceive,
+			SpamAllowed: false,
+			Status: Status{
+				Delivered: ChannelFeatureNone,
+				Read:      ChannelFeatureBoth,
+			},
+			Text: ChannelSettingsText{
+				Creating: ChannelFeatureBoth,
+				Editing:  ChannelFeatureSend,
+				Quoting:  ChannelFeatureBoth,
+				Deleting: ChannelFeatureSend,
 			},
 		},
 	}
@@ -98,21 +92,17 @@ func TestMgClient_UpdateTransportChannel(t *testing.T) {
 	c := client()
 	ch := Channel{
 		ID: channelId,
-		Events: []string{
-			"message_sent",
-			"message_updated",
-			"message_deleted",
-			"message_read",
-		},
 		Settings: ChannelSettings{
-			ReceiveMessageMode: "always",
-			SpamAllowed:        false,
-			Features: ChannelFeatures{
-				StatusDelivered: ChannelFeatureNone,
-				MessageDeleting: ChannelFeatureSend,
-				MessageEditing:  ChannelFeatureBoth,
-				MessageQuoting:  ChannelFeatureBoth,
-				ImageMessage:    ChannelFeatureReceive,
+			SpamAllowed: false,
+			Status: Status{
+				Delivered: ChannelFeatureNone,
+				Read:      ChannelFeatureBoth,
+			},
+			Text: ChannelSettingsText{
+				Creating: ChannelFeatureBoth,
+				Editing:  ChannelFeatureBoth,
+				Quoting:  ChannelFeatureBoth,
+				Deleting: ChannelFeatureBoth,
 			},
 		},
 	}
