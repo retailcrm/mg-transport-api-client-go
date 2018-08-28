@@ -138,13 +138,26 @@ type WebhookRequest struct {
 
 // WebhookData request data
 type WebhookData struct {
-	ExternalUserID    string `json:"external_user_id"`
-	ExternalMessageID string `json:"external_message_id,omitempty"`
-	ExternalChatID    string `json:"external_chat_id"`
-	ChannelID         uint64 `json:"channel_id"`
-	Content           string `json:"content"`
-	QuoteExternalID   string `json:"quote_external_id,omitempty"`
-	QuoteContent      string `json:"quote_content,omitempty"`
+	ExternalUserID    string              `json:"external_user_id"`
+	ExternalMessageID string              `json:"external_message_id,omitempty"`
+	ExternalChatID    string              `json:"external_chat_id"`
+	ChannelID         uint64              `json:"channel_id"`
+	Content           string              `json:"content"`
+	QuoteExternalID   string              `json:"quote_external_id,omitempty"`
+	QuoteContent      string              `json:"quote_content,omitempty"`
+	User              *newMessageDataUser `json:"user,omitempty"`
+	Bot               *newMessageDataBot  `json:"bot,omitempty"`
+}
+
+type newMessageDataUser struct {
+	FirstName string `json:"first_name"`
+	LastName  string `json:"last_name"`
+	Avatar    string `json:"avatar"`
+}
+
+type newMessageDataBot struct {
+	Name   string `json:"name"`
+	Avatar string `json:"avatar"`
 }
 
 // TransportRequestMeta request metadata
