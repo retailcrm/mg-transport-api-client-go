@@ -77,6 +77,7 @@ type User struct {
 	Country    string `json:"country,omitempty"`
 	Language   string `json:"language,omitempty"`
 	Phone      string `json:"phone,omitempty"`
+	Email      string `json:"email,omitempty"`
 }
 
 // Message struct
