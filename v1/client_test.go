@@ -152,6 +152,7 @@ func TestMgClient_Messages(t *testing.T) {
 }
 
 func TestMgClient_UpdateMessages(t *testing.T) {
+	t.Skip()
 	c := client()
 	t.Logf("%v", ext)
 
@@ -181,6 +182,7 @@ func TestMgClient_UpdateMessages(t *testing.T) {
 }
 
 func TestMgClient_DeleteMessage(t *testing.T) {
+	t.Skip()
 	c := client()
 	t.Logf("%v", ext)
 
