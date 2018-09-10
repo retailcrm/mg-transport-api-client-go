@@ -26,7 +26,7 @@ func New(url string, token string) *MgClient {
 //
 //	request := ActivateRequest{
 //		Type: "telegram",
-//		Name: "Telegram",
+//		Name: "@my_shopping_bot",
 //		Settings: ChannelSettings{
 //			SpamAllowed: false,
 //			Status: Status{
@@ -78,7 +78,7 @@ func (c *MgClient) ActivateTransportChannel(request Channel) (ActivateResponse, 
 //	request := ActivateRequest{
 //		ID:   3053450384,
 //		Type: "telegram",
-//		Name: "Telegram",
+//		Name: "@my_shopping_bot",
 //		Settings: ChannelSettings{
 //			SpamAllowed: false,
 //			Status: Status{

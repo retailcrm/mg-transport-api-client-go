@@ -24,7 +24,7 @@ func TestMgClient_ActivateTransportChannel(t *testing.T) {
 	ch := Channel{
 		ID:   channelId,
 		Type: "telegram",
-		Name: "Telegram",
+		Name: "@my_shopping_bot",
 		Settings: ChannelSettings{
 			SpamAllowed: false,
 			Status: Status{
@@ -53,7 +53,7 @@ func TestMgClient_ActivateNewTransportChannel(t *testing.T) {
 	c := client()
 	ch := Channel{
 		Type: "telegram",
-		Name: "Telegram",
+		Name: "@my_shopping_bot",
 		Settings: ChannelSettings{
 			SpamAllowed: false,
 			Status: Status{
@@ -94,7 +94,7 @@ func TestMgClient_UpdateTransportChannel(t *testing.T) {
 	c := client()
 	ch := Channel{
 		ID:   channelId,
-		Name: "Somename",
+		Name: "@my_shopping_bot_2",
 		Settings: ChannelSettings{
 			SpamAllowed: false,
 			Status: Status{
