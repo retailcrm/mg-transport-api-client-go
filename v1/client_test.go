@@ -24,6 +24,7 @@ func TestMgClient_ActivateTransportChannel(t *testing.T) {
 	ch := Channel{
 		ID:   channelId,
 		Type: "telegram",
+		Name: "Telegram",
 		Settings: ChannelSettings{
 			SpamAllowed: false,
 			Status: Status{
@@ -52,6 +53,7 @@ func TestMgClient_ActivateNewTransportChannel(t *testing.T) {
 	c := client()
 	ch := Channel{
 		Type: "telegram",
+		Name: "Telegram",
 		Settings: ChannelSettings{
 			SpamAllowed: false,
 			Status: Status{
@@ -91,7 +93,8 @@ func TestMgClient_ActivateNewTransportChannel(t *testing.T) {
 func TestMgClient_UpdateTransportChannel(t *testing.T) {
 	c := client()
 	ch := Channel{
-		ID: channelId,
+		ID:   channelId,
+		Name: "Somename",
 		Settings: ChannelSettings{
 			SpamAllowed: false,
 			Status: Status{
@@ -121,13 +124,10 @@ func TestMgClient_Messages(t *testing.T) {
 	t.Logf("%v", ext)
 
 	snd := SendData{
-		Message: SendMessage{
-			Message{
-				ExternalID: ext,
-				Type:       "text",
-				Text:       "hello!",
-			},
-			time.Now(),
+		Message: Message{
+			ExternalID: ext,
+			Type:       "text",
+			Text:       "hello!",
 		},
 		User: User{
 			ExternalID: "6",
