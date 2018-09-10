@@ -28,6 +28,7 @@ func main() {
     var client = v1.New("https://token.url", "cb8ccf05e38a47543ad8477d49bcba99be73bff503ea6")
     ch := Channel{
         Type: "telegram",
+        Name: "@my_shopping_bot"
         Settings: ChannelSettings{
             SpamAllowed: false,
             Status: Status{

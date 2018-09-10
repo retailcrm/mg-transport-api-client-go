@@ -24,6 +24,7 @@ type MgClient struct {
 type Channel struct {
 	ID       uint64          `json:"id,omitempty"`
 	Type     string          `json:"type,omitempty"`
+	Name     string          `json:"name,omitempty"`
 	Settings ChannelSettings `json:"settings,omitempty,brackets"`
 }
 
@@ -101,7 +102,7 @@ type UpdateMessage struct {
 
 // SendData struct
 type SendData struct {
-	Message        SendMessage              `json:"message"`
+	Message        Message                  `json:"message"`
 	User           User                     `json:"user"`
 	Channel        uint64                   `json:"channel"`
 	ExternalChatID string                   `json:"external_chat_id"`
