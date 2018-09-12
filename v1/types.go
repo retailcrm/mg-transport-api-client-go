@@ -6,10 +6,14 @@ import (
 )
 
 const (
-	ChannelFeatureNone    string = "none"
+	// ChannelFeatureNone channel can not implement feature
+	ChannelFeatureNone string = "none"
+	// ChannelFeatureReceive channel implement feature on receive
 	ChannelFeatureReceive string = "receive"
-	ChannelFeatureSend    string = "send"
-	ChannelFeatureBoth    string = "both"
+	// ChannelFeatureSend channel implement feature on send
+	ChannelFeatureSend string = "send"
+	// ChannelFeatureBoth channel implement feature on both directions
+	ChannelFeatureBoth string = "both"
 )
 
 // MgClient type
@@ -140,26 +144,73 @@ type WebhookRequest struct {
 
 // WebhookData request data
 type WebhookData struct {
-	ExternalUserID    string           `json:"external_user_id"`
-	ExternalMessageID string           `json:"external_message_id,omitempty"`
-	ExternalChatID    string           `json:"external_chat_id"`
-	ChannelID         uint64           `json:"channel_id"`
-	Content           string           `json:"content"`
-	QuoteExternalID   string           `json:"quote_external_id,omitempty"`
-	QuoteContent      string           `json:"quote_content,omitempty"`
-	User              *MessageDataUser `json:"user,omitempty"`
-	Bot               *MessageDataBot  `json:"bot,omitempty"`
+	ExternalUserID    string              `json:"external_user_id"`
+	ExternalMessageID string              `json:"external_message_id,omitempty"`
+	ExternalChatID    string              `json:"external_chat_id"`
+	ChannelID         uint64              `json:"channel_id"`
+	Content           string              `json:"content"`
+	QuoteExternalID   string              `json:"quote_external_id,omitempty"`
+	QuoteContent      string              `json:"quote_content,omitempty"`
+	User              *MessageDataUser    `json:"user,omitempty"`
+	Bot               *MessageDataBot     `json:"bot,omitempty"`
+	Product           *MessageDataProduct `json:"product,omitempty"`
+	Order             *MessageDataOrder   `json:"order,omitempty"`
 }
 
+// MessageDataUser user data from webhook
 type MessageDataUser struct {
 	FirstName string `json:"first_name"`
 	LastName  string `json:"last_name"`
 	Avatar    string `json:"avatar"`
 }
 
+// MessageDataBot bot data from webhook
 type MessageDataBot struct {
 	Name   string `json:"name"`
 	Avatar string `json:"avatar"`
+}
+
+// MessageDataProduct product data from webhook
+type MessageDataProduct struct {
+	ID       uint64                    `json:"id"`
+	Name     string                    `json:"name"`
+	Article  string                    `json:"article,omitempty"`
+	Url      string                    `json:"url,omitempty"`
+	Img      string                    `json:"img,omitempty"`
+	Cost     *MessageDataOrderCost     `json:"cost,omitempty"`
+	Quantity *MessageDataOrderQuantity `json:"quantity,omitempty"`
+}
+
+// MessageDataOrder order data from webhook
+type MessageDataOrder struct {
+	Number string                  `json:"number"`
+	Url    string                  `json:"url,omitempty"`
+	Date   string                  `json:"date,omitempty"`
+	Cost   *MessageDataOrderCost   `json:"cost,omitempty"`
+	Status *MessageDataOrderStatus `json:"status,omitempty"`
+	Items  []MessageDataOrderItem  `json:"items,omitempty"`
+}
+
+type MessageDataOrderStatus struct {
+	Code string `json:"code,omitempty"`
+	Name string `json:"name,omitempty"`
+}
+
+type MessageDataOrderItem struct {
+	Name     string `json:"name,omitempty"`
+	Url      string `json:"url,omitempty"`
+	Quantity string `json:"quantity,omitempty"`
+	Price    string `json:"price,omitempty"`
+}
+
+type MessageDataOrderCost struct {
+	Value    float32 `json:"value,omitempty"`
+	Currency string  `json:"currency"`
+}
+
+type MessageDataOrderQuantity struct {
+	Value float32 `json:"value"`
+	Unit  string  `json:"unit"`
 }
 
 // TransportRequestMeta request metadata
