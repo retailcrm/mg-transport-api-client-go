@@ -172,13 +172,13 @@ type MessageDataBot struct {
 
 // MessageDataProduct product data from webhook
 type MessageDataProduct struct {
-	ID       uint64 `json:"id"`
-	Name     string `json:"name"`
-	Article  string `json:"article,omitempty"`
-	Url      string `json:"url,omitempty"`
-	Img      string `json:"img,omitempty"`
-	Cost     string `json:"cost,omitempty"`
-	Quantity string `json:"quantity,omitempty"`
+	ID       uint64                    `json:"id"`
+	Name     string                    `json:"name"`
+	Article  string                    `json:"article,omitempty"`
+	Url      string                    `json:"url,omitempty"`
+	Img      string                    `json:"img,omitempty"`
+	Cost     *MessageDataOrderCost     `json:"cost,omitempty"`
+	Quantity *MessageDataOrderQuantity `json:"quantity,omitempty"`
 }
 
 // MessageDataOrder order data from webhook
@@ -186,7 +186,7 @@ type MessageDataOrder struct {
 	Number string                  `json:"number"`
 	Url    string                  `json:"url,omitempty"`
 	Date   string                  `json:"date,omitempty"`
-	Cost   string                  `json:"cost,omitempty"`
+	Cost   *MessageDataOrderCost   `json:"cost,omitempty"`
 	Status *MessageDataOrderStatus `json:"status,omitempty"`
 	Items  []MessageDataOrderItem  `json:"items,omitempty"`
 }
@@ -201,6 +201,16 @@ type MessageDataOrderItem struct {
 	Url      string `json:"url,omitempty"`
 	Quantity string `json:"quantity,omitempty"`
 	Price    string `json:"price,omitempty"`
+}
+
+type MessageDataOrderCost struct {
+	Value    float32 `json:"value,omitempty"`
+	Currency string  `json:"currency"`
+}
+
+type MessageDataOrderQuantity struct {
+	Value float32 `json:"value"`
+	Unit  string  `json:"unit"`
 }
 
 // TransportRequestMeta request metadata
