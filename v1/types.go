@@ -14,6 +14,12 @@ const (
 	ChannelFeatureSend string = "send"
 	// ChannelFeatureBoth channel implement feature on both directions
 	ChannelFeatureBoth string = "both"
+
+	MsgTypeText    string = "text"
+	MsgTypeSystem  string = "system"
+	MsgTypeCommand string = "command"
+	MsgTypeOrder   string = "order"
+	MsgTypeProduct string = "product"
 )
 
 // MgClient type
@@ -151,6 +157,7 @@ type WebhookData struct {
 	Content           string              `json:"content"`
 	QuoteExternalID   string              `json:"quote_external_id,omitempty"`
 	QuoteContent      string              `json:"quote_content,omitempty"`
+	Type              string              `json:"type"`
 	User              *MessageDataUser    `json:"user,omitempty"`
 	Bot               *MessageDataBot     `json:"bot,omitempty"`
 	Product           *MessageDataProduct `json:"product,omitempty"`
