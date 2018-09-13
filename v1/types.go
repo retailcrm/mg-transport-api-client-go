@@ -43,6 +43,20 @@ type ChannelSettings struct {
 	SpamAllowed bool                `json:"spam_allowed"`
 	Status      Status              `json:"status"`
 	Text        ChannelSettingsText `json:"text"`
+	Product     Product             `json:"product"`
+	Order       Order               `json:"order"`
+}
+
+type Product struct {
+	Creating string `json:"creating"`
+	Editing  string `json:"editing"`
+	Deleting string `json:"deleting"`
+}
+
+type Order struct {
+	Creating string `json:"creating"`
+	Editing  string `json:"editing"`
+	Deleting string `json:"deleting"`
 }
 
 // Status struct
