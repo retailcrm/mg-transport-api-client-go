@@ -218,10 +218,10 @@ type MessageDataOrderStatus struct {
 }
 
 type MessageDataOrderItem struct {
-	Name     string `json:"name,omitempty"`
-	Url      string `json:"url,omitempty"`
-	Quantity string `json:"quantity,omitempty"`
-	Price    string `json:"price,omitempty"`
+	Name     string                    `json:"name,omitempty"`
+	Url      string                    `json:"url,omitempty"`
+	Quantity *MessageDataOrderQuantity `json:"quantity,omitempty"`
+	Price    *MessageDataOrderCost     `json:"price,omitempty"`
 }
 
 type MessageDataOrderCost struct {
