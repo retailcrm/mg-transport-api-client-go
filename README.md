@@ -41,6 +41,14 @@ func main() {
                 Quoting:  ChannelFeatureReceive,
                 Deleting: ChannelFeatureBoth,
             },
+            Product: Product{
+                Creating: ChannelFeatureSend,
+            	Deleting: ChannelFeatureSend,
+            },
+            Order: Order{
+            	Creating: ChannelFeatureBoth,
+            	Deleting: ChannelFeatureSend,
+            },
         },
     }
 

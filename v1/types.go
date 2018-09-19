@@ -204,12 +204,14 @@ type MessageDataProduct struct {
 
 // MessageDataOrder order data from webhook
 type MessageDataOrder struct {
-	Number string                  `json:"number"`
-	Url    string                  `json:"url,omitempty"`
-	Date   string                  `json:"date,omitempty"`
-	Cost   *MessageDataOrderCost   `json:"cost,omitempty"`
-	Status *MessageDataOrderStatus `json:"status,omitempty"`
-	Items  []MessageDataOrderItem  `json:"items,omitempty"`
+	Number   string                    `json:"number"`
+	Url      string                    `json:"url,omitempty"`
+	Date     string                    `json:"date,omitempty"`
+	Cost     *MessageDataOrderCost     `json:"cost,omitempty"`
+	Status   *MessageDataOrderStatus   `json:"status,omitempty"`
+	Delivery *MessageDataOrderDelivery `json:"delivery"`
+	Payments []MessageDataOrderPayment `json:"payment"`
+	Items    []MessageDataOrderItem    `json:"items,omitempty"`
 }
 
 type MessageDataOrderStatus struct {
@@ -232,6 +234,23 @@ type MessageDataOrderCost struct {
 type MessageDataOrderQuantity struct {
 	Value float32 `json:"value"`
 	Unit  string  `json:"unit"`
+}
+
+type MessageDataOrderPayment struct {
+	Name   string                         `json:"name"`
+	Status *MessageDataOrderPaymentStatus `json:"status"`
+	Amount *MessageDataOrderCost          `json:"amount"`
+}
+
+type MessageDataOrderPaymentStatus struct {
+	Name  string `json:"name"`
+	Payed bool   `json:"payed"`
+}
+
+type MessageDataOrderDelivery struct {
+	Name    string                `json:"name"`
+	Amount  *MessageDataOrderCost `json:"amount"`
+	Address string                `json:"address"`
 }
 
 // TransportRequestMeta request metadata

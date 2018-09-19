@@ -37,6 +37,14 @@ func TestMgClient_ActivateTransportChannel(t *testing.T) {
 				Quoting:  ChannelFeatureReceive,
 				Deleting: ChannelFeatureBoth,
 			},
+			Product: Product{
+				Creating: ChannelFeatureSend,
+				Deleting: ChannelFeatureSend,
+			},
+			Order: Order{
+				Creating: ChannelFeatureBoth,
+				Deleting: ChannelFeatureSend,
+			},
 		},
 	}
 
@@ -64,6 +72,14 @@ func TestMgClient_ActivateNewTransportChannel(t *testing.T) {
 				Creating: ChannelFeatureBoth,
 				Editing:  ChannelFeatureSend,
 				Quoting:  ChannelFeatureBoth,
+				Deleting: ChannelFeatureSend,
+			},
+			Product: Product{
+				Creating: ChannelFeatureSend,
+				Deleting: ChannelFeatureSend,
+			},
+			Order: Order{
+				Creating: ChannelFeatureBoth,
 				Deleting: ChannelFeatureSend,
 			},
 		},
@@ -106,6 +122,14 @@ func TestMgClient_UpdateTransportChannel(t *testing.T) {
 				Editing:  ChannelFeatureBoth,
 				Quoting:  ChannelFeatureBoth,
 				Deleting: ChannelFeatureBoth,
+			},
+			Product: Product{
+				Creating: ChannelFeatureSend,
+				Deleting: ChannelFeatureSend,
+			},
+			Order: Order{
+				Creating: ChannelFeatureBoth,
+				Deleting: ChannelFeatureSend,
 			},
 		},
 	}
