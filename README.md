@@ -43,11 +43,11 @@ func main() {
             },
             Product: Product{
                 Creating: ChannelFeatureSend,
-            	Deleting: ChannelFeatureSend,
+                Deleting: ChannelFeatureSend,
             },
             Order: Order{
-            	Creating: ChannelFeatureBoth,
-            	Deleting: ChannelFeatureSend,
+                Creating: ChannelFeatureBoth,
+                Deleting: ChannelFeatureSend,
             },
         },
     }
