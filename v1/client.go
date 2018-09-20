@@ -39,6 +39,14 @@ func New(url string, token string) *MgClient {
 //				Quoting:  ChannelFeatureReceive,
 //				Deleting: ChannelFeatureSend,
 // 			},
+//			Product: Product{
+//				Creating: ChannelFeatureSend,
+//				Deleting: ChannelFeatureSend,
+// 			},
+//			Order: Order{
+//				Creating: ChannelFeatureBoth,
+//				Deleting: ChannelFeatureSend,
+// 			},
 // 		},
 //	}
 //
@@ -90,6 +98,14 @@ func (c *MgClient) ActivateTransportChannel(request Channel) (ActivateResponse, 
 //				Editing:  ChannelFeatureSend,
 //				Quoting:  ChannelFeatureReceive,
 //				Deleting: ChannelFeatureBoth,
+// 			},
+//			Product: Product{
+//				Creating: ChannelFeatureSend,
+//				Deleting: ChannelFeatureSend,
+// 			},
+//			Order: Order{
+//				Creating: ChannelFeatureBoth,
+//				Deleting: ChannelFeatureSend,
 // 			},
 // 		},
 //	}
