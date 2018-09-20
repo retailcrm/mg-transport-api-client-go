@@ -27,6 +27,13 @@ const (
 	MsgOrderStatusCodeDelivery   = "delivery"
 	MsgOrderStatusCodeComplete   = "complete"
 	MsgOrderStatusCodeCancel     = "cancel"
+
+	MsgCurrencyRub = "rub"
+	MsgCurrencyUah = "uah"
+	MsgCurrencyByr = "byr"
+	MsgCurrencyKzt = "kzt"
+	MsgCurrencyUsd = "usd"
+	MsgCurrencyEur = "eur"
 )
 
 // MgClient type
