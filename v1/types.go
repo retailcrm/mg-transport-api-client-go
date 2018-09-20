@@ -20,6 +20,13 @@ const (
 	MsgTypeCommand string = "command"
 	MsgTypeOrder   string = "order"
 	MsgTypeProduct string = "product"
+
+	MsgOrderStatusCodeNew        = "new"
+	MsgOrderStatusCodeApproval   = "approval"
+	MsgOrderStatusCodeAssembling = "assembling"
+	MsgOrderStatusCodeDelivery   = "delivery"
+	MsgOrderStatusCodeComplete   = "complete"
+	MsgOrderStatusCodeCancel     = "cancel"
 )
 
 // MgClient type
