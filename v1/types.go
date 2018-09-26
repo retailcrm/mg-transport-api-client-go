@@ -236,6 +236,7 @@ type MessageDataOrderStatus struct {
 type MessageDataOrderItem struct {
 	Name     string                    `json:"name,omitempty"`
 	Url      string                    `json:"url,omitempty"`
+	Img      string                    `json:"img,omitempty"`
 	Quantity *MessageDataOrderQuantity `json:"quantity,omitempty"`
 	Price    *MessageDataOrderCost     `json:"price,omitempty"`
 }
@@ -263,8 +264,9 @@ type MessageDataOrderPaymentStatus struct {
 
 type MessageDataOrderDelivery struct {
 	Name    string                `json:"name"`
-	Amount  *MessageDataOrderCost `json:"amount"`
+	Price   *MessageDataOrderCost `json:"price"`
 	Address string                `json:"address"`
+	Comment string                `json:"comment,omitempty"`
 }
 
 // TransportRequestMeta request metadata
