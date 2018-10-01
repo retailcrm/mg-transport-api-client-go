@@ -19,6 +19,18 @@ func client() *MgClient {
 	return New(mgURL, mgToken)
 }
 
+func TestMgClient_TransportChannels(t *testing.T) {
+	c := client()
+
+	data, status, err := c.TransportChannels(Channels{Active: true})
+
+	if err != nil {
+		t.Errorf("%d %v", status, err)
+	}
+
+	t.Logf("Channels found: %v", len(data))
+}
+
 func TestMgClient_ActivateTransportChannel(t *testing.T) {
 	c := client()
 	ch := Channel{

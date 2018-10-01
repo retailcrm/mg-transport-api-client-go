@@ -105,6 +105,31 @@ type DeleteResponse struct {
 	DectivatedAt time.Time `json:"deactivated_at"`
 }
 
+// ChannelListItem response struct
+type ChannelListItem struct {
+	ID            uint64          `json:"id"`
+	Type          string          `json:"type"`
+	Name          *string         `json:"name"`
+	Settings      ChannelSettings `json:"settings"`
+	CreatedAt     string          `json:"created_at"`
+	UpdatedAt     *string         `json:"updated_at"`
+	ActivatedAt   string          `json:"activated_at"`
+	DeactivatedAt *string         `json:"deactivated_at"`
+	IsActive      bool            `json:"is_active"`
+}
+
+// Channels request type
+type Channels struct {
+	ID          int       `json:"id,omitempty"`
+	Types       []string  `json:"types,omitempty"`
+	Active      bool      `json:"active,omitempty"`
+	Since       time.Time `json:"since,omitempty"`
+	Until       time.Time `json:"until,omitempty"`
+	TransportID uint64    `json:"transport_id,omitempty"`
+	Sort        string    `json:"sort,omitempty"`
+	Limit       int       `json:"limit,omitempty"`
+}
+
 // User struct
 type User struct {
 	ExternalID string `json:"external_id"`
