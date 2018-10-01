@@ -7,6 +7,8 @@ import (
 	"net/http"
 	"strconv"
 	"time"
+
+	"github.com/google/go-querystring/query"
 )
 
 // New initialize client
@@ -16,6 +18,39 @@ func New(url string, token string) *MgClient {
 		Token:      token,
 		httpClient: &http.Client{Timeout: 20 * time.Second},
 	}
+}
+
+// TransportChannels returns channels list
+//
+// Example:
+//
+// 	var client = v1.New("https://token.url", "cb8ccf05e38a47543ad8477d49bcba99be73bff503ea6")
+//
+// 	data, status, err := client.TransportChannels{Channels{Active: true}}
+//
+// 	if err != nil {
+// 		fmt.Printf("%v", err)
+// 	}
+//
+//	fmt.Printf("Status: %v, Channels found: %v", status, len(data))
+func (c *MgClient) TransportChannels(request Channels) ([]ChannelListItem, int, error) {
+	var resp []ChannelListItem
+	outgoing, _ := query.Values(request)
+
+	data, status, err := c.GetRequest(fmt.Sprintf("/channels?%s", outgoing.Encode()))
+	if err != nil {
+		return resp, status, err
+	}
+
+	if err := json.Unmarshal(data, &resp); err != nil {
+		return resp, status, err
+	}
+
+	if status > http.StatusCreated || status < http.StatusOK {
+		return resp, status, c.Error(data)
+	}
+
+	return resp, status, err
 }
 
 // ActivateTransportChannel implement channel activation
