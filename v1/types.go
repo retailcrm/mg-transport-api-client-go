@@ -5,6 +5,7 @@ import (
 	"time"
 )
 
+//noinspection ALL
 const (
 	// ChannelFeatureNone channel can not implement feature
 	ChannelFeatureNone string = "none"
@@ -15,24 +16,41 @@ const (
 	// ChannelFeatureBoth channel implement feature on both directions
 	ChannelFeatureBoth string = "both"
 
-	MsgTypeText    string = "text"
-	MsgTypeSystem  string = "system"
+	// MsgTypeText text message
+	MsgTypeText string = "text"
+	// MsgTypeSystem system message
+	MsgTypeSystem string = "system"
+	// MsgTypeCommand command (for bots)
 	MsgTypeCommand string = "command"
-	MsgTypeOrder   string = "order"
+	// MsgTypeOrder order card
+	MsgTypeOrder string = "order"
+	// MsgTypeProduct product card
 	MsgTypeProduct string = "product"
 
-	MsgOrderStatusCodeNew        = "new"
-	MsgOrderStatusCodeApproval   = "approval"
+	// MsgOrderStatusCodeNew order status group new
+	MsgOrderStatusCodeNew = "new"
+	// MsgOrderStatusCodeApproval order status group approval
+	MsgOrderStatusCodeApproval = "approval"
+	// MsgOrderStatusCodeAssembling order status group assembling
 	MsgOrderStatusCodeAssembling = "assembling"
-	MsgOrderStatusCodeDelivery   = "delivery"
-	MsgOrderStatusCodeComplete   = "complete"
-	MsgOrderStatusCodeCancel     = "cancel"
+	// MsgOrderStatusCodeDelivery order status group delivery
+	MsgOrderStatusCodeDelivery = "delivery"
+	// MsgOrderStatusCodeComplete order status group complete
+	MsgOrderStatusCodeComplete = "complete"
+	// MsgOrderStatusCodeCancel order status group cancel
+	MsgOrderStatusCodeCancel = "cancel"
 
+	// MsgCurrencyRub currency code for russian ruble
 	MsgCurrencyRub = "rub"
+	// MsgCurrencyUah currency code for ukrainian hryvnia
 	MsgCurrencyUah = "uah"
+	// MsgCurrencyByr currency code for belorussian ruble
 	MsgCurrencyByr = "byr"
+	// MsgCurrencyKzt currency code for kazakh tenge
 	MsgCurrencyKzt = "kzt"
+	// MsgCurrencyUsd currency code for us dollar
 	MsgCurrencyUsd = "usd"
+	// MsgCurrencyEur currency code for euro
 	MsgCurrencyEur = "eur"
 )
 
@@ -61,12 +79,14 @@ type ChannelSettings struct {
 	Order       Order               `json:"order"`
 }
 
+// Product type
 type Product struct {
 	Creating string `json:"creating"`
 	Editing  string `json:"editing"`
 	Deleting string `json:"deleting"`
 }
 
+// Order type
 type Order struct {
 	Creating string `json:"creating"`
 	Editing  string `json:"editing"`
@@ -101,8 +121,8 @@ type UpdateResponse struct {
 
 // DeleteResponse channel deactivation response
 type DeleteResponse struct {
-	ChannelID    uint64    `json:"id"`
-	DectivatedAt time.Time `json:"deactivated_at"`
+	ChannelID     uint64    `json:"id"`
+	DeactivatedAt time.Time `json:"deactivated_at"`
 }
 
 // ChannelListItem response struct
@@ -157,10 +177,17 @@ type SendMessage struct {
 	SentAt time.Time `json:"sent_at,omitempty"`
 }
 
-// UpdateMessage struct
-type UpdateMessage struct {
-	Message
-	EditedAt int64 `json:"edited_at,omitempty"`
+// EditMessageRequest type
+type EditMessageRequest struct {
+	Message EditMessageRequestMessage `json:"message"`
+	Channel uint64                    `json:"channel"`
+}
+
+// EditMessageRequestMessage type
+type EditMessageRequestMessage struct {
+	ExternalID string `json:"external_id"`
+	Text       string `json:"text"`
+	EditedAt   int64  `json:"edited_at"`
 }
 
 // SendData struct
@@ -172,14 +199,23 @@ type SendData struct {
 	Quote          *SendMessageRequestQuote `json:"quote,omitempty"`
 }
 
+// SendMessageRequestQuote type
 type SendMessageRequestQuote struct {
 	ExternalID string `json:"external_id"`
 }
 
-// UpdateData struct
-type UpdateData struct {
-	Message UpdateMessage `json:"message"`
-	Channel uint64        `json:"channel"`
+// MarkMessageReadResponse type
+type MarkMessageReadResponse struct{}
+
+// MarkMessageReadRequest type
+type MarkMessageReadRequest struct {
+	Message   MarkMessageReadRequestMessage `json:"message"`
+	ChannelID uint64                        `json:"channel_id"`
+}
+
+// MarkMessageReadRequestMessage type
+type MarkMessageReadRequestMessage struct {
+	ExternalID string `json:"external_id"`
 }
 
 // DeleteData struct
@@ -190,11 +226,11 @@ type DeleteData struct {
 
 // MessagesResponse message event response
 type MessagesResponse struct {
-	MessageID int       `json:"message_id"`
-	Time      time.Time `json:"time"`
+	MessageID int       `json:"message_id,omitempty"`
+	Time      time.Time `json:"time,omitempty"`
 }
 
-// Webhook request
+// WebhookRequest type
 type WebhookRequest struct {
 	Type string               `json:"type"`
 	Meta TransportRequestMeta `json:"meta"`
@@ -253,11 +289,13 @@ type MessageDataOrder struct {
 	Items    []MessageDataOrderItem    `json:"items,omitempty"`
 }
 
+// MessageDataOrderStatus type
 type MessageDataOrderStatus struct {
 	Code string `json:"code,omitempty"`
 	Name string `json:"name,omitempty"`
 }
 
+// MessageDataOrderItem type
 type MessageDataOrderItem struct {
 	Name     string                    `json:"name,omitempty"`
 	Url      string                    `json:"url,omitempty"`
@@ -266,27 +304,32 @@ type MessageDataOrderItem struct {
 	Price    *MessageDataOrderCost     `json:"price,omitempty"`
 }
 
+// MessageDataOrderCost type
 type MessageDataOrderCost struct {
 	Value    float32 `json:"value,omitempty"`
 	Currency string  `json:"currency"`
 }
 
+// MessageDataOrderQuantity type
 type MessageDataOrderQuantity struct {
 	Value float32 `json:"value"`
 	Unit  string  `json:"unit"`
 }
 
+// MessageDataOrderPayment type
 type MessageDataOrderPayment struct {
 	Name   string                         `json:"name"`
 	Status *MessageDataOrderPaymentStatus `json:"status"`
 	Amount *MessageDataOrderCost          `json:"amount"`
 }
 
+// MessageDataOrderPaymentStatus type
 type MessageDataOrderPaymentStatus struct {
 	Name  string `json:"name"`
 	Payed bool   `json:"payed"`
 }
 
+// MessageDataOrderDelivery type
 type MessageDataOrderDelivery struct {
 	Name    string                `json:"name"`
 	Price   *MessageDataOrderCost `json:"price"`

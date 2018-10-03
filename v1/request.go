@@ -11,32 +11,13 @@ import (
 var prefix = "/api/transport/v1"
 
 // GetRequest implements GET Request
-func (c *MgClient) GetRequest(urlWithParameters string) ([]byte, int, error) {
-	var res []byte
-
-	req, err := http.NewRequest("GET", fmt.Sprintf("%s%s%s", c.URL, prefix, urlWithParameters), nil)
-	if err != nil {
-		return res, 0, err
-	}
-
-	req.Header.Set("X-Transport-Token", c.Token)
-
-	resp, err := c.httpClient.Do(req)
-	if err != nil {
-		return res, 0, err
-	}
-
-	if resp.StatusCode >= http.StatusInternalServerError {
-		err = fmt.Errorf("HTTP request error. Status code: %d.\n", resp.StatusCode)
-		return res, resp.StatusCode, err
-	}
-
-	res, err = buildRawResponse(resp)
-	if err != nil {
-		return res, resp.StatusCode, err
-	}
-
-	return res, resp.StatusCode, err
+func (c *MgClient) GetRequest(url string, parameters []byte) ([]byte, int, error) {
+	return makeRequest(
+		"GET",
+		fmt.Sprintf("%s%s%s", c.URL, prefix, url),
+		bytes.NewBuffer(parameters),
+		c,
+	)
 }
 
 // PostRequest implements POST Request
