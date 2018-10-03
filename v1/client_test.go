@@ -111,7 +111,7 @@ func TestMgClient_ActivateNewTransportChannel(t *testing.T) {
 		t.Errorf("%d %v", status, err)
 	}
 
-	if deleteData.DectivatedAt.String() == "" {
+	if deleteData.DeactivatedAt.String() == "" {
 		t.Errorf("%v", err)
 	}
 
@@ -188,57 +188,63 @@ func TestMgClient_Messages(t *testing.T) {
 }
 
 func TestMgClient_UpdateMessages(t *testing.T) {
-	t.Skip()
 	c := client()
 	t.Logf("%v", ext)
 
-	snd := UpdateData{
-		UpdateMessage{
-			Message{
-				ExternalID: ext,
-				Type:       "text",
-				Text:       "hello hello!",
-			},
-			MakeTimestamp(),
+	sndU := EditMessageRequest{
+		EditMessageRequestMessage{
+			ExternalID: ext,
+			Text:       "hello hello!",
 		},
 		channelId,
 	}
 
-	data, status, err := c.UpdateMessages(snd)
+	dataU, status, err := c.UpdateMessages(sndU)
 
 	if status != http.StatusOK {
 		t.Errorf("%v", err)
 	}
 
-	if data.Time.String() == "" {
+	if dataU.Time.String() == "" {
 		t.Errorf("%v", err)
 	}
 
-	t.Logf("Message %v updated", data.MessageID)
+	t.Logf("Message %v updated", dataU.MessageID)
 }
 
-func TestMgClient_DeleteMessage(t *testing.T) {
-	t.Skip()
+func TestMgClient_MarkMessageReadAndDelete(t *testing.T) {
 	c := client()
 	t.Logf("%v", ext)
 
-	snd := DeleteData{
+	snd := MarkMessageReadRequest{
+		MarkMessageReadRequestMessage{
+			ExternalID: ext,
+		},
+		channelId,
+	}
+
+	_, status, err := c.MarkMessageRead(snd)
+
+	if status != http.StatusOK {
+		t.Errorf("%v", err)
+	}
+
+	t.Logf("Message ext marked as read")
+
+	sndD := DeleteData{
 		Message{
 			ExternalID: ext,
 		},
 		channelId,
 	}
 
-	data, status, err := c.DeleteMessage(snd)
+	data, status, err := c.DeleteMessage(sndD)
+
 	if status != http.StatusOK {
 		t.Errorf("%v", err)
 	}
 
-	if data.Time.String() == "" {
-		t.Errorf("%v", err)
-	}
-
-	t.Logf("Message %v updated", data.MessageID)
+	t.Logf("Message %v deleted", data.MessageID)
 }
 
 func TestMgClient_DeactivateTransportChannel(t *testing.T) {
@@ -249,7 +255,7 @@ func TestMgClient_DeactivateTransportChannel(t *testing.T) {
 		t.Errorf("%d %v", status, err)
 	}
 
-	if deleteData.DectivatedAt.String() == "" {
+	if deleteData.DeactivatedAt.String() == "" {
 		t.Errorf("%v", err)
 	}
 

@@ -24,7 +24,7 @@ func New(url string, token string) *MgClient {
 //
 // Example:
 //
-// 	var client = v1.New("https://token.url", "cb8ccf05e38a47543ad8477d49bcba99be73bff503ea6")
+// 	var client = v1.New("https://token.url", "cb8ccf05e38a47543ad8477d4999be73bff503ea6")
 //
 // 	data, status, err := client.TransportChannels{Channels{Active: true}}
 //
@@ -35,15 +35,16 @@ func New(url string, token string) *MgClient {
 //	fmt.Printf("Status: %v, Channels found: %v", status, len(data))
 func (c *MgClient) TransportChannels(request Channels) ([]ChannelListItem, int, error) {
 	var resp []ChannelListItem
+	var b []byte
 	outgoing, _ := query.Values(request)
 
-	data, status, err := c.GetRequest(fmt.Sprintf("/channels?%s", outgoing.Encode()))
+	data, status, err := c.GetRequest(fmt.Sprintf("/channels?%s", outgoing.Encode()), b)
 	if err != nil {
 		return resp, status, err
 	}
 
-	if err := json.Unmarshal(data, &resp); err != nil {
-		return resp, status, err
+	if e := json.Unmarshal(data, &resp); e != nil {
+		return resp, status, e
 	}
 
 	if status > http.StatusCreated || status < http.StatusOK {
@@ -57,7 +58,7 @@ func (c *MgClient) TransportChannels(request Channels) ([]ChannelListItem, int, 
 //
 // Example:
 //
-// 	var client = v1.New("https://token.url", "cb8ccf05e38a47543ad8477d49bcba99be73bff503ea6")
+// 	var client = v1.New("https://token.url", "cb8ccf05e38a47543ad8477d4999be73bff503ea6")
 //
 //	request := ActivateRequest{
 //		Type: "telegram",
@@ -101,8 +102,8 @@ func (c *MgClient) ActivateTransportChannel(request Channel) (ActivateResponse, 
 		return resp, status, err
 	}
 
-	if err := json.Unmarshal(data, &resp); err != nil {
-		return resp, status, err
+	if e := json.Unmarshal(data, &resp); e != nil {
+		return resp, status, e
 	}
 
 	if status > http.StatusCreated || status < http.StatusOK {
@@ -116,7 +117,7 @@ func (c *MgClient) ActivateTransportChannel(request Channel) (ActivateResponse, 
 //
 // Example:
 //
-//	var client = v1.New("https://token.url", "cb8ccf05e38a47543ad8477d49bcba99be73bff503ea6")
+//	var client = v1.New("https://token.url", "cb8ccf05e38a47543ad8477d4999be73bff503ea6")
 //
 //	request := ActivateRequest{
 //		ID:   3053450384,
@@ -161,8 +162,8 @@ func (c *MgClient) UpdateTransportChannel(request Channel) (UpdateResponse, int,
 		return resp, status, err
 	}
 
-	if err := json.Unmarshal(data, &resp); err != nil {
-		return resp, status, err
+	if e := json.Unmarshal(data, &resp); e != nil {
+		return resp, status, e
 	}
 
 	if status != http.StatusOK {
@@ -176,7 +177,7 @@ func (c *MgClient) UpdateTransportChannel(request Channel) (UpdateResponse, int,
 //
 // Example:
 //
-// 	var client = v1.New("https://token.url", "cb8ccf05e38a47543ad8477d49bcba99be73bff503ea6")
+// 	var client = v1.New("https://token.url", "cb8ccf05e38a47543ad8477d4999be73bff503ea6")
 //
 // 	data, status, err := client.DeactivateTransportChannel(3053450384)
 //
@@ -197,8 +198,8 @@ func (c *MgClient) DeactivateTransportChannel(id uint64) (DeleteResponse, int, e
 		return resp, status, err
 	}
 
-	if err := json.Unmarshal(data, &resp); err != nil {
-		return resp, status, err
+	if e := json.Unmarshal(data, &resp); e != nil {
+		return resp, status, e
 	}
 
 	if status != http.StatusOK {
@@ -212,7 +213,7 @@ func (c *MgClient) DeactivateTransportChannel(id uint64) (DeleteResponse, int, e
 //
 // Example:
 //
-// 	var client = v1.New("https://token.url", "cb8ccf05e38a47543ad8477d49bcba99be73bff503ea6")
+// 	var client = v1.New("https://token.url", "cb8ccf05e38a47543ad8477d4999be73bff503ea6")
 //	msg := SendData{
 //		SendMessage{
 //			Message{
@@ -246,8 +247,8 @@ func (c *MgClient) Messages(request SendData) (MessagesResponse, int, error) {
 		return resp, status, err
 	}
 
-	if err := json.Unmarshal(data, &resp); err != nil {
-		return resp, status, err
+	if e := json.Unmarshal(data, &resp); e != nil {
+		return resp, status, e
 	}
 
 	if status != http.StatusOK {
@@ -261,7 +262,7 @@ func (c *MgClient) Messages(request SendData) (MessagesResponse, int, error) {
 //
 // Example:
 //
-// 	var client = v1.New("https://token.url", "cb8ccf05e38a47543ad8477d49bcba99be73bff503ea6")
+// 	var client = v1.New("https://token.url", "cb8ccf05e38a47543ad8477d4999be73bff503ea6")
 //	msg := UpdateData{
 //		UpdateMessage{
 //			Message{
@@ -281,7 +282,7 @@ func (c *MgClient) Messages(request SendData) (MessagesResponse, int, error) {
 // 	}
 //
 //	fmt.Printf("%s\n", data.MessageID)
-func (c *MgClient) UpdateMessages(request UpdateData) (MessagesResponse, int, error) {
+func (c *MgClient) UpdateMessages(request EditMessageRequest) (MessagesResponse, int, error) {
 	var resp MessagesResponse
 	outgoing, _ := json.Marshal(&request)
 
@@ -290,8 +291,47 @@ func (c *MgClient) UpdateMessages(request UpdateData) (MessagesResponse, int, er
 		return resp, status, err
 	}
 
-	if err := json.Unmarshal(data, &resp); err != nil {
+	if e := json.Unmarshal(data, &resp); e != nil {
+		return resp, status, e
+	}
+
+	if status != http.StatusOK {
+		return resp, status, c.Error(data)
+	}
+
+	return resp, status, err
+}
+
+// MarkMessageRead send message read event to MG
+//
+// Example:
+//
+// 	var client = v1.New("https://token.url", "cb8ccf05e38a47543ad8477d4999be73bff503ea6")
+//	msg := MarkMessageReadRequest{
+//		Message{
+//			ExternalID: "274628",
+//		},
+//		10,
+//	}
+//
+// 	data, status, err := client.MarkMessageRead(msg)
+//
+// 	if err != nil {
+// 		fmt.Printf("%v", err)
+// 	}
+//
+//	fmt.Printf("%v %v\n", status, data)
+func (c *MgClient) MarkMessageRead(request MarkMessageReadRequest) (MarkMessageReadResponse, int, error) {
+	var resp MarkMessageReadResponse
+	outgoing, _ := json.Marshal(&request)
+
+	data, status, err := c.PostRequest("/messages/read", []byte(outgoing))
+	if err != nil {
 		return resp, status, err
+	}
+
+	if e := json.Unmarshal(data, &resp); e != nil {
+		return resp, status, e
 	}
 
 	if status != http.StatusOK {
@@ -305,7 +345,7 @@ func (c *MgClient) UpdateMessages(request UpdateData) (MessagesResponse, int, er
 //
 // Example:
 //
-// 	var client = v1.New("https://token.url", "cb8ccf05e38a47543ad8477d49bcba99be73bff503ea6")
+// 	var client = v1.New("https://token.url", "cb8ccf05e38a47543ad8477d4999be73bff503ea6")
 //
 //	msg := DeleteData{
 //		Message{
@@ -333,8 +373,8 @@ func (c *MgClient) DeleteMessage(request DeleteData) (MessagesResponse, int, err
 		return resp, status, err
 	}
 
-	if err := json.Unmarshal(data, &resp); err != nil {
-		return resp, status, err
+	if e := json.Unmarshal(data, &resp); e != nil {
+		return resp, status, e
 	}
 
 	if status != http.StatusOK {
@@ -356,6 +396,7 @@ func (c *MgClient) Error(info []byte) error {
 	return errors.New(values[0].(string))
 }
 
+// MakeTimestamp returns current unix timestamp
 func MakeTimestamp() int64 {
 	return time.Now().UnixNano() / (int64(time.Millisecond) / int64(time.Nanosecond))
 }
