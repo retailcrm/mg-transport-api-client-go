@@ -39,6 +39,8 @@ const (
 	MsgOrderStatusCodeComplete = "complete"
 	// MsgOrderStatusCodeCancel order status group cancel
 	MsgOrderStatusCodeCancel = "cancel"
+
+	FileSizeLimit = 20 * 1024 * 1024
 )
 
 // MgClient type
@@ -59,11 +61,13 @@ type Channel struct {
 
 // ChannelSettings struct
 type ChannelSettings struct {
-	SpamAllowed bool                `json:"spam_allowed"`
-	Status      Status              `json:"status"`
-	Text        ChannelSettingsText `json:"text"`
-	Product     Product             `json:"product"`
-	Order       Order               `json:"order"`
+	SpamAllowed bool                     `json:"spam_allowed"`
+	Status      Status                   `json:"status"`
+	Text        ChannelSettingsText      `json:"text"`
+	Product     Product                  `json:"product"`
+	Order       Order                    `json:"order"`
+	Files       ChannelSettingsFilesBase `json:"files"`
+	Images      ChannelSettingsFilesBase `json:"images"`
 }
 
 // Product type
@@ -92,6 +96,44 @@ type ChannelSettingsText struct {
 	Editing  string `json:"editing"`
 	Quoting  string `json:"quoting"`
 	Deleting string `json:"deleting"`
+}
+
+// ChannelSettingsFilesBase struct
+type ChannelSettingsFilesBase struct {
+	Creating string `json:"creating"`
+	Editing  string `json:"editing"`
+	Quoting  string `json:"quoting"`
+	Deleting string `json:"deleting"`
+	Max      uint64 `json:"max"`
+}
+
+// FullFileResponse uploaded file data
+type FullFileResponse struct {
+	UploadFileResponse
+	Link string `json:"link,omitempty"`
+}
+
+// UploadFileResponse uploaded file data
+type UploadFileResponse struct {
+	ID        []byte    `json:"id"`
+	Hash      string    `json:"hash"`
+	Type      string    `json:"type"`
+	Meta      FileMeta  `json:"meta"`
+	MimeType  string    `json:"mime_type"`
+	Size      int       `json:"size"`
+	Url       *string   `json:"source_url"`
+	CreatedAt time.Time `json:"created_at"`
+}
+
+// FileMeta file metadata
+type FileMeta struct {
+	Width  *int `json:"width,omitempty"`
+	Height *int `json:"height,omitempty"`
+}
+
+// UploadFileByUrlRequest file url to upload
+type UploadFileByUrlRequest struct {
+	Url string `json:"url"`
 }
 
 // ActivateResponse channel activation response
@@ -238,6 +280,15 @@ type WebhookData struct {
 	Bot               *MessageDataBot     `json:"bot,omitempty"`
 	Product           *MessageDataProduct `json:"product,omitempty"`
 	Order             *MessageDataOrder   `json:"order,omitempty"`
+	Images            *[]FileItem         `json:"images,omitempty"`
+	Files             *[]FileItem         `json:"files,omitempty"`
+}
+
+// FileItem struct
+type FileItem struct {
+	ID   string `json:"id"`
+	Name string `json:"name"`
+	Size int    `json:"size"`
 }
 
 // MessageDataUser user data from webhook
