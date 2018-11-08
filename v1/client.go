@@ -384,6 +384,81 @@ func (c *MgClient) DeleteMessage(request DeleteData) (MessagesResponse, int, err
 	return resp, status, err
 }
 
+// GetFile implement get file url
+//
+// Example:
+//
+// 	var client = v1.New("https://token.url", "cb8ccf05e38a47543ad8477d4999be73bff503ea6")
+//
+// 	data, status, err := client.GetFile("file_ID")
+//
+// 	if err != nil {
+// 		fmt.Printf("%v", err)
+// 	}
+//
+//	fmt.Printf("%s\n", data.MessageID)
+func (c *MgClient) GetFile(request string) (FullFileResponse, int, error) {
+	var resp FullFileResponse
+	var b []byte
+
+	data, status, err := c.GetRequest(fmt.Sprintf("/files/%s", request), b)
+
+	if err != nil {
+		return resp, status, err
+	}
+
+	if e := json.Unmarshal(data, &resp); e != nil {
+		return resp, status, e
+	}
+
+	if status != http.StatusOK {
+		return resp, status, c.Error(data)
+	}
+
+	return resp, status, err
+}
+
+// UploadFile upload file
+func (c *MgClient) UploadFile(request []byte) (UploadFileResponse, int, error) {
+	var resp UploadFileResponse
+
+	data, status, err := c.PostRequest("/files/upload", request)
+	if err != nil {
+		return resp, status, err
+	}
+
+	if e := json.Unmarshal(data, &resp); e != nil {
+		return resp, status, e
+	}
+
+	if status != http.StatusOK {
+		return resp, status, c.Error(data)
+	}
+
+	return resp, status, err
+}
+
+// UploadFileByURL upload file by url
+func (c *MgClient) UploadFileByURL(request UploadFileByUrlRequest) (UploadFileResponse, int, error) {
+	var resp UploadFileResponse
+	outgoing, _ := json.Marshal(&request)
+
+	data, status, err := c.PostRequest("/files/upload_by_url", []byte(outgoing))
+	if err != nil {
+		return resp, status, err
+	}
+
+	if e := json.Unmarshal(data, &resp); e != nil {
+		return resp, status, e
+	}
+
+	if status != http.StatusOK {
+		return resp, status, c.Error(data)
+	}
+
+	return resp, status, err
+}
+
 func (c *MgClient) Error(info []byte) error {
 	var data map[string]interface{}
 
