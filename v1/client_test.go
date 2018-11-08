@@ -11,7 +11,7 @@ import (
 var (
 	mgURL        = os.Getenv("MG_URL")
 	mgToken      = os.Getenv("MG_TOKEN")
-	channelId, _ = strconv.ParseUint(os.Getenv("MG_CHANNEL"), 10, 64)
+	channelID, _ = strconv.ParseUint(os.Getenv("MG_CHANNEL"), 10, 64)
 	ext          = strconv.FormatInt(time.Now().UTC().UnixNano(), 10)
 )
 
@@ -34,7 +34,7 @@ func TestMgClient_TransportChannels(t *testing.T) {
 func TestMgClient_ActivateTransportChannel(t *testing.T) {
 	c := client()
 	ch := Channel{
-		ID:   channelId,
+		ID:   channelID,
 		Type: "telegram",
 		Name: "@my_shopping_bot",
 		Settings: ChannelSettings{
@@ -121,7 +121,7 @@ func TestMgClient_ActivateNewTransportChannel(t *testing.T) {
 func TestMgClient_UpdateTransportChannel(t *testing.T) {
 	c := client()
 	ch := Channel{
-		ID:   channelId,
+		ID:   channelID,
 		Name: "@my_shopping_bot_2",
 		Settings: ChannelSettings{
 			SpamAllowed: false,
@@ -170,7 +170,7 @@ func TestMgClient_Messages(t *testing.T) {
 			Nickname:   "octopus",
 			Firstname:  "Joe",
 		},
-		Channel:        channelId,
+		Channel:        channelID,
 		ExternalChatID: "24798237492374",
 	}
 
@@ -196,7 +196,7 @@ func TestMgClient_UpdateMessages(t *testing.T) {
 			ExternalID: ext,
 			Text:       "hello hello!",
 		},
-		channelId,
+		channelID,
 	}
 
 	dataU, status, err := c.UpdateMessages(sndU)
@@ -220,7 +220,7 @@ func TestMgClient_MarkMessageReadAndDelete(t *testing.T) {
 		MarkMessageReadRequestMessage{
 			ExternalID: ext,
 		},
-		channelId,
+		channelID,
 	}
 
 	_, status, err := c.MarkMessageRead(snd)
@@ -235,7 +235,7 @@ func TestMgClient_MarkMessageReadAndDelete(t *testing.T) {
 		Message{
 			ExternalID: ext,
 		},
-		channelId,
+		channelID,
 	}
 
 	data, status, err := c.DeleteMessage(sndD)
@@ -249,7 +249,7 @@ func TestMgClient_MarkMessageReadAndDelete(t *testing.T) {
 
 func TestMgClient_DeactivateTransportChannel(t *testing.T) {
 	c := client()
-	deleteData, status, err := c.DeactivateTransportChannel(channelId)
+	deleteData, status, err := c.DeactivateTransportChannel(channelID)
 
 	if err != nil {
 		t.Errorf("%d %v", status, err)

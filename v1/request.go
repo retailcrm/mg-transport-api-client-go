@@ -70,7 +70,7 @@ func makeRequest(reqType, url string, buf *bytes.Buffer, c *MgClient) ([]byte, i
 	}
 
 	if resp.StatusCode >= http.StatusInternalServerError {
-		err = fmt.Errorf("HTTP request error. Status code: %d.\n", resp.StatusCode)
+		err = fmt.Errorf("http request error. status code: %d", resp.StatusCode)
 		return res, resp.StatusCode, err
 	}
 
