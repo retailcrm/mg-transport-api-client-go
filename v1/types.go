@@ -39,19 +39,6 @@ const (
 	MsgOrderStatusCodeComplete = "complete"
 	// MsgOrderStatusCodeCancel order status group cancel
 	MsgOrderStatusCodeCancel = "cancel"
-
-	// MsgCurrencyRub currency code for russian ruble
-	MsgCurrencyRub = "rub"
-	// MsgCurrencyUah currency code for ukrainian hryvnia
-	MsgCurrencyUah = "uah"
-	// MsgCurrencyByr currency code for belorussian ruble
-	MsgCurrencyByr = "byr"
-	// MsgCurrencyKzt currency code for kazakh tenge
-	MsgCurrencyKzt = "kzt"
-	// MsgCurrencyUsd currency code for us dollar
-	MsgCurrencyUsd = "usd"
-	// MsgCurrencyEur currency code for euro
-	MsgCurrencyEur = "eur"
 )
 
 // MgClient type
