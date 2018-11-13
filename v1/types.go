@@ -26,6 +26,10 @@ const (
 	MsgTypeOrder string = "order"
 	// MsgTypeProduct product card
 	MsgTypeProduct string = "product"
+	// MsgTypeFile file card
+	MsgTypeFile string = "file"
+	// MsgTypeImage image card
+	MsgTypeImage string = "image"
 
 	// MsgOrderStatusCodeNew order status group new
 	MsgOrderStatusCodeNew = "new"
@@ -66,8 +70,8 @@ type ChannelSettings struct {
 	Text        ChannelSettingsText      `json:"text"`
 	Product     Product                  `json:"product"`
 	Order       Order                    `json:"order"`
-	Files       ChannelSettingsFilesBase `json:"files"`
-	Images      ChannelSettingsFilesBase `json:"images"`
+	File        ChannelSettingsFilesBase `json:"file"`
+	Image       ChannelSettingsFilesBase `json:"image"`
 }
 
 // Product type
@@ -115,7 +119,7 @@ type FullFileResponse struct {
 
 // UploadFileResponse uploaded file data
 type UploadFileResponse struct {
-	ID        []byte    `json:"id"`
+	ID        string    `json:"id"`
 	Hash      string    `json:"hash"`
 	Type      string    `json:"type"`
 	Meta      FileMeta  `json:"meta"`
@@ -198,6 +202,7 @@ type Message struct {
 	ExternalID string `json:"external_id"`
 	Type       string `json:"type,omitempty"`
 	Text       string `json:"text,omitempty"`
+	Items      []Item `json:"items,omitempty"`
 }
 
 // SendMessage struct
@@ -226,6 +231,12 @@ type SendData struct {
 	Channel        uint64                   `json:"channel"`
 	ExternalChatID string                   `json:"external_chat_id"`
 	Quote          *SendMessageRequestQuote `json:"quote,omitempty"`
+}
+
+// Item struct
+type Item struct {
+	ID      string `json:"id"`
+	Caption string `json:"caption"`
 }
 
 // SendMessageRequestQuote type

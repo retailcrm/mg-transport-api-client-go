@@ -57,6 +57,12 @@ func TestMgClient_ActivateTransportChannel(t *testing.T) {
 				Creating: ChannelFeatureBoth,
 				Deleting: ChannelFeatureSend,
 			},
+			Image: ChannelSettingsFilesBase{
+				Creating: ChannelFeatureBoth,
+			},
+			File: ChannelSettingsFilesBase{
+				Creating: ChannelFeatureBoth,
+			},
 		},
 	}
 
@@ -93,6 +99,12 @@ func TestMgClient_ActivateNewTransportChannel(t *testing.T) {
 			Order: Order{
 				Creating: ChannelFeatureBoth,
 				Deleting: ChannelFeatureSend,
+			},
+			Image: ChannelSettingsFilesBase{
+				Creating: ChannelFeatureBoth,
+			},
+			File: ChannelSettingsFilesBase{
+				Creating: ChannelFeatureBoth,
 			},
 		},
 	}
@@ -143,6 +155,12 @@ func TestMgClient_UpdateTransportChannel(t *testing.T) {
 				Creating: ChannelFeatureBoth,
 				Deleting: ChannelFeatureSend,
 			},
+			Image: ChannelSettingsFilesBase{
+				Creating: ChannelFeatureBoth,
+			},
+			File: ChannelSettingsFilesBase{
+				Creating: ChannelFeatureBoth,
+			},
 		},
 	}
 
@@ -155,7 +173,7 @@ func TestMgClient_UpdateTransportChannel(t *testing.T) {
 	t.Logf("Update selected channel: %v", data.ChannelID)
 }
 
-func TestMgClient_Messages(t *testing.T) {
+func TestMgClient_TextMessages(t *testing.T) {
 	c := client()
 	t.Logf("%v", ext)
 
@@ -164,6 +182,46 @@ func TestMgClient_Messages(t *testing.T) {
 			ExternalID: ext,
 			Type:       "text",
 			Text:       "hello!",
+		},
+		User: User{
+			ExternalID: "6",
+			Nickname:   "octopus",
+			Firstname:  "Joe",
+		},
+		Channel:        channelID,
+		ExternalChatID: "24798237492374",
+	}
+
+	data, status, err := c.Messages(snd)
+
+	if status != http.StatusOK {
+		t.Errorf("%v", err)
+	}
+
+	if data.Time.String() == "" {
+		t.Errorf("%v", err)
+	}
+
+	t.Logf("Message %v is sent", data.MessageID)
+}
+
+func TestMgClient_ImageMessages(t *testing.T) {
+	c := client()
+	t.Logf("%v", ext)
+
+	uploadFileResponse, st, err := c.UploadFileByURL(UploadFileByUrlRequest{
+		Url: "https://via.placeholder.com/300",
+	})
+
+	if st != http.StatusOK {
+		t.Errorf("%v", err)
+	}
+
+	snd := SendData{
+		Message: Message{
+			ExternalID: ext,
+			Type:       MsgTypeImage,
+			Items:      []Item{{ID: uploadFileResponse.ID}},
 		},
 		User: User{
 			ExternalID: "6",
