@@ -299,9 +299,10 @@ type WebhookData struct {
 
 // FileItem struct
 type FileItem struct {
-	ID   string `json:"id"`
-	Name string `json:"name"`
-	Size int    `json:"size"`
+	ID      string `json:"id"`
+	Name    string `json:"name"`
+	Size    int    `json:"size"`
+	Caption string `json:"caption"`
 }
 
 // MessageDataUser user data from webhook
