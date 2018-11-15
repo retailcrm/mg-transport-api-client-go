@@ -108,13 +108,15 @@ type ChannelSettingsFilesBase struct {
 	Editing  string `json:"editing"`
 	Quoting  string `json:"quoting"`
 	Deleting string `json:"deleting"`
-	Max      uint64 `json:"max"`
+	Max      uint64 `json:"max_items_count"`
 }
 
 // FullFileResponse uploaded file data
 type FullFileResponse struct {
-	UploadFileResponse
-	Link string `json:"link,omitempty"`
+	ID   string `json:"id,omitempty"`
+	Type string `json:"type,omitempty"`
+	Size int    `json:"size,omitempty"`
+	Url  string `json:"url,omitempty"`
 }
 
 // UploadFileResponse uploaded file data
