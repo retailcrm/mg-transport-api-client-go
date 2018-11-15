@@ -26,6 +26,10 @@ const (
 	MsgTypeOrder string = "order"
 	// MsgTypeProduct product card
 	MsgTypeProduct string = "product"
+	// MsgTypeFile file card
+	MsgTypeFile string = "file"
+	// MsgTypeImage image card
+	MsgTypeImage string = "image"
 
 	// MsgOrderStatusCodeNew order status group new
 	MsgOrderStatusCodeNew = "new"
@@ -39,6 +43,8 @@ const (
 	MsgOrderStatusCodeComplete = "complete"
 	// MsgOrderStatusCodeCancel order status group cancel
 	MsgOrderStatusCodeCancel = "cancel"
+
+	FileSizeLimit = 20 * 1024 * 1024
 )
 
 // MgClient type
@@ -59,11 +65,13 @@ type Channel struct {
 
 // ChannelSettings struct
 type ChannelSettings struct {
-	SpamAllowed bool                `json:"spam_allowed"`
-	Status      Status              `json:"status"`
-	Text        ChannelSettingsText `json:"text"`
-	Product     Product             `json:"product"`
-	Order       Order               `json:"order"`
+	SpamAllowed bool                     `json:"spam_allowed"`
+	Status      Status                   `json:"status"`
+	Text        ChannelSettingsText      `json:"text"`
+	Product     Product                  `json:"product"`
+	Order       Order                    `json:"order"`
+	File        ChannelSettingsFilesBase `json:"file"`
+	Image       ChannelSettingsFilesBase `json:"image"`
 }
 
 // Product type
@@ -92,6 +100,46 @@ type ChannelSettingsText struct {
 	Editing  string `json:"editing"`
 	Quoting  string `json:"quoting"`
 	Deleting string `json:"deleting"`
+}
+
+// ChannelSettingsFilesBase struct
+type ChannelSettingsFilesBase struct {
+	Creating string `json:"creating"`
+	Editing  string `json:"editing"`
+	Quoting  string `json:"quoting"`
+	Deleting string `json:"deleting"`
+	Max      uint64 `json:"max_items_count"`
+}
+
+// FullFileResponse uploaded file data
+type FullFileResponse struct {
+	ID   string `json:"id,omitempty"`
+	Type string `json:"type,omitempty"`
+	Size int    `json:"size,omitempty"`
+	Url  string `json:"url,omitempty"`
+}
+
+// UploadFileResponse uploaded file data
+type UploadFileResponse struct {
+	ID        string    `json:"id"`
+	Hash      string    `json:"hash"`
+	Type      string    `json:"type"`
+	Meta      FileMeta  `json:"meta"`
+	MimeType  string    `json:"mime_type"`
+	Size      int       `json:"size"`
+	Url       *string   `json:"source_url"`
+	CreatedAt time.Time `json:"created_at"`
+}
+
+// FileMeta file metadata
+type FileMeta struct {
+	Width  *int `json:"width,omitempty"`
+	Height *int `json:"height,omitempty"`
+}
+
+// UploadFileByUrlRequest file url to upload
+type UploadFileByUrlRequest struct {
+	Url string `json:"url"`
 }
 
 // ActivateResponse channel activation response
@@ -156,6 +204,7 @@ type Message struct {
 	ExternalID string `json:"external_id"`
 	Type       string `json:"type,omitempty"`
 	Text       string `json:"text,omitempty"`
+	Items      []Item `json:"items,omitempty"`
 }
 
 // SendMessage struct
@@ -184,6 +233,12 @@ type SendData struct {
 	Channel        uint64                   `json:"channel"`
 	ExternalChatID string                   `json:"external_chat_id"`
 	Quote          *SendMessageRequestQuote `json:"quote,omitempty"`
+}
+
+// Item struct
+type Item struct {
+	ID      string `json:"id"`
+	Caption string `json:"caption"`
 }
 
 // SendMessageRequestQuote type
@@ -238,6 +293,15 @@ type WebhookData struct {
 	Bot               *MessageDataBot     `json:"bot,omitempty"`
 	Product           *MessageDataProduct `json:"product,omitempty"`
 	Order             *MessageDataOrder   `json:"order,omitempty"`
+	Images            *[]FileItem         `json:"images,omitempty"`
+	Files             *[]FileItem         `json:"files,omitempty"`
+}
+
+// FileItem struct
+type FileItem struct {
+	ID   string `json:"id"`
+	Name string `json:"name"`
+	Size int    `json:"size"`
 }
 
 // MessageDataUser user data from webhook
