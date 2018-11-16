@@ -293,14 +293,12 @@ type WebhookData struct {
 	Bot               *MessageDataBot     `json:"bot,omitempty"`
 	Product           *MessageDataProduct `json:"product,omitempty"`
 	Order             *MessageDataOrder   `json:"order,omitempty"`
-	Images            *[]FileItem         `json:"images,omitempty"`
-	Files             *[]FileItem         `json:"files,omitempty"`
+	Items             *[]FileItem         `json:"items,omitempty"`
 }
 
 // FileItem struct
 type FileItem struct {
 	ID      string `json:"id"`
-	Name    string `json:"name"`
 	Size    int    `json:"size"`
 	Caption string `json:"caption"`
 }
