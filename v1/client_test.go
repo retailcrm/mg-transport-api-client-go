@@ -181,7 +181,7 @@ func TestMgClient_TextMessages(t *testing.T) {
 	snd := SendData{
 		Message: Message{
 			ExternalID: ext,
-			Type:       "text",
+			Type:       MsgTypeText,
 			Text:       "hello!",
 		},
 		User: User{
@@ -220,7 +220,7 @@ func TestMgClient_ImageMessages(t *testing.T) {
 
 	snd := SendData{
 		Message: Message{
-			ExternalID: ext,
+			ExternalID: ext + "file",
 			Type:       MsgTypeImage,
 			Items:      []Item{{ID: uploadFileResponse.ID}},
 		},
@@ -304,6 +304,21 @@ func TestMgClient_MarkMessageReadAndDelete(t *testing.T) {
 	}
 
 	t.Logf("Message %v deleted", data.MessageID)
+
+	sndD = DeleteData{
+		Message{
+			ExternalID: ext + "file",
+		},
+		channelID,
+	}
+
+	data, status, err = c.DeleteMessage(sndD)
+
+	if status != http.StatusOK {
+		t.Errorf("%v", err)
+	}
+
+	t.Logf("Message %v deleted", data.MessageID)
 }
 
 func TestMgClient_DeactivateTransportChannel(t *testing.T) {
@@ -319,4 +334,24 @@ func TestMgClient_DeactivateTransportChannel(t *testing.T) {
 	}
 
 	t.Logf("Deactivate selected channel: %v", deleteData.ChannelID)
+}
+
+func TestMgClient_UploadFile(t *testing.T) {
+	c := client()
+	t.Logf("%v", ext)
+
+	resp, err := http.Get("https://via.placeholder.com/300")
+	if err != nil {
+		t.Errorf("%v", err)
+	}
+
+	defer resp.Body.Close()
+
+	data, status, err := c.UploadFile(resp.Body)
+
+	if status != http.StatusOK {
+		t.Errorf("%v", err)
+	}
+
+	t.Logf("Message %+v is sent", data)
 }
