@@ -44,10 +44,11 @@ func TestMgClient_ActivateTransportChannel(t *testing.T) {
 				Read:      ChannelFeatureReceive,
 			},
 			Text: ChannelSettingsText{
-				Creating: ChannelFeatureBoth,
-				Editing:  ChannelFeatureSend,
-				Quoting:  ChannelFeatureReceive,
-				Deleting: ChannelFeatureBoth,
+				Creating:      ChannelFeatureBoth,
+				Editing:       ChannelFeatureSend,
+				Quoting:       ChannelFeatureReceive,
+				Deleting:      ChannelFeatureBoth,
+				MaxCharsCount: 2000,
 			},
 			Product: Product{
 				Creating: ChannelFeatureSend,
