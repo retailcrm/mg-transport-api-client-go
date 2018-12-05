@@ -96,10 +96,11 @@ type Status struct {
 
 // ChannelSettingsText struct
 type ChannelSettingsText struct {
-	Creating string `json:"creating"`
-	Editing  string `json:"editing"`
-	Quoting  string `json:"quoting"`
-	Deleting string `json:"deleting"`
+	Creating      string `json:"creating"`
+	Editing       string `json:"editing"`
+	Quoting       string `json:"quoting"`
+	Deleting      string `json:"deleting"`
+	MaxCharsCount uint16 `json:"max_chars_count"`
 }
 
 // ChannelSettingsFilesBase struct

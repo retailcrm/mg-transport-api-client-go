@@ -74,6 +74,7 @@ func (c *MgClient) TransportChannels(request Channels) ([]ChannelListItem, int, 
 //				Editing:  ChannelFeatureBoth,
 //				Quoting:  ChannelFeatureReceive,
 //				Deleting: ChannelFeatureSend,
+//				MaxCharsCount: 2000,
 // 			},
 //			Product: Product{
 //				Creating: ChannelFeatureSend,
