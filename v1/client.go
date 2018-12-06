@@ -1,9 +1,11 @@
 package v1
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"net/http"
 	"strconv"
 	"time"
@@ -98,7 +100,7 @@ func (c *MgClient) ActivateTransportChannel(request Channel) (ActivateResponse, 
 	var resp ActivateResponse
 	outgoing, _ := json.Marshal(&request)
 
-	data, status, err := c.PostRequest("/channels", []byte(outgoing))
+	data, status, err := c.PostRequest("/channels", bytes.NewBuffer(outgoing))
 	if err != nil {
 		return resp, status, err
 	}
@@ -243,7 +245,7 @@ func (c *MgClient) Messages(request SendData) (MessagesResponse, int, error) {
 	var resp MessagesResponse
 	outgoing, _ := json.Marshal(&request)
 
-	data, status, err := c.PostRequest("/messages", []byte(outgoing))
+	data, status, err := c.PostRequest("/messages", bytes.NewBuffer(outgoing))
 	if err != nil {
 		return resp, status, err
 	}
@@ -326,7 +328,7 @@ func (c *MgClient) MarkMessageRead(request MarkMessageReadRequest) (MarkMessageR
 	var resp MarkMessageReadResponse
 	outgoing, _ := json.Marshal(&request)
 
-	data, status, err := c.PostRequest("/messages/read", []byte(outgoing))
+	data, status, err := c.PostRequest("/messages/read", bytes.NewBuffer(outgoing))
 	if err != nil {
 		return resp, status, err
 	}
@@ -420,7 +422,7 @@ func (c *MgClient) GetFile(request string) (FullFileResponse, int, error) {
 }
 
 // UploadFile upload file
-func (c *MgClient) UploadFile(request []byte) (UploadFileResponse, int, error) {
+func (c *MgClient) UploadFile(request io.Reader) (UploadFileResponse, int, error) {
 	var resp UploadFileResponse
 
 	data, status, err := c.PostRequest("/files/upload", request)
@@ -444,7 +446,7 @@ func (c *MgClient) UploadFileByURL(request UploadFileByUrlRequest) (UploadFileRe
 	var resp UploadFileResponse
 	outgoing, _ := json.Marshal(&request)
 
-	data, status, err := c.PostRequest("/files/upload_by_url", []byte(outgoing))
+	data, status, err := c.PostRequest("/files/upload_by_url", bytes.NewBuffer(outgoing))
 	if err != nil {
 		return resp, status, err
 	}
