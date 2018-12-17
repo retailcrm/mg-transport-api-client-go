@@ -302,6 +302,8 @@ type FileItem struct {
 	ID      string `json:"id"`
 	Size    int    `json:"size"`
 	Caption string `json:"caption"`
+	Height  *int   `json:"height,omitempty"`
+	Width   *int   `json:"width,omitempty"`
 }
 
 // MessageDataUser user data from webhook
