@@ -16,7 +16,10 @@ var (
 )
 
 func client() *MgClient {
-	return New(mgURL, mgToken)
+	c := New(mgURL, mgToken)
+	c.Debug = true
+
+	return c
 }
 
 func TestMgClient_TransportChannels(t *testing.T) {
