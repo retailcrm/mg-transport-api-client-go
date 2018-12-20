@@ -338,7 +338,7 @@ type MessageDataOrder struct {
 	Cost     *MessageDataOrderCost     `json:"cost,omitempty"`
 	Status   *MessageDataOrderStatus   `json:"status,omitempty"`
 	Delivery *MessageDataOrderDelivery `json:"delivery"`
-	Payments []MessageDataOrderPayment `json:"payment"`
+	Payments []MessageDataOrderPayment `json:"payments"`
 	Items    []MessageDataOrderItem    `json:"items,omitempty"`
 }
 
