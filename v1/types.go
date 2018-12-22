@@ -76,40 +76,40 @@ type ChannelSettings struct {
 
 // Product type
 type Product struct {
-	Creating string `json:"creating"`
-	Editing  string `json:"editing"`
-	Deleting string `json:"deleting"`
+	Creating string `json:"creating,omitempty"`
+	Editing  string `json:"editing,omitempty"`
+	Deleting string `json:"deleting,omitempty"`
 }
 
 // Order type
 type Order struct {
-	Creating string `json:"creating"`
-	Editing  string `json:"editing"`
-	Deleting string `json:"deleting"`
+	Creating string `json:"creating,omitempty"`
+	Editing  string `json:"editing,omitempty"`
+	Deleting string `json:"deleting,omitempty"`
 }
 
 // Status struct
 type Status struct {
-	Delivered string `json:"delivered"`
-	Read      string `json:"read"`
+	Delivered string `json:"delivered,omitempty"`
+	Read      string `json:"read,omitempty"`
 }
 
 // ChannelSettingsText struct
 type ChannelSettingsText struct {
-	Creating      string `json:"creating"`
-	Editing       string `json:"editing"`
-	Quoting       string `json:"quoting"`
-	Deleting      string `json:"deleting"`
-	MaxCharsCount uint16 `json:"max_chars_count"`
+	Creating      string `json:"creating,omitempty"`
+	Editing       string `json:"editing,omitempty"`
+	Quoting       string `json:"quoting,omitempty"`
+	Deleting      string `json:"deleting,omitempty"`
+	MaxCharsCount uint16 `json:"max_chars_count,omitempty"`
 }
 
 // ChannelSettingsFilesBase struct
 type ChannelSettingsFilesBase struct {
-	Creating string `json:"creating"`
-	Editing  string `json:"editing"`
-	Quoting  string `json:"quoting"`
-	Deleting string `json:"deleting"`
-	Max      uint64 `json:"max_items_count"`
+	Creating string `json:"creating,omitempty"`
+	Editing  string `json:"editing,omitempty"`
+	Quoting  string `json:"quoting,omitempty"`
+	Deleting string `json:"deleting,omitempty"`
+	Max      uint64 `json:"max_items_count,omitempty"`
 }
 
 // FullFileResponse uploaded file data
