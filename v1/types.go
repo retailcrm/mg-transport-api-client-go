@@ -176,14 +176,14 @@ type ChannelListItem struct {
 
 // Channels request type
 type Channels struct {
-	ID          int       `json:"id,omitempty"`
-	Types       []string  `json:"types,omitempty"`
-	Active      bool      `json:"active,omitempty"`
-	Since       time.Time `json:"since,omitempty"`
-	Until       time.Time `json:"until,omitempty"`
-	TransportID uint64    `json:"transport_id,omitempty"`
-	Sort        string    `json:"sort,omitempty"`
-	Limit       int       `json:"limit,omitempty"`
+	ID          int       `url:"id"`
+	Types       []string  `url:"types"`
+	Active      bool      `url:"active"`
+	Since       time.Time `url:"since"`
+	Until       time.Time `url:"until"`
+	TransportID uint64    `url:"transport_id"`
+	Sort        string    `url:"sort"`
+	Limit       int       `url:"limit"`
 }
 
 // User struct
