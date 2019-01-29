@@ -105,11 +105,13 @@ type ChannelSettingsText struct {
 
 // ChannelSettingsFilesBase struct
 type ChannelSettingsFilesBase struct {
-	Creating string `json:"creating,omitempty"`
-	Editing  string `json:"editing,omitempty"`
-	Quoting  string `json:"quoting,omitempty"`
-	Deleting string `json:"deleting,omitempty"`
-	Max      uint64 `json:"max_items_count,omitempty"`
+	Creating             string `json:"creating,omitempty"`
+	Editing              string `json:"editing,omitempty"`
+	Quoting              string `json:"quoting,omitempty"`
+	Deleting             string `json:"deleting,omitempty"`
+	Max                  uint64 `json:"max_items_count,omitempty"`
+	CommentAttribute     string `json:"comment_attribute,omitempty"`
+	CommentMaxCharsCount int    `json:"comment_max_chars_count,omitempty"`
 }
 
 // FullFileResponse uploaded file data
