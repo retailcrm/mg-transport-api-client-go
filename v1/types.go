@@ -57,10 +57,11 @@ type MgClient struct {
 
 // Channel type
 type Channel struct {
-	ID       uint64          `json:"id,omitempty"`
-	Type     string          `json:"type,omitempty"`
-	Name     string          `json:"name,omitempty"`
-	Settings ChannelSettings `json:"settings,omitempty,brackets"`
+	ID        uint64          `json:"id,omitempty"`
+	Type      string          `json:"type,omitempty"`
+	Name      string          `json:"name,omitempty"`
+	AvatarUrl string          `json:"avatar_url,omitempty"`
+	Settings  ChannelSettings `json:"settings,omitempty,brackets"`
 }
 
 // ChannelSettings struct
