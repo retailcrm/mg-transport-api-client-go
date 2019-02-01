@@ -57,10 +57,11 @@ type MgClient struct {
 
 // Channel type
 type Channel struct {
-	ID       uint64          `json:"id,omitempty"`
-	Type     string          `json:"type,omitempty"`
-	Name     string          `json:"name,omitempty"`
-	Settings ChannelSettings `json:"settings,omitempty,brackets"`
+	ID        uint64          `json:"id,omitempty"`
+	Type      string          `json:"type,omitempty"`
+	Name      string          `json:"name,omitempty"`
+	AvatarUrl string          `json:"avatar_url,omitempty"`
+	Settings  ChannelSettings `json:"settings,omitempty,brackets"`
 }
 
 // ChannelSettings struct
@@ -105,11 +106,13 @@ type ChannelSettingsText struct {
 
 // ChannelSettingsFilesBase struct
 type ChannelSettingsFilesBase struct {
-	Creating string `json:"creating,omitempty"`
-	Editing  string `json:"editing,omitempty"`
-	Quoting  string `json:"quoting,omitempty"`
-	Deleting string `json:"deleting,omitempty"`
-	Max      uint64 `json:"max_items_count,omitempty"`
+	Creating             string `json:"creating,omitempty"`
+	Editing              string `json:"editing,omitempty"`
+	Quoting              string `json:"quoting,omitempty"`
+	Deleting             string `json:"deleting,omitempty"`
+	Max                  uint64 `json:"max_items_count,omitempty"`
+	CommentAttribute     string `json:"comment_attribute,omitempty"`
+	CommentMaxCharsCount int    `json:"comment_max_chars_count,omitempty"`
 }
 
 // FullFileResponse uploaded file data
@@ -230,6 +233,7 @@ type EditMessageRequestMessage struct {
 // SendData struct
 type SendData struct {
 	Message        Message                  `json:"message"`
+	Originator     string                   `json:"originator"`
 	User           User                     `json:"user"`
 	Channel        uint64                   `json:"channel"`
 	ExternalChatID string                   `json:"external_chat_id"`
