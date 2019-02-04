@@ -233,7 +233,7 @@ type EditMessageRequestMessage struct {
 // SendData struct
 type SendData struct {
 	Message        Message                  `json:"message"`
-	Originator     string                   `json:"originator"`
+	Originator     string                   `json:"originator,omitempty"`
 	User           User                     `json:"user"`
 	Channel        uint64                   `json:"channel"`
 	ExternalChatID string                   `json:"external_chat_id"`
