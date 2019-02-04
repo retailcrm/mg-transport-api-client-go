@@ -18,7 +18,7 @@ func New(url string, token string) *MgClient {
 	return &MgClient{
 		URL:        url,
 		Token:      token,
-		httpClient: &http.Client{Timeout: 20 * time.Second},
+		httpClient: &http.Client{Timeout: time.Minute},
 	}
 }
 
