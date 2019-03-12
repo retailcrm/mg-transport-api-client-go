@@ -189,8 +189,8 @@ type Channels struct {
 	Limit       int       `url:"limit,omitempty" json:"limit,omitempty"`
 }
 
-// User struct
-type User struct {
+// Customer struct
+type Customer struct {
 	ExternalID string `json:"external_id"`
 	Nickname   string `json:"nickname"`
 	Firstname  string `json:"first_name,omitempty"`
@@ -234,7 +234,7 @@ type EditMessageRequestMessage struct {
 type SendData struct {
 	Message        Message                  `json:"message"`
 	Originator     string                   `json:"originator,omitempty"`
-	User           User                     `json:"user"`
+	Customer       Customer                 `json:"customer"`
 	Channel        uint64                   `json:"channel"`
 	ExternalChatID string                   `json:"external_chat_id"`
 	Quote          *SendMessageRequestQuote `json:"quote,omitempty"`
