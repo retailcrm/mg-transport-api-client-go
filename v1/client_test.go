@@ -187,8 +187,8 @@ func TestMgClient_TextMessages(t *testing.T) {
 			Type:       MsgTypeText,
 			Text:       "hello!",
 		},
-		Originator: "user",
-		User: User{
+		Originator: OriginatorCustomer,
+		Customer: Customer{
 			ExternalID: "6",
 			Nickname:   "octopus",
 			Firstname:  "Joe",
@@ -228,8 +228,8 @@ func TestMgClient_ImageMessages(t *testing.T) {
 			Type:       MsgTypeImage,
 			Items:      []Item{{ID: uploadFileResponse.ID}},
 		},
-		Originator: "user",
-		User: User{
+		Originator: OriginatorCustomer,
+		Customer: Customer{
 			ExternalID: "6",
 			Nickname:   "octopus",
 			Firstname:  "Joe",

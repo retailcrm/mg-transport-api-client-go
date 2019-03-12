@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"errors"
 	"net/http"
 	"time"
 )
@@ -45,6 +46,13 @@ const (
 	MsgOrderStatusCodeCancel = "cancel"
 
 	FileSizeLimit = 20 * 1024 * 1024
+)
+
+const (
+	// OriginatorCustomer means message was created by customer
+	OriginatorCustomer Originator = iota + 1
+	// OriginatorChannel means message was created by channel, for example via messenger mobile application
+	OriginatorChannel
 )
 
 // MgClient type
@@ -189,8 +197,8 @@ type Channels struct {
 	Limit       int       `url:"limit,omitempty" json:"limit,omitempty"`
 }
 
-// User struct
-type User struct {
+// Customer struct
+type Customer struct {
 	ExternalID string `json:"external_id"`
 	Nickname   string `json:"nickname"`
 	Firstname  string `json:"first_name,omitempty"`
@@ -233,8 +241,8 @@ type EditMessageRequestMessage struct {
 // SendData struct
 type SendData struct {
 	Message        Message                  `json:"message"`
-	Originator     string                   `json:"originator,omitempty"`
-	User           User                     `json:"user"`
+	Originator     Originator               `json:"originator,omitempty"`
+	Customer       Customer                 `json:"customer"`
 	Channel        uint64                   `json:"channel"`
 	ExternalChatID string                   `json:"external_chat_id"`
 	Quote          *SendMessageRequestQuote `json:"quote,omitempty"`
@@ -398,4 +406,21 @@ type MessageDataOrderDelivery struct {
 type TransportRequestMeta struct {
 	ID        uint64 `json:"id"`
 	Timestamp int64  `json:"timestamp"`
+}
+
+var ErrInvalidOriginator = errors.New("invalid originator")
+
+// Originator of message
+type Originator byte
+
+// MarshalText marshals originator to text
+func (o Originator) MarshalText() ([]byte, error) {
+	switch o {
+	case OriginatorCustomer:
+		return []byte("customer"), nil
+	case OriginatorChannel:
+		return []byte("channel"), nil
+	}
+
+	return nil, ErrInvalidOriginator
 }
