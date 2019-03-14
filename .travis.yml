@@ -7,4 +7,5 @@ go:
 before_install:
   - go get -v github.com/google/go-querystring/query
   - go get -v github.com/h2non/gock
+  - go get -v github.com/stretchr/testify/assert
 script: go test -v ./...
