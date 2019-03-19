@@ -216,6 +216,7 @@ type Message struct {
 	ExternalID string `json:"external_id"`
 	Type       string `json:"type,omitempty"`
 	Text       string `json:"text,omitempty"`
+	Note       string `json:"note,omitempty"`
 	Items      []Item `json:"items,omitempty"`
 }
 
