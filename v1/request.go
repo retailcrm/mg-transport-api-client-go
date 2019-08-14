@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"strings"
 )
 
 var prefix = "/api/transport/v1"
@@ -62,7 +63,11 @@ func makeRequest(reqType, url string, buf io.Reader, c *MgClient) ([]byte, int, 
 	req.Header.Set("X-Transport-Token", c.Token)
 
 	if c.Debug {
-		log.Printf("MG TRANSPORT API Request: %s %s %s %v", reqType, url, c.Token, buf)
+		if strings.Index(url, "/files/upload") != -1 {
+			log.Printf("MG TRANSPORT API Request: %s %s %s [file data]", reqType, url, c.Token)
+		} else {
+			log.Printf("MG TRANSPORT API Request: %s %s %s %v", reqType, url, c.Token, buf)
+		}
 	}
 
 	resp, err := c.httpClient.Do(req)
