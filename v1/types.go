@@ -31,6 +31,8 @@ const (
 	MsgTypeFile string = "file"
 	// MsgTypeImage image card
 	MsgTypeImage string = "image"
+	// MsgTypeAudio audio
+	MsgTypeAudio string = "audio"
 
 	// MsgOrderStatusCodeNew order status group new
 	MsgOrderStatusCodeNew = "new"
