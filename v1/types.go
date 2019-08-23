@@ -67,11 +67,12 @@ type MgClient struct {
 
 // Channel type
 type Channel struct {
-	ID        uint64          `json:"id,omitempty"`
-	Type      string          `json:"type,omitempty"`
-	Name      string          `json:"name,omitempty"`
-	AvatarUrl string          `json:"avatar_url,omitempty"`
-	Settings  ChannelSettings `json:"settings,omitempty,brackets"`
+	ID         uint64          `json:"id,omitempty"`
+	ExternalID string          `json:"external_id,omitempty"`
+	Type       string          `json:"type,omitempty"`
+	Name       string          `json:"name,omitempty"`
+	AvatarUrl  string          `json:"avatar_url,omitempty"`
+	Settings   ChannelSettings `json:"settings,omitempty,brackets"`
 }
 
 // ChannelSettings struct
@@ -159,13 +160,15 @@ type UploadFileByUrlRequest struct {
 // ActivateResponse channel activation response
 type ActivateResponse struct {
 	ChannelID   uint64    `json:"id"`
+	ExternalID  string    `json:"external_id"`
 	ActivatedAt time.Time `json:"activated_at"`
 }
 
 // UpdateResponse channel update response
 type UpdateResponse struct {
-	ChannelID uint64    `json:"id"`
-	UpdatedAt time.Time `json:"updated_at"`
+	ChannelID  uint64    `json:"id"`
+	ExternalID string    `json:"external_id"`
+	UpdatedAt  time.Time `json:"updated_at"`
 }
 
 // DeleteResponse channel deactivation response
@@ -177,6 +180,7 @@ type DeleteResponse struct {
 // ChannelListItem response struct
 type ChannelListItem struct {
 	ID            uint64          `json:"id"`
+	ExternalID    string          `json:"external_id"`
 	Type          string          `json:"type"`
 	Name          *string         `json:"name"`
 	Settings      ChannelSettings `json:"settings"`
