@@ -15,10 +15,15 @@ import (
 
 // New initialize client
 func New(url string, token string) *MgClient {
+	return NewWithClient(url, token, &http.Client{Timeout: time.Minute})
+}
+
+// NewWithClient initializes client with provided http client
+func NewWithClient(url string, token string, client *http.Client) *MgClient {
 	return &MgClient{
 		URL:        url,
 		Token:      token,
-		httpClient: &http.Client{Timeout: time.Minute},
+		httpClient: client,
 	}
 }
 
