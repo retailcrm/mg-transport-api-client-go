@@ -3,8 +3,9 @@ package v1
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestSendData_MarshalJSON(t *testing.T) {

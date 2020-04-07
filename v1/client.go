@@ -11,7 +11,6 @@ import (
 	"time"
 
 	"github.com/google/go-querystring/query"
-	"github.com/retailcrm/mg-transport-api-client-go/v1/types"
 )
 
 // New initialize client
@@ -75,8 +74,8 @@ func (c *MgClient) TransportChannels(request Channels) ([]ChannelListItem, int, 
 // 	}
 //
 //	fmt.Printf("Status: %v, Templates found: %v", status, len(data))
-func (c *MgClient) TransportTemplates() ([]types.TemplateItem, int, error) {
-	var resp []types.TemplateItem
+func (c *MgClient) TransportTemplates() ([]TemplateItem, int, error) {
+	var resp []TemplateItem
 
 	data, status, err := c.GetRequest("/templates", []byte{})
 	if err != nil {
@@ -102,18 +101,18 @@ func (c *MgClient) TransportTemplates() ([]types.TemplateItem, int, error) {
 // 		request := v1.ActivateTemplateRequest{
 // 				Code: "code",
 // 				Name: "name",
-// 				Type: types.TemplateTypeText,
-// 				Template: []types.TemplateItem{
+// 				Type: v1.TemplateTypeText,
+// 				Template: []v1.TemplateItem{
 // 					{
-// 						Type: types.TemplateItemTypeText,
+// 						Type: v1.TemplateItemTypeText,
 // 						Text: "Hello, ",
 // 					},
 // 					{
-// 						Type:    types.TemplateItemTypeVar,
-// 						VarType: types.TemplateVarName,
+// 						Type:    v1.TemplateItemTypeVar,
+// 						VarType: v1.TemplateVarName,
 // 					},
 // 					{
-// 						Type: types.TemplateItemTypeText,
+// 						Type: v1.TemplateItemTypeText,
 // 						Text: "!",
 // 					},
 // 				},
@@ -143,21 +142,21 @@ func (c *MgClient) ActivateTemplate(channelID uint64, request ActivateTemplateRe
 // Example:
 // 		var client = New("https://token.url", "cb8ccf05e38a47543ad8477d4999be73bff503ea6")
 //
-// 		request := types.Template{
+// 		request := v1.Template{
 // 			Code:      "templateCode",
 // 			ChannelID: 1,
 // 			Name:      "templateName",
-// 			Template:  []types.TemplateItem{
+// 			Template:  []v1.TemplateItem{
 // 				{
-// 					Type: types.TemplateItemTypeText,
+// 					Type: v1.TemplateItemTypeText,
 // 					Text: "Welcome, ",
 // 				},
 // 				{
-// 					Type: types.TemplateItemTypeVar,
-// 					VarType: types.TemplateVarName,
+// 					Type: v1.TemplateItemTypeVar,
+// 					VarType: v1.TemplateVarName,
 // 				},
 // 				{
-// 					Type: types.TemplateItemTypeText,
+// 					Type: v1.TemplateItemTypeText,
 // 					Text: "!",
 // 				},
 // 			},
@@ -168,7 +167,7 @@ func (c *MgClient) ActivateTemplate(channelID uint64, request ActivateTemplateRe
 // 		if err != nil {
 // 			fmt.Printf("%#v", err)
 // 		}
-func (c *MgClient) UpdateTemplate(request types.Template) (int, error) {
+func (c *MgClient) UpdateTemplate(request Template) (int, error) {
 	outgoing, _ := json.Marshal(&request)
 
 	data, status, err := c.PutRequest(fmt.Sprintf("/channels/%d/templates/%s", request.ChannelID, request.Code), outgoing)

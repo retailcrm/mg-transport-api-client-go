@@ -4,8 +4,6 @@ import (
 	"errors"
 	"net/http"
 	"time"
-
-	"github.com/retailcrm/mg-transport-api-client-go/v1/types"
 )
 
 //noinspection ALL
@@ -419,10 +417,10 @@ type TransportRequestMeta struct {
 }
 
 type ActivateTemplateRequest struct {
-	Code     string               `binding:"required,min=1,max=512" json:"code"`
-	Name     string               `binding:"required,min=1,max=512" json:"name"`
-	Type     string               `binding:"required" json:"type"`
-	Template []types.TemplateItem `json:"template"`
+	Code     string         `binding:"required,min=1,max=512" json:"code"`
+	Name     string         `binding:"required,min=1,max=512" json:"name"`
+	Type     string         `binding:"required" json:"type"`
+	Template []TemplateItem `json:"template"`
 }
 
 var ErrInvalidOriginator = errors.New("invalid originator")
