@@ -97,9 +97,5 @@ func TestOriginator(t *testing.T) {
 		assert.Equal(t, err, ErrInvalidOriginator)
 	})
 
-	t.Run("MarshalJSON_Invalid", func(t *testing.T) {
-		data, err := json.Marshal(Originator(3))
-		assert.Nil(t, data)
-		assert.EqualError(t, err, "json: error calling MarshalJSON for type v1.Originator: invalid originator")
-	})
+	t.Run("MarshalJSON_Invalid", OriginatorMarshalJSONInvalid)
 }
