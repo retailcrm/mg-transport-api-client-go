@@ -247,7 +247,21 @@ func TestMgClient_TransportTemplates(t *testing.T) {
 	assert.NoError(t, err, fmt.Sprintf("%d %s", status, err))
 
 	t.Logf("Templates found: %#v", len(data))
-	t.Logf("%#v", data)
+
+	for _, item := range data {
+		for _, tpl := range item.Template {
+			if tpl.Type == TemplateItemTypeText {
+				assert.Empty(t, tpl.VarType)
+			} else {
+				assert.Empty(t, tpl.Text)
+				assert.NotEmpty(t, tpl.VarType)
+
+				if _, ok := templateVarAssoc[tpl.VarType]; !ok {
+					t.Errorf("unknown TemplateVar type %s", tpl.VarType)
+				}
+			}
+		}
+	}
 }
 
 func TestMgClient_ActivateTemplate(t *testing.T) {
