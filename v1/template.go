@@ -11,7 +11,7 @@ const TemplateTypeText = "text"
 
 const (
 	// TemplateItemTypeText is a type for text chunk in template
-	TemplateItemTypeText = iota
+	TemplateItemTypeText uint8 = iota
 	// TemplateItemTypeVar is a type for variable in template
 	TemplateItemTypeVar
 )
@@ -52,12 +52,17 @@ type TemplateItem struct {
 	VarType string
 }
 
-// MarshalJSON will correctly marshal TemplateItem
-func (t *TemplateItem) MarshalJSON() ([]byte, error) {
+// MarshalJSON controls how TemplateItem will be marshaled into JSON
+func (t TemplateItem) MarshalJSON() ([]byte, error) {
 	switch t.Type {
 	case TemplateItemTypeText:
 		return json.Marshal(t.Text)
 	case TemplateItemTypeVar:
+		// {} case, fast output without marshaling
+		if t.VarType == "" || t.VarType == TemplateVarCustom {
+			return []byte("{}"), nil
+		}
+
 		return json.Marshal(map[string]interface{}{
 			"var": t.VarType,
 		})
@@ -87,11 +92,12 @@ func (t *TemplateItem) UnmarshalJSON(b []byte) error {
 		}
 
 		if varTypeCurr, ok := v["var"].(string); ok {
-			if _, ok := templateVarAssoc[t.VarType]; !ok {
+			if _, ok := templateVarAssoc[varTypeCurr]; !ok {
 				return fmt.Errorf("invalid placeholder var '%s'", varTypeCurr)
 			}
 
 			t.Type = TemplateItemTypeVar
+			t.VarType = varTypeCurr
 		} else {
 			return errors.New("invalid TemplateItem")
 		}
