@@ -27,40 +27,6 @@ func NewWithClient(url string, token string, client *http.Client) *MgClient {
 	}
 }
 
-// TransportChannels returns channels list
-//
-// Example:
-//
-// 	var client = v1.New("https://token.url", "cb8ccf05e38a47543ad8477d4999be73bff503ea6")
-//
-// 	data, status, err := client.TransportChannels(Channels{Active: true})
-//
-// 	if err != nil {
-// 		fmt.Printf("%v", err)
-// 	}
-//
-//	fmt.Printf("Status: %v, Channels found: %v", status, len(data))
-func (c *MgClient) TransportChannels(request Channels) ([]ChannelListItem, int, error) {
-	var resp []ChannelListItem
-	var b []byte
-	outgoing, _ := query.Values(request)
-
-	data, status, err := c.GetRequest(fmt.Sprintf("/channels?%s", outgoing.Encode()), b)
-	if err != nil {
-		return resp, status, err
-	}
-
-	if e := json.Unmarshal(data, &resp); e != nil {
-		return resp, status, e
-	}
-
-	if status > http.StatusCreated || status < http.StatusOK {
-		return resp, status, c.Error(data)
-	}
-
-	return resp, status, err
-}
-
 // TransportTemplates returns templates list
 //
 // Example:
@@ -74,8 +40,8 @@ func (c *MgClient) TransportChannels(request Channels) ([]ChannelListItem, int, 
 // 	}
 //
 //	fmt.Printf("Status: %v, Templates found: %v", status, len(data))
-func (c *MgClient) TransportTemplates() ([]TemplateItem, int, error) {
-	var resp []TemplateItem
+func (c *MgClient) TransportTemplates() ([]Template, int, error) {
+	var resp []Template
 
 	data, status, err := c.GetRequest("/templates", []byte{})
 	if err != nil {
@@ -205,6 +171,40 @@ func (c *MgClient) DeactivateTemplate(channelID uint64, templateCode string) (in
 	}
 
 	return status, err
+}
+
+// TransportChannels returns channels list
+//
+// Example:
+//
+// 	var client = v1.New("https://token.url", "cb8ccf05e38a47543ad8477d4999be73bff503ea6")
+//
+// 	data, status, err := client.TransportChannels(Channels{Active: true})
+//
+// 	if err != nil {
+// 		fmt.Printf("%v", err)
+// 	}
+//
+//	fmt.Printf("Status: %v, Channels found: %v", status, len(data))
+func (c *MgClient) TransportChannels(request Channels) ([]ChannelListItem, int, error) {
+	var resp []ChannelListItem
+	var b []byte
+	outgoing, _ := query.Values(request)
+
+	data, status, err := c.GetRequest(fmt.Sprintf("/channels?%s", outgoing.Encode()), b)
+	if err != nil {
+		return resp, status, err
+	}
+
+	if e := json.Unmarshal(data, &resp); e != nil {
+		return resp, status, e
+	}
+
+	if status > http.StatusCreated || status < http.StatusOK {
+		return resp, status, c.Error(data)
+	}
+
+	return resp, status, err
 }
 
 // ActivateTransportChannel implement channel activation

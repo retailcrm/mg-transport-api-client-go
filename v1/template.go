@@ -38,7 +38,7 @@ var templateVarAssoc = map[string]interface{}{
 // Template struct
 type Template struct {
 	Code      string         `json:"code"`
-	ChannelID int64          `json:"channel_id,omitempty"`
+	ChannelID uint64         `json:"channel_id,omitempty"`
 	Name      string         `json:"name"`
 	Enabled   bool           `json:"enabled,omitempty"`
 	Type      string         `json:"type"`
