@@ -416,6 +416,13 @@ type TransportRequestMeta struct {
 	Timestamp int64  `json:"timestamp"`
 }
 
+type ActivateTemplateRequest struct {
+	Code     string         `binding:"required,min=1,max=512" json:"code"`
+	Name     string         `binding:"required,min=1,max=512" json:"name"`
+	Type     string         `binding:"required" json:"type"`
+	Template []TemplateItem `json:"template"`
+}
+
 var ErrInvalidOriginator = errors.New("invalid originator")
 
 // Originator of message

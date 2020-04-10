@@ -27,13 +27,159 @@ func NewWithClient(url string, token string, client *http.Client) *MgClient {
 	}
 }
 
+// TransportTemplates returns templates list
+//
+// Example:
+//
+// 	var client = v1.New("https://token.url", "cb8ccf05e38a47543ad8477d4999be73bff503ea6")
+//
+// 	data, status, err := client.TransportTemplates()
+//
+// 	if err != nil {
+// 		fmt.Printf("%v", err)
+// 	}
+//
+//	fmt.Printf("Status: %v, Templates found: %v", status, len(data))
+func (c *MgClient) TransportTemplates() ([]Template, int, error) {
+	var resp []Template
+
+	data, status, err := c.GetRequest("/templates", []byte{})
+	if err != nil {
+		return resp, status, err
+	}
+
+	if e := json.Unmarshal(data, &resp); e != nil {
+		return resp, status, e
+	}
+
+	if status > http.StatusCreated || status < http.StatusOK {
+		return resp, status, c.Error(data)
+	}
+
+	return resp, status, err
+}
+
+// ActivateTransportChannel implements template activation
+//
+// Example:
+// 		var client = v1.New("https://token.url", "cb8ccf05e38a47543ad8477d4999be73bff503ea6")
+//
+// 		request := v1.ActivateTemplateRequest{
+// 				Code: "code",
+// 				Name: "name",
+// 				Type: v1.TemplateTypeText,
+// 				Template: []v1.TemplateItem{
+// 					{
+// 						Type: v1.TemplateItemTypeText,
+// 						Text: "Hello, ",
+// 					},
+// 					{
+// 						Type:    v1.TemplateItemTypeVar,
+// 						VarType: v1.TemplateVarName,
+// 					},
+// 					{
+// 						Type: v1.TemplateItemTypeText,
+// 						Text: "!",
+// 					},
+// 				},
+// 		}
+//
+// 		_, err := client.ActivateTemplate(uint64(1), request)
+//
+// 		if err != nil {
+// 			fmt.Printf("%v", err)
+// 		}
+func (c *MgClient) ActivateTemplate(channelID uint64, request ActivateTemplateRequest) (int, error) {
+	outgoing, _ := json.Marshal(&request)
+
+	data, status, err := c.PostRequest(fmt.Sprintf("/channels/%d/templates", channelID), bytes.NewBuffer(outgoing))
+	if err != nil {
+		return status, err
+	}
+
+	if status > http.StatusCreated || status < http.StatusOK {
+		return status, c.Error(data)
+	}
+
+	return status, err
+}
+
+// UpdateTemplate implements template updating
+// Example:
+// 		var client = New("https://token.url", "cb8ccf05e38a47543ad8477d4999be73bff503ea6")
+//
+// 		request := v1.Template{
+// 			Code:      "templateCode",
+// 			ChannelID: 1,
+// 			Name:      "templateName",
+// 			Template:  []v1.TemplateItem{
+// 				{
+// 					Type: v1.TemplateItemTypeText,
+// 					Text: "Welcome, ",
+// 				},
+// 				{
+// 					Type: v1.TemplateItemTypeVar,
+// 					VarType: v1.TemplateVarName,
+// 				},
+// 				{
+// 					Type: v1.TemplateItemTypeText,
+// 					Text: "!",
+// 				},
+// 			},
+// 		}
+//
+// 		_, err := client.UpdateTemplate(request)
+//
+// 		if err != nil {
+// 			fmt.Printf("%#v", err)
+// 		}
+func (c *MgClient) UpdateTemplate(request Template) (int, error) {
+	outgoing, _ := json.Marshal(&request)
+
+	data, status, err := c.PutRequest(fmt.Sprintf("/channels/%d/templates/%s", request.ChannelID, request.Code), outgoing)
+	if err != nil {
+		return status, err
+	}
+
+	if status != http.StatusOK {
+		return status, c.Error(data)
+	}
+
+	return status, err
+}
+
+// DeactivateTemplate implements template deactivation
+//
+// Example:
+//
+// 	var client = v1.New("https://token.url", "cb8ccf05e38a47543ad8477d4999be73bff503ea6")
+//
+// 	_, err := client.DeactivateTemplate(3053450384, "templateCode")
+//
+// 	if err != nil {
+// 		fmt.Printf("%v", err)
+// 	}
+func (c *MgClient) DeactivateTemplate(channelID uint64, templateCode string) (int, error) {
+	data, status, err := c.DeleteRequest(
+		fmt.Sprintf("/channels/%d/templates/%s", channelID, templateCode), []byte{})
+	if err != nil {
+		return status, err
+	}
+
+	if status > http.StatusCreated || status < http.StatusOK {
+		return status, c.Error(data)
+	}
+
+	return status, err
+}
+
 // TransportChannels returns channels list
 //
 // Example:
 //
 // 	var client = v1.New("https://token.url", "cb8ccf05e38a47543ad8477d4999be73bff503ea6")
 //
-// 	data, status, err := client.TransportChannels{Channels{Active: true}}
+// 	data, status, err := client.TransportChannels(Channels{Active: true})
 //
 // 	if err != nil {
 // 		fmt.Printf("%v", err)
