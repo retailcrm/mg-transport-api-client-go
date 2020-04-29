@@ -340,12 +340,14 @@ type MessageDataBot struct {
 
 // MessageDataProduct product data from webhook
 type MessageDataProduct struct {
-	ID       uint64                    `json:"id"`
-	Name     string                    `json:"name"`
-	Article  string                    `json:"article,omitempty"`
-	Url      string                    `json:"url,omitempty"`
-	Img      string                    `json:"img,omitempty"`
-	Cost     *MessageDataOrderCost     `json:"cost,omitempty"`
+	ID      uint64                `json:"id"`
+	Name    string                `json:"name"`
+	Article string                `json:"article,omitempty"`
+	Url     string                `json:"url,omitempty"`
+	Img     string                `json:"img,omitempty"`
+	Cost    *MessageDataOrderCost `json:"cost,omitempty"`
+	Unit    string                `json:"unit,omitempty"`
+	// Deprecated: now you need to use Unit instead of this field
 	Quantity *MessageDataOrderQuantity `json:"quantity,omitempty"`
 }
 
