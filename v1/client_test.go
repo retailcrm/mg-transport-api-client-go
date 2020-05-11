@@ -329,6 +329,32 @@ func TestMgClient_UpdateTemplate(t *testing.T) {
 	}
 }
 
+func TestMgClient_UpdateTemplateFail(t *testing.T) {
+	c := client()
+	tpl := Template{
+		Name:    "updated name",
+		Enabled: true,
+		Type:    TemplateTypeText,
+		Template: []TemplateItem{
+			{
+				Type: TemplateItemTypeText,
+				Text: "Welcome ",
+			},
+			{
+				Type:    TemplateItemTypeVar,
+				VarType: TemplateVarFirstName,
+			},
+			{
+				Type: TemplateItemTypeText,
+				Text: "!",
+			},
+		},
+	}
+
+	status, err := c.UpdateTemplate(tpl)
+	assert.Error(t, err, fmt.Sprintf("%d %s", status, err))
+}
+
 func TestMgClient_DeactivateTemplate(t *testing.T) {
 	c := client()
 	status, err := c.DeactivateTemplate(templateChannel(t), tplCode)
