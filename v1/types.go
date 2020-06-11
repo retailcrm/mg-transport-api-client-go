@@ -314,8 +314,12 @@ type WebhookData struct {
 	Product           *MessageDataProduct `json:"product,omitempty"`
 	Order             *MessageDataOrder   `json:"order,omitempty"`
 	Items             *[]FileItem         `json:"items,omitempty"`
-	TemplateCode      string              `json:"template_code,omitempty"`
-	TemplateArgs      []string            `json:"template_args,omitempty"`
+	Template          *TemplateInfo       `json:"template,omitempty"`
+}
+
+type TemplateInfo struct {
+	Code string   `json:"code,omitempty"`
+	Args []string `json:"args,omitempty"`
 }
 
 // FileItem struct
