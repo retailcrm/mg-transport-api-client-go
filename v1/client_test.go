@@ -72,6 +72,10 @@ func templateChannel(t *testing.T) uint64 {
 					Quoting:  ChannelFeatureBoth,
 					Deleting: ChannelFeatureBoth,
 				},
+				CustomerExternalID: ChannelFeatureCustomerExternalIDPhone,
+				SendingPolicy: SendingPolicy{
+					NewCustomer: ChannelFeatureSendingPolicyTemplate,
+				},
 			},
 		})
 

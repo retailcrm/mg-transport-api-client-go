@@ -16,6 +16,14 @@ const (
 	ChannelFeatureSend string = "send"
 	// ChannelFeatureBoth channel implement feature on both directions
 	ChannelFeatureBoth string = "both"
+	// ChannelFeatureAny channel implement feature on any
+	ChannelFeatureAny string = "any"
+	// ChannelFeatureSendingPolicyNo channel can not implement feature
+	ChannelFeatureSendingPolicyNo string = "no"
+	// ChannelFeatureSendingPolicyTemplate channel can implement template
+	ChannelFeatureSendingPolicyTemplate string = "template"
+	// ChannelFeatureCustomerExternalIDPhone customer externalId is phone
+	ChannelFeatureCustomerExternalIDPhone string = "phone"
 
 	// MsgTypeText text message
 	MsgTypeText string = "text"
@@ -77,13 +85,15 @@ type Channel struct {
 
 // ChannelSettings struct
 type ChannelSettings struct {
-	SpamAllowed bool                     `json:"spam_allowed"`
-	Status      Status                   `json:"status"`
-	Text        ChannelSettingsText      `json:"text"`
-	Product     Product                  `json:"product"`
-	Order       Order                    `json:"order"`
-	File        ChannelSettingsFilesBase `json:"file"`
-	Image       ChannelSettingsFilesBase `json:"image"`
+	SpamAllowed        bool                     `json:"spam_allowed"`
+	Status             Status                   `json:"status"`
+	Text               ChannelSettingsText      `json:"text"`
+	Product            Product                  `json:"product"`
+	Order              Order                    `json:"order"`
+	File               ChannelSettingsFilesBase `json:"file"`
+	Image              ChannelSettingsFilesBase `json:"image"`
+	CustomerExternalID string                   `json:"customer_external_id,omitempty"`
+	SendingPolicy      SendingPolicy            `json:"sending_policy,omitempty"`
 }
 
 // Product type
@@ -124,6 +134,11 @@ type ChannelSettingsFilesBase struct {
 	Max                  uint64 `json:"max_items_count,omitempty"`
 	CommentAttribute     string `json:"comment_attribute,omitempty"`
 	CommentMaxCharsCount int    `json:"comment_max_chars_count,omitempty"`
+}
+
+type SendingPolicy struct {
+	NewCustomer       string `json:"new_customer,omitempty"`
+	AfterReplyTimeout string `json:"after_reply_timeout,omitempty"`
 }
 
 // FullFileResponse uploaded file data
