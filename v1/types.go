@@ -268,6 +268,7 @@ type SendData struct {
 	Channel        uint64                   `json:"channel"`
 	ExternalChatID string                   `json:"external_chat_id"`
 	Quote          *SendMessageRequestQuote `json:"quote,omitempty"`
+	ReplyDeadline  *time.Time               `json:"reply_deadline,omitempty"`
 }
 
 // Item struct
