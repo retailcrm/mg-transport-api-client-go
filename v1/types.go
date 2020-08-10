@@ -355,7 +355,7 @@ type SuggestionType string
 
 type Suggestion struct {
 	Type  SuggestionType `json:"type"`
-	Title string         `json:"title,omitempty"` // for text type required, for email and phone types always empty
+	Title string         `json:"title,omitempty"` // required for type=text and ignored for others
 }
 
 type TemplateInfo struct {
