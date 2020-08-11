@@ -85,15 +85,16 @@ type Channel struct {
 
 // ChannelSettings struct
 type ChannelSettings struct {
-	SpamAllowed        bool                     `json:"spam_allowed"`
-	Status             Status                   `json:"status"`
-	Text               ChannelSettingsText      `json:"text"`
-	Product            Product                  `json:"product"`
-	Order              Order                    `json:"order"`
-	File               ChannelSettingsFilesBase `json:"file"`
-	Image              ChannelSettingsFilesBase `json:"image"`
-	CustomerExternalID string                   `json:"customer_external_id,omitempty"`
-	SendingPolicy      SendingPolicy            `json:"sending_policy,omitempty"`
+	SpamAllowed        bool                       `json:"spam_allowed"`
+	Status             Status                     `json:"status"`
+	Text               ChannelSettingsText        `json:"text"`
+	Product            Product                    `json:"product"`
+	Order              Order                      `json:"order"`
+	File               ChannelSettingsFilesBase   `json:"file"`
+	Image              ChannelSettingsFilesBase   `json:"image"`
+	CustomerExternalID string                     `json:"customer_external_id,omitempty"`
+	SendingPolicy      SendingPolicy              `json:"sending_policy,omitempty"`
+	Suggestions        ChannelSettingsSuggestions `json:"suggestions,omitempty"`
 }
 
 // Product type
@@ -139,6 +140,12 @@ type ChannelSettingsFilesBase struct {
 type SendingPolicy struct {
 	NewCustomer       string `json:"new_customer,omitempty"`
 	AfterReplyTimeout string `json:"after_reply_timeout,omitempty"`
+}
+
+type ChannelSettingsSuggestions struct {
+	Text  string `json:"text,omitempty"`
+	Phone string `json:"phone,omitempty"`
+	Email string `json:"email,omitempty"`
 }
 
 // FullFileResponse uploaded file data
@@ -331,6 +338,24 @@ type WebhookData struct {
 	Order             *MessageDataOrder   `json:"order,omitempty"`
 	Items             *[]FileItem         `json:"items,omitempty"`
 	Template          *TemplateInfo       `json:"template,omitempty"`
+	Attachments       *Attachments        `json:"attachments,omitempty"`
+}
+
+type Attachments struct {
+	Suggestions []Suggestion `json:"suggestions,omitempty"`
+}
+
+const (
+	SuggestionTypeText  SuggestionType = "text"
+	SuggestionTypeEmail SuggestionType = "email"
+	SuggestionTypePhone SuggestionType = "phone"
+)
+
+type SuggestionType string
+
+type Suggestion struct {
+	Type  SuggestionType `json:"type"`
+	Title string         `json:"title,omitempty"` // required for type=text and ignored for others
 }
 
 type TemplateInfo struct {
