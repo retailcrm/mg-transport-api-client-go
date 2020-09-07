@@ -617,6 +617,27 @@ func (c *MgClient) UploadFileByURL(request UploadFileByUrlRequest) (UploadFileRe
 	return resp, status, err
 }
 
+func (c *MgClient) UpdateCustomerStatus(request UpdateCustomerStatus) (UpdateResponse, int, error) {
+	var resp UpdateResponse
+	outgoing, _ := json.Marshal(&request)
+	reader := bytes.NewBuffer(outgoing)
+
+	data, status, err := c.PostRequest("/customers/online", reader)
+	if err != nil {
+		return resp, status, err
+	}
+
+	if e := json.Unmarshal(data, &resp); e != nil {
+		return resp, status, e
+	}
+
+	if status != http.StatusOK {
+		return resp, status, c.Error(data)
+	}
+
+	return resp, status, err
+}
+
 func (c *MgClient) Error(info []byte) error {
 	var data map[string]interface{}
 

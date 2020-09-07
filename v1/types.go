@@ -459,6 +459,14 @@ type MessageDataOrderDelivery struct {
 	Comment string                `json:"comment,omitempty"`
 }
 
+// UpdateCustomerStatus struct
+type UpdateCustomerStatus struct {
+	CustomerID string     `json:"customer_id"`
+	Channel    uint64     `json:"channel"`
+	Online     bool       `json:"online"`
+	LastSeenAt *time.Time `json:"last_seen_at"`
+}
+
 // TransportRequestMeta request metadata
 type TransportRequestMeta struct {
 	ID        uint64 `json:"id"`
