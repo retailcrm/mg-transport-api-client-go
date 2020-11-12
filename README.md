@@ -4,7 +4,7 @@
 [![Godoc reference](https://img.shields.io/badge/godoc-reference-blue.svg?style=flat-square)](https://godoc.org/github.com/retailcrm/mg-transport-api-client-go)
 
 
-# retailCRM Message Gateway Transport API Go client
+# Message Gateway Transport API Go client
 
 ## Install
 
