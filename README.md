@@ -1,8 +1,8 @@
 [![Build Status](https://github.com/retailcrm/mg-transport-api-client-go/workflows/ci/badge.svg)](https://github.com/retailcrm/mg-transport-api-client-go/actions)
 [![Coverage](https://img.shields.io/codecov/c/gh/retailcrm/mg-transport-api-client-go/master.svg?logo=codecov)](https://codecov.io/gh/retailcrm/mg-transport-api-client-go)
-[![GitHub release](https://img.shields.io/github/release/retailcrm/mg-transport-api-client-go.svg?style=flat-square)](https://github.com/retailcrm/mg-transport-api-client-go/releases)
-[![GoLang version](https://img.shields.io/badge/go-1.11%2C%201.12%2C%201.13%2C%201.14%2C%201.15-blue.svg?style=flat-square)](https://golang.org/dl/)
-[![Godoc reference](https://img.shields.io/badge/godoc-reference-blue.svg?style=flat-square)](https://godoc.org/github.com/retailcrm/mg-transport-api-client-go)
+[![GitHub release](https://img.shields.io/github/release/retailcrm/mg-transport-api-client-go.svg)](https://github.com/retailcrm/mg-transport-api-client-go/releases)
+[![GoLang version](https://img.shields.io/badge/go->=1.11-blue.svg)](https://golang.org/dl/)
+[![Godoc reference](https://img.shields.io/badge/godoc-reference-blue.svg)](https://godoc.org/github.com/retailcrm/mg-transport-api-client-go)
 
 
 # Message Gateway Transport API Go client
