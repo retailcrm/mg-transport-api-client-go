@@ -10,6 +10,9 @@ on:
 
 env:
   GO111MODULE: on
+  MG_URL: ${{ secrets.MG_URL }}
+  MG_TOKEN: ${{ secrets.MG_TOKEN }}
+  MG_CHANNEL: ${{ secrets.MG_CHANNEL }}
 
 jobs:
   tests:
