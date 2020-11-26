@@ -19,6 +19,7 @@ jobs:
     name: Tests
     runs-on: ubuntu-latest
     strategy:
+      max-parallel: 1
       matrix:
         go-version: ['1.11', '1.12', '1.13', '1.14', '1.15']
     steps:
