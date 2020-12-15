@@ -499,6 +499,43 @@ func (c *MgClient) MarkMessageRead(request MarkMessageReadRequest) (MarkMessageR
 	return resp, status, err
 }
 
+// AckMessage
+//
+// Example:
+//
+// 	var client = v1.New("https://token.url", "cb8ccf05e38a47543ad8477d4999be73bff503ea6")
+//	msg := AckMessageRequest{
+//		"274628",
+//		10,
+//	}
+//
+// 	data, status, err := client.AckMessage(msg)
+//
+// 	if err != nil {
+// 		fmt.Printf("%v", err)
+// 	}
+//
+//	fmt.Printf("%v %v\n", status, data)
+func (c *MgClient) AckMessage(request AckMessageRequest) (AckMessageResponse, int, error) {
+	var resp AckMessageResponse
+	outgoing, _ := json.Marshal(&request)
+
+	data, status, err := c.PostRequest("/messages/ack", bytes.NewBuffer(outgoing))
+	if err != nil {
+		return resp, status, err
+	}
+
+	if e := json.Unmarshal(data, &resp); e != nil {
+		return resp, status, e
+	}
+
+	if status != http.StatusOK {
+		return resp, status, c.Error(data)
+	}
+
+	return resp, status, err
+}
+
 // DeleteMessage implement delete message
 //
 // Example:
