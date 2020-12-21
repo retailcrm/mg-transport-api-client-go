@@ -303,13 +303,10 @@ type MarkMessageReadRequestMessage struct {
 	ExternalID string `json:"external_id"`
 }
 
-// AckMessageResponse type
-type AckMessageResponse struct{}
-
 // AckMessageRequest type
 type AckMessageRequest struct {
-	MessageExternalID string `json:"external_message_id"`
-	ChannelID         uint64 `json:"channel"`
+	ExternalMessageID string `json:"external_message_id"`
+	Channel           uint64 `json:"channel"`
 }
 
 // DeleteData struct

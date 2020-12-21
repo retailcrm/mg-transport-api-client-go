@@ -499,41 +499,35 @@ func (c *MgClient) MarkMessageRead(request MarkMessageReadRequest) (MarkMessageR
 	return resp, status, err
 }
 
-// AckMessage
+// AckMessage implements ack of message
 //
 // Example:
 //
-// 	var client = v1.New("https://token.url", "cb8ccf05e38a47543ad8477d4999be73bff503ea6")
-//	msg := AckMessageRequest{
-//		"274628",
-//		10,
+//	var client = v1.New("https://token.url", "cb8ccf05e38a47543ad8477d4999be73bff503ea6")
+//
+//	request := AckMessageRequest{
+//		ExternalMessageID: "274628",
+//		Channel: 10,
 //	}
 //
-// 	data, status, err := client.AckMessage(msg)
+//	status, err := client.AckMessage(request)
 //
-// 	if err != nil {
-// 		fmt.Printf("%v", err)
-// 	}
-//
-//	fmt.Printf("%v %v\n", status, data)
-func (c *MgClient) AckMessage(request AckMessageRequest) (AckMessageResponse, int, error) {
-	var resp AckMessageResponse
+//	if err != nil {
+//		fmt.Printf("%v", err)
+//	}
+func (c *MgClient) AckMessage(request AckMessageRequest) (int, error) {
 	outgoing, _ := json.Marshal(&request)
 
 	data, status, err := c.PostRequest("/messages/ack", bytes.NewBuffer(outgoing))
 	if err != nil {
-		return resp, status, err
-	}
-
-	if e := json.Unmarshal(data, &resp); e != nil {
-		return resp, status, e
+		return status, err
 	}
 
 	if status != http.StatusOK {
-		return resp, status, c.Error(data)
+		return status, c.Error(data)
 	}
 
-	return resp, status, err
+	return status, err
 }
 
 // DeleteMessage implement delete message
