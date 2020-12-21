@@ -68,10 +68,10 @@ const (
 type ErrorType string
 const (
 	GeneralError ErrorType = "general"
-	CustomerNotExistsError ErrorType = "customer_not_exists"
-	ReplyTimedOutError ErrorType = "reply_timed_out"
-	SpamSuspicionError ErrorType = "spam_suspicion"
-	AccessRestrictedError ErrorType = "access_restricted"
+	CustomerNotExistsError = "customer_not_exists"
+	ReplyTimedOutError = "reply_timed_out"
+	SpamSuspicionError = "spam_suspicion"
+	AccessRestrictedError = "access_restricted"
 )
 
 // MgClient type
@@ -314,8 +314,9 @@ type MarkMessageReadRequestMessage struct {
 
 // AckMessageRequest type
 type AckMessageRequest struct {
-	ExternalMessageID string `json:"external_message_id"`
-	Channel           uint64 `json:"channel"`
+	ExternalMessageID string           `json:"external_message_id"`
+	Channel           uint64           `json:"channel"`
+	Error             MessageSentError `json:"error"`
 }
 
 // DeleteData struct
@@ -340,13 +341,13 @@ type WebhookRequest struct {
 // WebhookMessageSentResponse type
 // Consider using this structure while processing webhook request
 type WebhookMessageSentResponse struct {
-	ExternalMessageID string               `json:"external_message_id"`
-	Error             WebhookResponseError `json:"error"`
-	Async             bool                 `json:"async"`
+	ExternalMessageID string           `json:"external_message_id"`
+	Error             MessageSentError `json:"error"`
+	Async             bool             `json:"async"`
 }
 
-// WebhookResponseError type
-type WebhookResponseError struct {
+// MessageSentError type
+type MessageSentError struct {
 	Code    ErrorType `json:"code"`
 	Message string    `json:"message"`
 }
