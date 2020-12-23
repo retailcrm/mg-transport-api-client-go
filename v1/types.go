@@ -65,6 +65,15 @@ const (
 	OriginatorChannel
 )
 
+type ErrorType string
+const (
+	GeneralError ErrorType = "general"
+	CustomerNotExistsError = "customer_not_exists"
+	ReplyTimedOutError = "reply_timed_out"
+	SpamSuspicionError = "spam_suspicion"
+	AccessRestrictedError = "access_restricted"
+)
+
 // MgClient type
 type MgClient struct {
 	URL        string       `json:"url"`
@@ -303,6 +312,13 @@ type MarkMessageReadRequestMessage struct {
 	ExternalID string `json:"external_id"`
 }
 
+// AckMessageRequest type
+type AckMessageRequest struct {
+	ExternalMessageID string            `json:"external_message_id"`
+	Channel           uint64            `json:"channel"`
+	Error             *MessageSentError `json:"error,omitempty"`
+}
+
 // DeleteData struct
 type DeleteData struct {
 	Message Message `json:"message"`
@@ -320,6 +336,20 @@ type WebhookRequest struct {
 	Type string               `json:"type"`
 	Meta TransportRequestMeta `json:"meta"`
 	Data WebhookData          `json:"data"`
+}
+
+// WebhookMessageSentResponse type
+// Consider using this structure while processing webhook request
+type WebhookMessageSentResponse struct {
+	ExternalMessageID string            `json:"external_message_id"`
+	Error             *MessageSentError `json:"error,omitempty"`
+	Async             bool              `json:"async"`
+}
+
+// MessageSentError type
+type MessageSentError struct {
+	Code    ErrorType `json:"code"`
+	Message string    `json:"message"`
 }
 
 // WebhookData request data
