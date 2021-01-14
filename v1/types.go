@@ -2,6 +2,7 @@ package v1
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 	"time"
 )
@@ -517,4 +518,44 @@ func (o Originator) MarshalText() ([]byte, error) {
 	}
 
 	return nil, ErrInvalidOriginator
+}
+
+type TransportErrorCode string
+
+const (
+	MessageErrorGeneral           TransportErrorCode = "general"
+	MessageErrorCustomerNotExists TransportErrorCode = "customer_not_exists"
+	MessageErrorReplyTimedOut     TransportErrorCode = "reply_timed_out"
+	MessageErrorSpamSuspicion     TransportErrorCode = "spam_suspicion"
+	MessageErrorAccessRestricted  TransportErrorCode = "access_restricted"
+)
+
+type TransportResponse struct {
+	ExternalMessageID string          `json:"external_message_id,omitempty"`
+	Error             *TransportError `json:"error,omitempty"`
+}
+
+type TransportError struct {
+	Code    TransportErrorCode `json:"code"`
+	Message string             `json:"message,omitempty"`
+}
+
+func (t TransportErrorCode) MarshalJSON() ([]byte, error) {
+	if t == "" {
+		return []byte(fmt.Sprintf(`"%s"`, MessageErrorGeneral)), nil
+	}
+	return []byte(fmt.Sprintf(`"%s"`, t)), nil
+}
+
+func NewSentMessageResponse(externalMessageID string) TransportResponse {
+	return TransportResponse{ExternalMessageID: externalMessageID}
+}
+
+func NewTransportErrorResponse(code TransportErrorCode,  message string) TransportResponse {
+	return TransportResponse{
+		Error: &TransportError{
+			Code:    code,
+			Message: message,
+		},
+	}
 }
