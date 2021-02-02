@@ -36,7 +36,6 @@ func templateChannel(t *testing.T) uint64 {
 			Type: "telegram",
 			Name: "@test_channel_templates",
 			Settings: ChannelSettings{
-				SpamAllowed: false,
 				Status: Status{
 					Delivered: ChannelFeatureBoth,
 					Read:      ChannelFeatureBoth,
@@ -108,7 +107,6 @@ func TestMgClient_ActivateTransportChannel(t *testing.T) {
 		Type: "telegram",
 		Name: "@my_shopping_bot",
 		Settings: ChannelSettings{
-			SpamAllowed: false,
 			Status: Status{
 				Delivered: ChannelFeatureNone,
 				Read:      ChannelFeatureReceive,
@@ -152,7 +150,6 @@ func TestMgClient_ActivateNewTransportChannel(t *testing.T) {
 		Type: "telegram",
 		Name: "@my_shopping_bot",
 		Settings: ChannelSettings{
-			SpamAllowed: false,
 			Status: Status{
 				Delivered: ChannelFeatureNone,
 				Read:      ChannelFeatureBoth,
@@ -207,7 +204,6 @@ func TestMgClient_UpdateTransportChannel(t *testing.T) {
 		ID:   channelID,
 		Name: "@my_shopping_bot_2",
 		Settings: ChannelSettings{
-			SpamAllowed: false,
 			Status: Status{
 				Delivered: ChannelFeatureNone,
 				Read:      ChannelFeatureBoth,
