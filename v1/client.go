@@ -221,7 +221,6 @@ func (c *MgClient) TransportChannels(request Channels) ([]ChannelListItem, int, 
 //		Type: "telegram",
 //		Name: "@my_shopping_bot",
 //		Settings: ChannelSettings{
-//			SpamAllowed: false,
 //			Status: Status{
 //				Delivered: ChannelFeatureNone,
 //				Read: ChannelFeatureReceive,
@@ -282,7 +281,6 @@ func (c *MgClient) ActivateTransportChannel(request Channel) (ActivateResponse, 
 //		Type: "telegram",
 //		Name: "@my_shopping_bot",
 //		Settings: ChannelSettings{
-//			SpamAllowed: false,
 //			Status: Status{
 //				Delivered: ChannelFeatureNone,
 //				Read: ChannelFeatureReceive,

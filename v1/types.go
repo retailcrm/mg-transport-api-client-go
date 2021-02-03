@@ -67,12 +67,13 @@ const (
 )
 
 type ErrorType string
+
 const (
-	GeneralError ErrorType = "general"
-	CustomerNotExistsError = "customer_not_exists"
-	ReplyTimedOutError = "reply_timed_out"
-	SpamSuspicionError = "spam_suspicion"
-	AccessRestrictedError = "access_restricted"
+	GeneralError           ErrorType = "general"
+	CustomerNotExistsError           = "customer_not_exists"
+	ReplyTimedOutError               = "reply_timed_out"
+	SpamSuspicionError               = "spam_suspicion"
+	AccessRestrictedError            = "access_restricted"
 )
 
 // MgClient type
@@ -95,7 +96,6 @@ type Channel struct {
 
 // ChannelSettings struct
 type ChannelSettings struct {
-	SpamAllowed        bool                       `json:"spam_allowed"`
 	Status             Status                     `json:"status"`
 	Text               ChannelSettingsText        `json:"text"`
 	Product            Product                    `json:"product"`
@@ -551,7 +551,7 @@ func NewSentMessageResponse(externalMessageID string) TransportResponse {
 	return TransportResponse{ExternalMessageID: externalMessageID}
 }
 
-func NewTransportErrorResponse(code TransportErrorCode,  message string) TransportResponse {
+func NewTransportErrorResponse(code TransportErrorCode, message string) TransportResponse {
 	return TransportResponse{
 		Error: &TransportError{
 			Code:    code,
