@@ -541,15 +541,15 @@ func (c *MgClient) AckMessage(request AckMessageRequest) (int, error) {
 //		10,
 //	}
 //
-// 	data, status, err := client.DeleteMessage(msg)
-//
+// 	previousChatMessage, status, err := client.DeleteMessage(msg)
 // 	if err != nil {
 // 		fmt.Printf("%v", err)
 // 	}
 //
-//	fmt.Printf("%s\n", data.MessageID)
-func (c *MgClient) DeleteMessage(request DeleteData) (MessagesResponse, int, error) {
-	var resp MessagesResponse
+//  if previousChatMessage != nil {
+//  	fmt.Printf("Previous chat message id = %d", previousChatMessage.MessageID)
+//  }
+func (c *MgClient) DeleteMessage(request DeleteData) (*MessagesResponse, int, error) {
 	outgoing, _ := json.Marshal(&request)
 
 	data, status, err := c.DeleteRequest(
@@ -557,18 +557,18 @@ func (c *MgClient) DeleteMessage(request DeleteData) (MessagesResponse, int, err
 		[]byte(outgoing),
 	)
 	if err != nil {
-		return resp, status, err
+		return nil, status, err
 	}
-
-	if e := json.Unmarshal(data, &resp); e != nil {
-		return resp, status, e
-	}
-
 	if status != http.StatusOK {
-		return resp, status, c.Error(data)
+		return nil, status, c.Error(data)
 	}
 
-	return resp, status, err
+	var previousChatMessage *MessagesResponse
+	if e := json.Unmarshal(data, &previousChatMessage); e != nil {
+		return nil, status, e
+	}
+
+	return previousChatMessage, status, nil
 }
 
 // GetFile implement get file url
