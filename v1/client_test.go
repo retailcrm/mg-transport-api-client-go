@@ -490,13 +490,16 @@ func TestMgClient_MarkMessageReadAndDelete(t *testing.T) {
 		channelID,
 	}
 
-	data, status, err := c.DeleteMessage(sndD)
+	previousChatMessage, status, err := c.DeleteMessage(sndD)
 
 	if status != http.StatusOK {
 		t.Errorf("%v", err)
 	}
 
-	t.Logf("Message %v deleted", data.MessageID)
+	t.Logf("Message %v deleted", ext)
+	if previousChatMessage != nil {
+		t.Logf("Previous chat message %+v", *previousChatMessage)
+	}
 
 	sndD = DeleteData{
 		Message{
@@ -505,13 +508,16 @@ func TestMgClient_MarkMessageReadAndDelete(t *testing.T) {
 		channelID,
 	}
 
-	data, status, err = c.DeleteMessage(sndD)
+	previousChatMessage, status, err = c.DeleteMessage(sndD)
 
 	if status != http.StatusOK {
 		t.Errorf("%v", err)
 	}
 
-	t.Logf("Message %v deleted", data.MessageID)
+	t.Logf("Message %v deleted", ext+"file")
+	if previousChatMessage != nil {
+		t.Logf("Previous chat message %+v", *previousChatMessage)
+	}
 }
 
 func TestMgClient_DeactivateTransportChannel(t *testing.T) {
