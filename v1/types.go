@@ -82,6 +82,7 @@ type MgClient struct {
 	Token      string       `json:"token"`
 	Debug      bool         `json:"debug"`
 	httpClient *http.Client `json:"-"`
+	logger     BasicLogger  `json:"-"`
 }
 
 // Channel type.

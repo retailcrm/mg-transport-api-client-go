@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"strings"
 )
@@ -64,9 +63,9 @@ func makeRequest(reqType, url string, buf io.Reader, c *MgClient) ([]byte, int, 
 
 	if c.Debug {
 		if strings.Contains(url, "/files/upload") {
-			log.Printf("MG TRANSPORT API Request: %s %s %s [file data]", reqType, url, c.Token)
+			c.writeLog("MG TRANSPORT API Request: %s %s %s [file data]", reqType, url, c.Token)
 		} else {
-			log.Printf("MG TRANSPORT API Request: %s %s %s %v", reqType, url, c.Token, buf)
+			c.writeLog("MG TRANSPORT API Request: %s %s %s %v", reqType, url, c.Token, buf)
 		}
 	}
 
@@ -86,7 +85,7 @@ func makeRequest(reqType, url string, buf io.Reader, c *MgClient) ([]byte, int, 
 	}
 
 	if c.Debug {
-		log.Printf("MG TRANSPORT API Response: %s", res)
+		c.writeLog("MG TRANSPORT API Response: %s", res)
 	}
 
 	return res, resp.StatusCode, err
