@@ -29,7 +29,7 @@ func NewWithClient(url string, token string, client *http.Client) *MgClient {
 	}
 }
 
-// WithLogger sets the provided logger instance into the Client.
+// WithLogger sets the provided logger instance into the Client
 func (c *MgClient) WithLogger(logger BasicLogger) *MgClient {
 	c.logger = logger
 	return c
