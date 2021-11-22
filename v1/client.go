@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -26,6 +27,22 @@ func NewWithClient(url string, token string, client *http.Client) *MgClient {
 		Token:      token,
 		httpClient: client,
 	}
+}
+
+// WithLogger sets the provided logger instance into the Client
+func (c *MgClient) WithLogger(logger BasicLogger) *MgClient {
+	c.logger = logger
+	return c
+}
+
+// writeLog writes to the log.
+func (c *MgClient) writeLog(format string, v ...interface{}) {
+	if c.logger != nil {
+		c.logger.Printf(format, v...)
+		return
+	}
+
+	log.Printf(format, v...)
 }
 
 // TransportTemplates returns templates list
