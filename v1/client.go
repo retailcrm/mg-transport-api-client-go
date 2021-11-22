@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"strconv"
 	"time"
 
@@ -59,7 +60,7 @@ func (c *MgClient) TransportTemplates() ([]Template, int, error) {
 	return resp, status, err
 }
 
-// ActivateTransportChannel implements template activation
+// ActivateTemplate implements template activation
 //
 // Example:
 // 		var client = v1.New("https://token.url", "cb8ccf05e38a47543ad8477d4999be73bff503ea6")
@@ -140,7 +141,8 @@ func (c *MgClient) UpdateTemplate(request Template) (int, error) {
 		return 0, errors.New("`ChannelID` and `Code` cannot be blank")
 	}
 
-	data, status, err := c.PutRequest(fmt.Sprintf("/channels/%d/templates/%s", request.ChannelID, request.Code), outgoing)
+	data, status, err := c.PutRequest(
+		fmt.Sprintf("/channels/%d/templates/%s", request.ChannelID, url.PathEscape(request.Code)), outgoing)
 	if err != nil {
 		return status, err
 	}
@@ -165,7 +167,7 @@ func (c *MgClient) UpdateTemplate(request Template) (int, error) {
 // 	}
 func (c *MgClient) DeactivateTemplate(channelID uint64, templateCode string) (int, error) {
 	data, status, err := c.DeleteRequest(
-		fmt.Sprintf("/channels/%d/templates/%s", channelID, templateCode), []byte{})
+		fmt.Sprintf("/channels/%d/templates/%s", channelID, url.PathEscape(templateCode)), []byte{})
 	if err != nil {
 		return status, err
 	}
@@ -442,7 +444,7 @@ func (c *MgClient) UpdateMessages(request EditMessageRequest) (MessagesResponse,
 	var resp MessagesResponse
 	outgoing, _ := json.Marshal(&request)
 
-	data, status, err := c.PutRequest("/messages", []byte(outgoing))
+	data, status, err := c.PutRequest("/messages", outgoing)
 	if err != nil {
 		return resp, status, err
 	}
@@ -554,7 +556,7 @@ func (c *MgClient) DeleteMessage(request DeleteData) (*MessagesResponse, int, er
 
 	data, status, err := c.DeleteRequest(
 		"/messages",
-		[]byte(outgoing),
+		outgoing,
 	)
 	if err != nil {
 		return nil, status, err
