@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/base64"
 	"fmt"
-	"io"
 	"net/http"
 	"strings"
 	"testing"
@@ -362,48 +361,6 @@ func (t *MGClientTest) Test_ActivateTemplate() {
 	status, err := c.ActivateTemplate(1, req)
 	t.Assert().NoError(err, fmt.Sprintf("%d %s", status, err))
 	t.Assert().Equal(http.StatusCreated, status)
-}
-
-func printRequest(t *testing.T, r *http.Request) {
-	t.Logf("%s %s %s\n", r.Proto, r.Method, r.URL.String())
-	t.Logf(" > RemoteAddr: %s\n", r.RemoteAddr)
-	t.Logf(" > Host: %s\n", r.Host)
-	t.Logf(" > Length: %d\n", r.ContentLength)
-
-	for _, encoding := range r.TransferEncoding {
-		t.Logf(" > Transfer-Encoding: %s\n", encoding)
-	}
-
-	for header, values := range r.Header {
-		for _, value := range values {
-			t.Logf("[header] %s: %s\n", header, value)
-		}
-	}
-
-	if r.Body == nil {
-		t.Log("No body is present.")
-	} else {
-		data, err := io.ReadAll(r.Body)
-		if err != nil {
-			t.Logf("Cannot read body: %s\n", err)
-		}
-
-		r.Body = io.NopCloser(bytes.NewReader(data))
-
-		if len(data) == 0 {
-			t.Log("Body is empty.")
-		} else {
-			t.Logf("Body:\n%s\n", string(data))
-		}
-	}
-
-	for header, values := range r.Trailer {
-		for _, value := range values {
-			t.Logf("[trailer header] %s: %s\n", header, value)
-		}
-	}
-
-	t.Log()
 }
 
 func (t *MGClientTest) Test_UpdateTemplate() {

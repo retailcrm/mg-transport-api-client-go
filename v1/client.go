@@ -14,12 +14,12 @@ import (
 	"github.com/google/go-querystring/query"
 )
 
-// New initialize client
+// New initialize client.
 func New(url string, token string) *MgClient {
 	return NewWithClient(url, token, &http.Client{Timeout: time.Minute})
 }
 
-// NewWithClient initializes client with provided http client
+// NewWithClient initializes client with provided http client.
 func NewWithClient(url string, token string, client *http.Client) *MgClient {
 	return &MgClient{
 		URL:        url,
@@ -315,7 +315,7 @@ func (c *MgClient) UpdateTransportChannel(request Channel) (UpdateResponse, int,
 	var resp UpdateResponse
 	outgoing, _ := json.Marshal(&request)
 
-	data, status, err := c.PutRequest(fmt.Sprintf("/channels/%d", request.ID), []byte(outgoing))
+	data, status, err := c.PutRequest(fmt.Sprintf("/channels/%d", request.ID), outgoing)
 	if err != nil {
 		return resp, status, err
 	}
@@ -607,7 +607,7 @@ func (c *MgClient) GetFile(request string) (FullFileResponse, int, error) {
 	return resp, status, err
 }
 
-// UploadFile upload file
+// UploadFile upload file.
 func (c *MgClient) UploadFile(request io.Reader) (UploadFileResponse, int, error) {
 	var resp UploadFileResponse
 
@@ -627,7 +627,7 @@ func (c *MgClient) UploadFile(request io.Reader) (UploadFileResponse, int, error
 	return resp, status, err
 }
 
-// UploadFileByURL upload file by url
+// UploadFileByURL upload file by url.
 func (c *MgClient) UploadFileByURL(request UploadFileByUrlRequest) (UploadFileResponse, int, error) {
 	var resp UploadFileResponse
 	outgoing, _ := json.Marshal(&request)
@@ -660,7 +660,7 @@ func (c *MgClient) Error(info []byte) error {
 	return errors.New(values[0].(string))
 }
 
-// MakeTimestamp returns current unix timestamp
+// MakeTimestamp returns current unix timestamp.
 func MakeTimestamp() int64 {
 	return time.Now().UnixNano() / (int64(time.Millisecond) / int64(time.Nanosecond))
 }

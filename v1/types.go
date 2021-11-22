@@ -7,62 +7,62 @@ import (
 	"time"
 )
 
-//noinspection ALL
+// noinspection ALL.
 const (
-	// ChannelFeatureNone channel can not implement feature
+	// ChannelFeatureNone channel can not implement feature.
 	ChannelFeatureNone string = "none"
-	// ChannelFeatureReceive channel implement feature on receive
+	// ChannelFeatureReceive channel implement feature on receive.
 	ChannelFeatureReceive string = "receive"
-	// ChannelFeatureSend channel implement feature on send
+	// ChannelFeatureSend channel implement feature on send.
 	ChannelFeatureSend string = "send"
-	// ChannelFeatureBoth channel implement feature on both directions
+	// ChannelFeatureBoth channel implement feature on both directions.
 	ChannelFeatureBoth string = "both"
-	// ChannelFeatureAny channel implement feature on any
+	// ChannelFeatureAny channel implement feature on any.
 	ChannelFeatureAny string = "any"
-	// ChannelFeatureSendingPolicyNo channel can not implement feature
+	// ChannelFeatureSendingPolicyNo channel can not implement feature.
 	ChannelFeatureSendingPolicyNo string = "no"
-	// ChannelFeatureSendingPolicyTemplate channel can implement template
+	// ChannelFeatureSendingPolicyTemplate channel can implement template.
 	ChannelFeatureSendingPolicyTemplate string = "template"
-	// ChannelFeatureCustomerExternalIDPhone customer externalId is phone
+	// ChannelFeatureCustomerExternalIDPhone customer externalId is phone.
 	ChannelFeatureCustomerExternalIDPhone string = "phone"
 
-	// MsgTypeText text message
+	// MsgTypeText text message.
 	MsgTypeText string = "text"
-	// MsgTypeSystem system message
+	// MsgTypeSystem system message.
 	MsgTypeSystem string = "system"
-	// MsgTypeCommand command (for bots)
+	// MsgTypeCommand command (for bots).
 	MsgTypeCommand string = "command"
-	// MsgTypeOrder order card
+	// MsgTypeOrder order card.
 	MsgTypeOrder string = "order"
-	// MsgTypeProduct product card
+	// MsgTypeProduct product card.
 	MsgTypeProduct string = "product"
-	// MsgTypeFile file card
+	// MsgTypeFile file card.
 	MsgTypeFile string = "file"
-	// MsgTypeImage image card
+	// MsgTypeImage image card.
 	MsgTypeImage string = "image"
-	// MsgTypeAudio audio
+	// MsgTypeAudio audio.
 	MsgTypeAudio string = "audio"
 
-	// MsgOrderStatusCodeNew order status group new
+	// MsgOrderStatusCodeNew order status group new.
 	MsgOrderStatusCodeNew = "new"
-	// MsgOrderStatusCodeApproval order status group approval
+	// MsgOrderStatusCodeApproval order status group approval.
 	MsgOrderStatusCodeApproval = "approval"
-	// MsgOrderStatusCodeAssembling order status group assembling
+	// MsgOrderStatusCodeAssembling order status group assembling.
 	MsgOrderStatusCodeAssembling = "assembling"
-	// MsgOrderStatusCodeDelivery order status group delivery
+	// MsgOrderStatusCodeDelivery order status group delivery.
 	MsgOrderStatusCodeDelivery = "delivery"
-	// MsgOrderStatusCodeComplete order status group complete
+	// MsgOrderStatusCodeComplete order status group complete.
 	MsgOrderStatusCodeComplete = "complete"
-	// MsgOrderStatusCodeCancel order status group cancel
+	// MsgOrderStatusCodeCancel order status group cancel.
 	MsgOrderStatusCodeCancel = "cancel"
 
 	FileSizeLimit = 20 * 1024 * 1024
 )
 
 const (
-	// OriginatorCustomer means message was created by customer
+	// OriginatorCustomer means message was created by customer.
 	OriginatorCustomer Originator = iota + 1
-	// OriginatorChannel means message was created by channel, for example via messenger mobile application
+	// OriginatorChannel means message was created by channel, for example via messenger mobile application.
 	OriginatorChannel
 )
 
@@ -70,13 +70,13 @@ type ErrorType string
 
 const (
 	GeneralError           ErrorType = "general"
-	CustomerNotExistsError           = "customer_not_exists"
-	ReplyTimedOutError               = "reply_timed_out"
-	SpamSuspicionError               = "spam_suspicion"
-	AccessRestrictedError            = "access_restricted"
+	CustomerNotExistsError ErrorType = "customer_not_exists"
+	ReplyTimedOutError     ErrorType = "reply_timed_out"
+	SpamSuspicionError     ErrorType = "spam_suspicion"
+	AccessRestrictedError  ErrorType = "access_restricted"
 )
 
-// MgClient type
+// MgClient type.
 type MgClient struct {
 	URL        string       `json:"url"`
 	Token      string       `json:"token"`
@@ -84,17 +84,17 @@ type MgClient struct {
 	httpClient *http.Client `json:"-"`
 }
 
-// Channel type
+// Channel type.
 type Channel struct {
 	ID         uint64          `json:"id,omitempty"`
 	ExternalID string          `json:"external_id,omitempty"`
 	Type       string          `json:"type,omitempty"`
 	Name       string          `json:"name,omitempty"`
 	AvatarUrl  string          `json:"avatar_url,omitempty"`
-	Settings   ChannelSettings `json:"settings,omitempty,brackets"`
+	Settings   ChannelSettings `json:"settings,omitempty"`
 }
 
-// ChannelSettings struct
+// ChannelSettings struct.
 type ChannelSettings struct {
 	Status             Status                     `json:"status"`
 	Text               ChannelSettingsText        `json:"text"`
@@ -107,27 +107,27 @@ type ChannelSettings struct {
 	Suggestions        ChannelSettingsSuggestions `json:"suggestions,omitempty"`
 }
 
-// Product type
+// Product type.
 type Product struct {
 	Creating string `json:"creating,omitempty"`
 	Editing  string `json:"editing,omitempty"`
 	Deleting string `json:"deleting,omitempty"`
 }
 
-// Order type
+// Order type.
 type Order struct {
 	Creating string `json:"creating,omitempty"`
 	Editing  string `json:"editing,omitempty"`
 	Deleting string `json:"deleting,omitempty"`
 }
 
-// Status struct
+// Status struct.
 type Status struct {
 	Delivered string `json:"delivered,omitempty"`
 	Read      string `json:"read,omitempty"`
 }
 
-// ChannelSettingsText struct
+// ChannelSettingsText struct.
 type ChannelSettingsText struct {
 	Creating      string `json:"creating,omitempty"`
 	Editing       string `json:"editing,omitempty"`
@@ -136,7 +136,7 @@ type ChannelSettingsText struct {
 	MaxCharsCount uint16 `json:"max_chars_count,omitempty"`
 }
 
-// ChannelSettingsFilesBase struct
+// ChannelSettingsFilesBase struct.
 type ChannelSettingsFilesBase struct {
 	Creating             string `json:"creating,omitempty"`
 	Editing              string `json:"editing,omitempty"`
@@ -158,7 +158,7 @@ type ChannelSettingsSuggestions struct {
 	Email string `json:"email,omitempty"`
 }
 
-// FullFileResponse uploaded file data
+// FullFileResponse uploaded file data.
 type FullFileResponse struct {
 	ID   string `json:"id,omitempty"`
 	Type string `json:"type,omitempty"`
@@ -166,7 +166,7 @@ type FullFileResponse struct {
 	Url  string `json:"url,omitempty"`
 }
 
-// UploadFileResponse uploaded file data
+// UploadFileResponse uploaded file data.
 type UploadFileResponse struct {
 	ID        string    `json:"id"`
 	Hash      string    `json:"hash"`
@@ -178,38 +178,38 @@ type UploadFileResponse struct {
 	CreatedAt time.Time `json:"created_at"`
 }
 
-// FileMeta file metadata
+// FileMeta file metadata.
 type FileMeta struct {
 	Width  *int `json:"width,omitempty"`
 	Height *int `json:"height,omitempty"`
 }
 
-// UploadFileByUrlRequest file url to upload
+// UploadFileByUrlRequest file url to upload.
 type UploadFileByUrlRequest struct {
 	Url string `json:"url"`
 }
 
-// ActivateResponse channel activation response
+// ActivateResponse channel activation response.
 type ActivateResponse struct {
 	ChannelID   uint64    `json:"id"`
 	ExternalID  string    `json:"external_id"`
 	ActivatedAt time.Time `json:"activated_at"`
 }
 
-// UpdateResponse channel update response
+// UpdateResponse channel update response.
 type UpdateResponse struct {
 	ChannelID  uint64    `json:"id"`
 	ExternalID string    `json:"external_id"`
 	UpdatedAt  time.Time `json:"updated_at"`
 }
 
-// DeleteResponse channel deactivation response
+// DeleteResponse channel deactivation response.
 type DeleteResponse struct {
 	ChannelID     uint64    `json:"id"`
 	DeactivatedAt time.Time `json:"deactivated_at"`
 }
 
-// ChannelListItem response struct
+// ChannelListItem response struct.
 type ChannelListItem struct {
 	ID            uint64          `json:"id"`
 	ExternalID    string          `json:"external_id"`
@@ -223,7 +223,7 @@ type ChannelListItem struct {
 	IsActive      bool            `json:"is_active"`
 }
 
-// Channels request type
+// Channels request type.
 type Channels struct {
 	ID          int       `url:"id,omitempty" json:"id,omitempty"`
 	Types       []string  `url:"types,omitempty" json:"types,omitempty"`
@@ -235,7 +235,7 @@ type Channels struct {
 	Limit       int       `url:"limit,omitempty" json:"limit,omitempty"`
 }
 
-// Customer struct
+// Customer struct.
 type Customer struct {
 	ExternalID string `json:"external_id"`
 	Nickname   string `json:"nickname"`
@@ -249,7 +249,7 @@ type Customer struct {
 	Email      string `json:"email,omitempty"`
 }
 
-// Message struct
+// Message struct.
 type Message struct {
 	ExternalID string `json:"external_id"`
 	Type       string `json:"type,omitempty"`
@@ -258,26 +258,26 @@ type Message struct {
 	Items      []Item `json:"items,omitempty"`
 }
 
-// SendMessage struct
+// SendMessage struct.
 type SendMessage struct {
 	Message
 	SentAt time.Time `json:"sent_at,omitempty"`
 }
 
-// EditMessageRequest type
+// EditMessageRequest type.
 type EditMessageRequest struct {
 	Message EditMessageRequestMessage `json:"message"`
 	Channel uint64                    `json:"channel"`
 }
 
-// EditMessageRequestMessage type
+// EditMessageRequestMessage type.
 type EditMessageRequestMessage struct {
 	ExternalID string `json:"external_id"`
 	Text       string `json:"text"`
 	EditedAt   int64  `json:"edited_at"`
 }
 
-// SendData struct
+// SendData struct.
 type SendData struct {
 	Message        Message                  `json:"message"`
 	Originator     Originator               `json:"originator,omitempty"`
@@ -288,51 +288,51 @@ type SendData struct {
 	ReplyDeadline  *time.Time               `json:"reply_deadline,omitempty"`
 }
 
-// Item struct
+// Item struct.
 type Item struct {
 	ID      string `json:"id"`
 	Caption string `json:"caption"`
 }
 
-// SendMessageRequestQuote type
+// SendMessageRequestQuote type.
 type SendMessageRequestQuote struct {
 	ExternalID string `json:"external_id"`
 }
 
-// MarkMessageReadResponse type
+// MarkMessageReadResponse type.
 type MarkMessageReadResponse struct{}
 
-// MarkMessageReadRequest type
+// MarkMessageReadRequest type.
 type MarkMessageReadRequest struct {
 	Message   MarkMessageReadRequestMessage `json:"message"`
 	ChannelID uint64                        `json:"channel_id"`
 }
 
-// MarkMessageReadRequestMessage type
+// MarkMessageReadRequestMessage type.
 type MarkMessageReadRequestMessage struct {
 	ExternalID string `json:"external_id"`
 }
 
-// AckMessageRequest type
+// AckMessageRequest type.
 type AckMessageRequest struct {
 	ExternalMessageID string            `json:"external_message_id"`
 	Channel           uint64            `json:"channel"`
 	Error             *MessageSentError `json:"error,omitempty"`
 }
 
-// DeleteData struct
+// DeleteData struct.
 type DeleteData struct {
 	Message Message `json:"message"`
 	Channel uint64  `json:"channel"`
 }
 
-// MessagesResponse message event response
+// MessagesResponse message event response.
 type MessagesResponse struct {
 	MessageID int       `json:"message_id,omitempty"`
 	Time      time.Time `json:"time,omitempty"`
 }
 
-// WebhookRequest type
+// WebhookRequest type.
 type WebhookRequest struct {
 	Type string               `json:"type"`
 	Meta TransportRequestMeta `json:"meta"`
@@ -340,20 +340,20 @@ type WebhookRequest struct {
 }
 
 // WebhookMessageSentResponse type
-// Consider using this structure while processing webhook request
+// Consider using this structure while processing webhook request.
 type WebhookMessageSentResponse struct {
 	ExternalMessageID string            `json:"external_message_id"`
 	Error             *MessageSentError `json:"error,omitempty"`
 	Async             bool              `json:"async"`
 }
 
-// MessageSentError type
+// MessageSentError type.
 type MessageSentError struct {
 	Code    ErrorType `json:"code"`
 	Message string    `json:"message"`
 }
 
-// WebhookData request data
+// WebhookData request data.
 type WebhookData struct {
 	ExternalUserID    string              `json:"external_user_id"`
 	ExternalMessageID string              `json:"external_message_id,omitempty"`
@@ -394,7 +394,7 @@ type TemplateInfo struct {
 	Args []string `json:"args,omitempty"`
 }
 
-// FileItem struct
+// FileItem struct.
 type FileItem struct {
 	ID      string `json:"id"`
 	Size    int    `json:"size"`
@@ -403,20 +403,20 @@ type FileItem struct {
 	Width   *int   `json:"width,omitempty"`
 }
 
-// MessageDataUser user data from webhook
+// MessageDataUser user data from webhook.
 type MessageDataUser struct {
 	FirstName string `json:"first_name"`
 	LastName  string `json:"last_name"`
 	Avatar    string `json:"avatar"`
 }
 
-// MessageDataBot bot data from webhook
+// MessageDataBot bot data from webhook.
 type MessageDataBot struct {
 	Name   string `json:"name"`
 	Avatar string `json:"avatar"`
 }
 
-// MessageDataProduct product data from webhook
+// MessageDataProduct product data from webhook.
 type MessageDataProduct struct {
 	ID      uint64                `json:"id"`
 	Name    string                `json:"name"`
@@ -429,7 +429,7 @@ type MessageDataProduct struct {
 	Quantity *MessageDataOrderQuantity `json:"quantity,omitempty"`
 }
 
-// MessageDataOrder order data from webhook
+// MessageDataOrder order data from webhook.
 type MessageDataOrder struct {
 	Number   string                    `json:"number"`
 	Url      string                    `json:"url,omitempty"`
@@ -442,13 +442,13 @@ type MessageDataOrder struct {
 	Items    []MessageDataOrderItem    `json:"items,omitempty"`
 }
 
-// MessageDataOrderStatus type
+// MessageDataOrderStatus type.
 type MessageDataOrderStatus struct {
 	Code string `json:"code,omitempty"`
 	Name string `json:"name,omitempty"`
 }
 
-// MessageDataOrderItem type
+// MessageDataOrderItem type.
 type MessageDataOrderItem struct {
 	Name     string                    `json:"name,omitempty"`
 	Url      string                    `json:"url,omitempty"`
@@ -457,32 +457,32 @@ type MessageDataOrderItem struct {
 	Price    *MessageDataOrderCost     `json:"price,omitempty"`
 }
 
-// MessageDataOrderCost type
+// MessageDataOrderCost type.
 type MessageDataOrderCost struct {
 	Value    float32 `json:"value,omitempty"`
 	Currency string  `json:"currency"`
 }
 
-// MessageDataOrderQuantity type
+// MessageDataOrderQuantity type.
 type MessageDataOrderQuantity struct {
 	Value float32 `json:"value"`
 	Unit  string  `json:"unit"`
 }
 
-// MessageDataOrderPayment type
+// MessageDataOrderPayment type.
 type MessageDataOrderPayment struct {
 	Name   string                         `json:"name"`
 	Status *MessageDataOrderPaymentStatus `json:"status"`
 	Amount *MessageDataOrderCost          `json:"amount"`
 }
 
-// MessageDataOrderPaymentStatus type
+// MessageDataOrderPaymentStatus type.
 type MessageDataOrderPaymentStatus struct {
-	Name  string `json:"name"`
-	Payed bool   `json:"payed"`
+	Name string `json:"name"`
+	Paid bool   `json:"paid"`
 }
 
-// MessageDataOrderDelivery type
+// MessageDataOrderDelivery type.
 type MessageDataOrderDelivery struct {
 	Name    string                `json:"name"`
 	Price   *MessageDataOrderCost `json:"price"`
@@ -490,7 +490,7 @@ type MessageDataOrderDelivery struct {
 	Comment string                `json:"comment,omitempty"`
 }
 
-// TransportRequestMeta request metadata
+// TransportRequestMeta request metadata.
 type TransportRequestMeta struct {
 	ID        uint64 `json:"id"`
 	Timestamp int64  `json:"timestamp"`
@@ -505,10 +505,10 @@ type ActivateTemplateRequest struct {
 
 var ErrInvalidOriginator = errors.New("invalid originator")
 
-// Originator of message
+// Originator of message.
 type Originator byte
 
-// MarshalText marshals originator to text
+// MarshalText marshals originator to text.
 func (o Originator) MarshalText() ([]byte, error) {
 	switch o {
 	case OriginatorCustomer:
