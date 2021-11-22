@@ -7,18 +7,19 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"strconv"
 	"time"
 
 	"github.com/google/go-querystring/query"
 )
 
-// New initialize client
+// New initialize client.
 func New(url string, token string) *MgClient {
 	return NewWithClient(url, token, &http.Client{Timeout: time.Minute})
 }
 
-// NewWithClient initializes client with provided http client
+// NewWithClient initializes client with provided http client.
 func NewWithClient(url string, token string, client *http.Client) *MgClient {
 	return &MgClient{
 		URL:        url,
@@ -59,7 +60,7 @@ func (c *MgClient) TransportTemplates() ([]Template, int, error) {
 	return resp, status, err
 }
 
-// ActivateTransportChannel implements template activation
+// ActivateTemplate implements template activation
 //
 // Example:
 // 		var client = v1.New("https://token.url", "cb8ccf05e38a47543ad8477d4999be73bff503ea6")
@@ -140,7 +141,8 @@ func (c *MgClient) UpdateTemplate(request Template) (int, error) {
 		return 0, errors.New("`ChannelID` and `Code` cannot be blank")
 	}
 
-	data, status, err := c.PutRequest(fmt.Sprintf("/channels/%d/templates/%s", request.ChannelID, request.Code), outgoing)
+	data, status, err := c.PutRequest(
+		fmt.Sprintf("/channels/%d/templates/%s", request.ChannelID, url.PathEscape(request.Code)), outgoing)
 	if err != nil {
 		return status, err
 	}
@@ -165,7 +167,7 @@ func (c *MgClient) UpdateTemplate(request Template) (int, error) {
 // 	}
 func (c *MgClient) DeactivateTemplate(channelID uint64, templateCode string) (int, error) {
 	data, status, err := c.DeleteRequest(
-		fmt.Sprintf("/channels/%d/templates/%s", channelID, templateCode), []byte{})
+		fmt.Sprintf("/channels/%d/templates/%s", channelID, url.PathEscape(templateCode)), []byte{})
 	if err != nil {
 		return status, err
 	}
@@ -313,7 +315,7 @@ func (c *MgClient) UpdateTransportChannel(request Channel) (UpdateResponse, int,
 	var resp UpdateResponse
 	outgoing, _ := json.Marshal(&request)
 
-	data, status, err := c.PutRequest(fmt.Sprintf("/channels/%d", request.ID), []byte(outgoing))
+	data, status, err := c.PutRequest(fmt.Sprintf("/channels/%d", request.ID), outgoing)
 	if err != nil {
 		return resp, status, err
 	}
@@ -442,7 +444,7 @@ func (c *MgClient) UpdateMessages(request EditMessageRequest) (MessagesResponse,
 	var resp MessagesResponse
 	outgoing, _ := json.Marshal(&request)
 
-	data, status, err := c.PutRequest("/messages", []byte(outgoing))
+	data, status, err := c.PutRequest("/messages", outgoing)
 	if err != nil {
 		return resp, status, err
 	}
@@ -554,7 +556,7 @@ func (c *MgClient) DeleteMessage(request DeleteData) (*MessagesResponse, int, er
 
 	data, status, err := c.DeleteRequest(
 		"/messages",
-		[]byte(outgoing),
+		outgoing,
 	)
 	if err != nil {
 		return nil, status, err
@@ -605,7 +607,7 @@ func (c *MgClient) GetFile(request string) (FullFileResponse, int, error) {
 	return resp, status, err
 }
 
-// UploadFile upload file
+// UploadFile upload file.
 func (c *MgClient) UploadFile(request io.Reader) (UploadFileResponse, int, error) {
 	var resp UploadFileResponse
 
@@ -625,7 +627,7 @@ func (c *MgClient) UploadFile(request io.Reader) (UploadFileResponse, int, error
 	return resp, status, err
 }
 
-// UploadFileByURL upload file by url
+// UploadFileByURL upload file by url.
 func (c *MgClient) UploadFileByURL(request UploadFileByUrlRequest) (UploadFileResponse, int, error) {
 	var resp UploadFileResponse
 	outgoing, _ := json.Marshal(&request)
@@ -658,7 +660,7 @@ func (c *MgClient) Error(info []byte) error {
 	return errors.New(values[0].(string))
 }
 
-// MakeTimestamp returns current unix timestamp
+// MakeTimestamp returns current unix timestamp.
 func MakeTimestamp() int64 {
 	return time.Now().UnixNano() / (int64(time.Millisecond) / int64(time.Nanosecond))
 }

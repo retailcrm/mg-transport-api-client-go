@@ -10,24 +10,24 @@ import (
 const TemplateTypeText = "text"
 
 const (
-	// TemplateItemTypeText is a type for text chunk in template
+	// TemplateItemTypeText is a type for text chunk in template.
 	TemplateItemTypeText uint8 = iota
-	// TemplateItemTypeVar is a type for variable in template
+	// TemplateItemTypeVar is a type for variable in template.
 	TemplateItemTypeVar
 )
 
 const (
-	// TemplateVarCustom is a custom variable type
+	// TemplateVarCustom is a custom variable type.
 	TemplateVarCustom = "custom"
-	// TemplateVarName is a name variable type
+	// TemplateVarName is a name variable type.
 	TemplateVarName = "name"
-	// TemplateVarFirstName is a first name variable type
+	// TemplateVarFirstName is a first name variable type.
 	TemplateVarFirstName = "first_name"
-	// TemplateVarLastName is a last name variable type
+	// TemplateVarLastName is a last name variable type.
 	TemplateVarLastName = "last_name"
 )
 
-// templateVarAssoc for checking variable validity, only for internal use
+// templateVarAssoc for checking variable validity, only for internal use.
 var templateVarAssoc = map[string]interface{}{
 	TemplateVarCustom:    nil,
 	TemplateVarName:      nil,
@@ -35,7 +35,7 @@ var templateVarAssoc = map[string]interface{}{
 	TemplateVarLastName:  nil,
 }
 
-// Template struct
+// Template struct.
 type Template struct {
 	Code      string         `json:"code"`
 	ChannelID uint64         `json:"channel_id,omitempty"`
@@ -45,14 +45,14 @@ type Template struct {
 	Template  []TemplateItem `json:"template"`
 }
 
-// TemplateItem is a part of template
+// TemplateItem is a part of template.
 type TemplateItem struct {
 	Type    uint8
 	Text    string
 	VarType string
 }
 
-// MarshalJSON controls how TemplateItem will be marshaled into JSON
+// MarshalJSON controls how TemplateItem will be marshaled into JSON.
 func (t TemplateItem) MarshalJSON() ([]byte, error) {
 	switch t.Type {
 	case TemplateItemTypeText:
@@ -71,7 +71,7 @@ func (t TemplateItem) MarshalJSON() ([]byte, error) {
 	return nil, errors.New("unknown TemplateItem type")
 }
 
-// UnmarshalJSON will correctly unmarshal TemplateItem
+// UnmarshalJSON will correctly unmarshal TemplateItem.
 func (t *TemplateItem) UnmarshalJSON(b []byte) error {
 	var obj interface{}
 	err := json.Unmarshal(b, &obj)

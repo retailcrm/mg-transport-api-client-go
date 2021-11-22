@@ -5,105 +5,113 @@ import (
 	"encoding/base64"
 	"fmt"
 	"net/http"
-	"os"
-	"strconv"
+	"strings"
 	"testing"
 	"time"
 
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/suite"
+	"gopkg.in/h2non/gock.v1"
 )
 
-var (
-	mgURL               = os.Getenv("MG_URL")
-	mgToken             = os.Getenv("MG_TOKEN")
-	channelID, _        = strconv.ParseUint(os.Getenv("MG_CHANNEL"), 10, 64)
-	ext                 = strconv.FormatInt(time.Now().UTC().UnixNano(), 10)
-	tplCode             = fmt.Sprintf("testTemplate_%d", time.Now().UnixNano())
-	tplChannel   uint64 = 0
-)
+type MGClientTest struct {
+	suite.Suite
+}
 
-func client() *MgClient {
-	c := New(mgURL, mgToken)
+func TestMGClient(t *testing.T) {
+	suite.Run(t, new(MGClientTest))
+}
+
+func (t *MGClientTest) client() *MgClient {
+	c := New("https://mg-test.retailcrm.pro", "mg_token")
 	c.Debug = true
 
 	return c
 }
 
-func templateChannel(t *testing.T) uint64 {
-	if tplChannel == 0 {
-		c := client()
-		resp, _, err := c.ActivateTransportChannel(Channel{
-			Type: "telegram",
-			Name: "@test_channel_templates",
+func (t *MGClientTest) gock() *gock.Request {
+	return gock.New("https://mg-test.retailcrm.pro").MatchHeader("x-transport-token", "mg_token")
+}
+
+func (t *MGClientTest) transportURL(path string) string {
+	return "/api/transport/v1/" + strings.TrimLeft(path, "/")
+}
+
+func (t *MGClientTest) Test_TransportChannels() {
+	c := t.client()
+	chName := "WhatsApp Channel"
+	createdAt := "2021-11-22T08:20:46.479979Z"
+
+	defer gock.Off()
+	t.gock().
+		Get(t.transportURL("channels")).
+		Reply(http.StatusOK).
+		JSON([]ChannelListItem{{
+			ID:         1,
+			ExternalID: "external_id",
+			Type:       "whatsapp",
+			Name:       &chName,
 			Settings: ChannelSettings{
 				Status: Status{
-					Delivered: ChannelFeatureBoth,
-					Read:      ChannelFeatureBoth,
+					Delivered: ChannelFeatureNone,
+					Read:      ChannelFeatureSend,
 				},
 				Text: ChannelSettingsText{
 					Creating:      ChannelFeatureBoth,
 					Editing:       ChannelFeatureBoth,
 					Quoting:       ChannelFeatureBoth,
-					Deleting:      ChannelFeatureBoth,
-					MaxCharsCount: 5000,
+					Deleting:      ChannelFeatureReceive,
+					MaxCharsCount: 4096,
 				},
 				Product: Product{
-					Creating: ChannelFeatureBoth,
-					Editing:  ChannelFeatureBoth,
-					Deleting: ChannelFeatureBoth,
+					Creating: ChannelFeatureReceive,
+					Editing:  ChannelFeatureReceive,
 				},
 				Order: Order{
-					Creating: ChannelFeatureBoth,
-					Editing:  ChannelFeatureBoth,
-					Deleting: ChannelFeatureBoth,
+					Creating: ChannelFeatureReceive,
+					Editing:  ChannelFeatureReceive,
 				},
 				File: ChannelSettingsFilesBase{
-					Creating:             ChannelFeatureBoth,
-					Editing:              ChannelFeatureBoth,
-					Quoting:              ChannelFeatureBoth,
-					Deleting:             ChannelFeatureBoth,
-					Max:                  1000000,
-					CommentMaxCharsCount: 128,
+					Creating: ChannelFeatureBoth,
+					Editing:  ChannelFeatureBoth,
+					Quoting:  ChannelFeatureBoth,
+					Deleting: ChannelFeatureReceive,
+					Max:      1,
 				},
 				Image: ChannelSettingsFilesBase{
 					Creating: ChannelFeatureBoth,
 					Editing:  ChannelFeatureBoth,
 					Quoting:  ChannelFeatureBoth,
-					Deleting: ChannelFeatureBoth,
+					Deleting: ChannelFeatureReceive,
+					Max:      1, // nolint:gomnd
+				},
+				Suggestions: ChannelSettingsSuggestions{
+					Text:  ChannelFeatureBoth,
+					Phone: ChannelFeatureBoth,
+					Email: ChannelFeatureBoth,
 				},
 				CustomerExternalID: ChannelFeatureCustomerExternalIDPhone,
 				SendingPolicy: SendingPolicy{
 					NewCustomer: ChannelFeatureSendingPolicyTemplate,
 				},
 			},
-		})
-
-		if err != nil {
-			t.FailNow()
-		}
-
-		tplChannel = resp.ChannelID
-	}
-
-	return tplChannel
-}
-
-func TestMgClient_TransportChannels(t *testing.T) {
-	c := client()
+			CreatedAt:     createdAt,
+			UpdatedAt:     &createdAt,
+			ActivatedAt:   createdAt,
+			DeactivatedAt: nil,
+			IsActive:      true,
+		}})
 
 	data, status, err := c.TransportChannels(Channels{Active: true})
+	t.Require().NoError(err)
+	t.Assert().Equal(http.StatusOK, status)
 
-	if err != nil {
-		t.Errorf("%d %v", status, err)
-	}
-
-	t.Logf("Channels found: %v", len(data))
+	t.Assert().Len(data, 1)
 }
 
-func TestMgClient_ActivateTransportChannel(t *testing.T) {
-	c := client()
+func (t *MGClientTest) Test_ActivateTransportChannel() {
+	c := t.client()
 	ch := Channel{
-		ID:   channelID,
+		ID:   1,
 		Type: "telegram",
 		Name: "@my_shopping_bot",
 		Settings: ChannelSettings{
@@ -135,17 +143,27 @@ func TestMgClient_ActivateTransportChannel(t *testing.T) {
 		},
 	}
 
+	defer gock.Off()
+	t.gock().
+		Post(t.transportURL("channels")).
+		Reply(http.StatusCreated).
+		JSON(ActivateResponse{
+			ChannelID:   1,
+			ExternalID:  "external_id_1",
+			ActivatedAt: time.Now(),
+		})
+
 	data, status, err := c.ActivateTransportChannel(ch)
+	t.Require().NoError(err)
+	t.Assert().Equal(http.StatusCreated, status)
 
-	if err != nil {
-		t.Errorf("%d %v", status, err)
-	}
-
-	t.Logf("Activate selected channel: %v", data.ChannelID)
+	t.Assert().Equal(uint64(1), data.ChannelID)
+	t.Assert().Equal("external_id_1", data.ExternalID)
+	t.Assert().NotEmpty(data.ActivatedAt.String())
 }
 
-func TestMgClient_ActivateNewTransportChannel(t *testing.T) {
-	c := client()
+func (t *MGClientTest) Test_ActivateNewTransportChannel() {
+	c := t.client()
 	ch := Channel{
 		Type: "telegram",
 		Name: "@my_shopping_bot",
@@ -177,31 +195,44 @@ func TestMgClient_ActivateNewTransportChannel(t *testing.T) {
 		},
 	}
 
+	defer gock.Off()
+
+	t.gock().
+		Post(t.transportURL("channels")).
+		Reply(http.StatusCreated).
+		JSON(ActivateResponse{
+			ChannelID:   1,
+			ExternalID:  "external_id_1",
+			ActivatedAt: time.Now(),
+		})
+
+	t.gock().
+		Delete(t.transportURL("channels/1")).
+		Reply(http.StatusOK).
+		JSON(DeleteResponse{
+			ChannelID:     1,
+			DeactivatedAt: time.Now(),
+		})
+
 	data, status, err := c.ActivateTransportChannel(ch)
+	t.Require().NoError(err)
+	t.Assert().Equal(http.StatusCreated, status)
 
-	if err != nil {
-		t.Errorf("%d %v", status, err)
-	}
-
-	t.Logf("New channel ID %v", data.ChannelID)
+	t.Assert().Equal(uint64(1), data.ChannelID)
+	t.Assert().Equal("external_id_1", data.ExternalID)
+	t.Assert().NotEmpty(data.ActivatedAt.String())
 
 	deleteData, status, err := c.DeactivateTransportChannel(data.ChannelID)
-
-	if err != nil {
-		t.Errorf("%d %v", status, err)
-	}
-
-	if deleteData.DeactivatedAt.String() == "" {
-		t.Errorf("%v", err)
-	}
-
-	t.Logf("Deactivate new channel with ID %v", deleteData.ChannelID)
+	t.Require().NoError(err)
+	t.Assert().Equal(http.StatusOK, status)
+	t.Assert().NotEmpty(deleteData.DeactivatedAt.String())
+	t.Assert().Equal(uint64(1), deleteData.ChannelID)
 }
 
-func TestMgClient_UpdateTransportChannel(t *testing.T) {
-	c := client()
+func (t *MGClientTest) Test_UpdateTransportChannel() {
+	c := t.client()
 	ch := Channel{
-		ID:   channelID,
+		ID:   1,
 		Name: "@my_shopping_bot_2",
 		Settings: ChannelSettings{
 			Status: Status{
@@ -231,44 +262,79 @@ func TestMgClient_UpdateTransportChannel(t *testing.T) {
 		},
 	}
 
+	defer gock.Off()
+	t.gock().
+		Put(t.transportURL("channels/1")).
+		Reply(http.StatusOK).
+		JSON(UpdateResponse{
+			ChannelID:  uint64(1),
+			ExternalID: "external_id_1",
+			UpdatedAt:  time.Now(),
+		})
+
 	data, status, err := c.UpdateTransportChannel(ch)
-
-	if status != http.StatusOK {
-		t.Errorf("%v", err)
-	}
-
-	t.Logf("Update selected channel: %v", data.ChannelID)
+	t.Require().NoError(err)
+	t.Assert().Equal(http.StatusOK, status)
+	t.Assert().Equal(uint64(1), data.ChannelID)
+	t.Assert().Equal("external_id_1", data.ExternalID)
+	t.Assert().NotEmpty(data.UpdatedAt.String())
 }
 
-func TestMgClient_TransportTemplates(t *testing.T) {
-	c := client()
+func (t *MGClientTest) Test_TransportTemplates() {
+	c := t.client()
+
+	defer gock.Off()
+	t.gock().
+		Get(t.transportURL("templates")).
+		Reply(http.StatusOK).
+		JSON([]Template{{
+			Code:      "tpl_code",
+			ChannelID: 1,
+			Name:      "Test Template",
+			Enabled:   true,
+			Type:      TemplateTypeText,
+			Template: []TemplateItem{
+				{
+					Type: TemplateItemTypeText,
+					Text: "Hello, ",
+				},
+				{
+					Type:    TemplateItemTypeVar,
+					VarType: TemplateVarFirstName,
+				},
+				{
+					Type: TemplateItemTypeText,
+					Text: "! We're glad to see you back in our store.",
+				},
+			},
+		}})
 
 	data, status, err := c.TransportTemplates()
-	assert.NoError(t, err, fmt.Sprintf("%d %s", status, err))
-
-	t.Logf("Templates found: %#v", len(data))
+	t.Assert().NoError(err, fmt.Sprintf("%d %s", status, err))
+	t.Assert().Equal(http.StatusOK, status)
+	t.Assert().Len(data, 1)
 
 	for _, item := range data {
 		for _, tpl := range item.Template {
 			if tpl.Type == TemplateItemTypeText {
-				assert.Empty(t, tpl.VarType)
+				t.Assert().Empty(tpl.VarType)
 			} else {
-				assert.Empty(t, tpl.Text)
-				assert.NotEmpty(t, tpl.VarType)
+				t.Assert().Empty(tpl.Text)
+				t.Assert().NotEmpty(tpl.VarType)
 
 				if _, ok := templateVarAssoc[tpl.VarType]; !ok {
-					t.Errorf("unknown TemplateVar type %s", tpl.VarType)
+					t.T().Errorf("unknown TemplateVar type %s", tpl.VarType)
 				}
 			}
 		}
 	}
 }
 
-func TestMgClient_ActivateTemplate(t *testing.T) {
-	c := client()
+func (t *MGClientTest) Test_ActivateTemplate() {
+	c := t.client()
 	req := ActivateTemplateRequest{
-		Code: tplCode,
-		Name: tplCode,
+		Code: "tplCode",
+		Name: "tplCode",
 		Type: TemplateTypeText,
 		Template: []TemplateItem{
 			{
@@ -286,17 +352,22 @@ func TestMgClient_ActivateTemplate(t *testing.T) {
 		},
 	}
 
-	status, err := c.ActivateTemplate(templateChannel(t), req)
-	assert.NoError(t, err, fmt.Sprintf("%d %s", status, err))
+	defer gock.Off()
+	t.gock().
+		Post("/channels/1/templates").
+		Reply(http.StatusCreated).
+		JSON(map[string]interface{}{})
 
-	t.Logf("Activated template with code `%s`", req.Code)
+	status, err := c.ActivateTemplate(1, req)
+	t.Assert().NoError(err, fmt.Sprintf("%d %s", status, err))
+	t.Assert().Equal(http.StatusCreated, status)
 }
 
-func TestMgClient_UpdateTemplate(t *testing.T) {
-	c := client()
+func (t *MGClientTest) Test_UpdateTemplate() {
+	c := t.client()
 	tpl := Template{
-		Code:      tplCode,
-		ChannelID: templateChannel(t),
+		Code:      "encodable#code",
+		ChannelID: 1,
 		Name:      "updated name",
 		Enabled:   true,
 		Type:      TemplateTypeText,
@@ -316,21 +387,36 @@ func TestMgClient_UpdateTemplate(t *testing.T) {
 		},
 	}
 
+	defer gock.Off()
+
+	t.gock().
+		Filter(func(r *http.Request) bool {
+			return r.Method == http.MethodPut &&
+				r.URL.Path == "/api/transport/v1/channels/1/templates/encodable#code"
+		}).
+		Reply(http.StatusOK).
+		JSON(map[string]interface{}{})
+
+	t.gock().
+		Get(t.transportURL("templates")).
+		Reply(http.StatusOK).
+		JSON([]Template{tpl})
+
 	status, err := c.UpdateTemplate(tpl)
-	assert.NoError(t, err, fmt.Sprintf("%d %s", status, err))
+	t.Assert().NoError(err, fmt.Sprintf("%d %s", status, err))
 
 	templates, status, err := c.TransportTemplates()
-	assert.NoError(t, err, fmt.Sprintf("%d %s", status, err))
+	t.Assert().NoError(err, fmt.Sprintf("%d %s", status, err))
 
 	for _, template := range templates {
 		if template.Code == tpl.Code {
-			assert.Equal(t, tpl.Name, template.Name)
+			t.Assert().Equal(tpl.Name, template.Name)
 		}
 	}
 }
 
-func TestMgClient_UpdateTemplateFail(t *testing.T) {
-	c := client()
+func (t *MGClientTest) Test_UpdateTemplateFail() {
+	c := t.client()
 	tpl := Template{
 		Name:    "updated name",
 		Enabled: true,
@@ -351,23 +437,39 @@ func TestMgClient_UpdateTemplateFail(t *testing.T) {
 		},
 	}
 
+	defer gock.Off()
+	t.gock().
+		Reply(http.StatusBadRequest).
+		JSON(map[string][]string{
+			"errors": {"Some weird error message..."},
+		})
+
 	status, err := c.UpdateTemplate(tpl)
-	assert.Error(t, err, fmt.Sprintf("%d %s", status, err))
+	t.Assert().Error(err, fmt.Sprintf("%d %s", status, err))
 }
 
-func TestMgClient_DeactivateTemplate(t *testing.T) {
-	c := client()
-	status, err := c.DeactivateTemplate(templateChannel(t), tplCode)
-	assert.NoError(t, err, fmt.Sprintf("%d %s", status, err))
+func (t *MGClientTest) Test_DeactivateTemplate() {
+	c := t.client()
+
+	defer gock.Off()
+	t.gock().
+		Filter(func(r *http.Request) bool {
+			return r.Method == http.MethodDelete &&
+				r.URL.Path == t.transportURL("channels/1/templates/test_template#code")
+		}).
+		Reply(http.StatusOK).
+		JSON(map[string]interface{}{})
+
+	status, err := c.DeactivateTemplate(1, "test_template#code")
+	t.Assert().NoError(err, fmt.Sprintf("%d %s", status, err))
 }
 
-func TestMgClient_TextMessages(t *testing.T) {
-	c := client()
-	t.Logf("%v", ext)
+func (t *MGClientTest) Test_TextMessages() {
+	c := t.client()
 
 	snd := SendData{
 		Message: Message{
-			ExternalID: ext,
+			ExternalID: "external_id",
 			Type:       MsgTypeText,
 			Text:       "hello!",
 		},
@@ -377,38 +479,61 @@ func TestMgClient_TextMessages(t *testing.T) {
 			Nickname:   "octopus",
 			Firstname:  "Joe",
 		},
-		Channel:        channelID,
+		Channel:        1,
 		ExternalChatID: "24798237492374",
 	}
 
+	defer gock.Off()
+	t.gock().
+		Post(t.transportURL("messages")).
+		Reply(http.StatusOK).
+		JSON(MessagesResponse{
+			MessageID: 1,
+			Time:      time.Now(),
+		})
+
 	data, status, err := c.Messages(snd)
-
-	if status != http.StatusOK {
-		t.Errorf("%v", err)
-	}
-
-	if data.Time.String() == "" {
-		t.Errorf("%v", err)
-	}
-
-	t.Logf("Message %v is sent", data.MessageID)
+	t.Require().NoError(err)
+	t.Assert().Equal(http.StatusOK, status)
+	t.Assert().NotEmpty(data.Time.String())
+	t.Assert().Equal(1, data.MessageID)
 }
 
-func TestMgClient_ImageMessages(t *testing.T) {
-	c := client()
-	t.Logf("%v", ext)
+func (t *MGClientTest) Test_ImageMessages() {
+	c := t.client()
+
+	defer gock.Off()
+
+	t.gock().
+		Post(t.transportURL("files/upload_by_url")).
+		Reply(http.StatusOK).
+		JSON(UploadFileResponse{
+			ID:        "1",
+			Hash:      "1",
+			Type:      "image/png",
+			MimeType:  "",
+			Size:      1024,
+			CreatedAt: time.Now(),
+		})
+
+	t.gock().
+		Post(t.transportURL("messages")).
+		Reply(http.StatusOK).
+		JSON(MessagesResponse{
+			MessageID: 1,
+			Time:      time.Now(),
+		})
 
 	uploadFileResponse, st, err := c.UploadFileByURL(UploadFileByUrlRequest{
 		Url: "https://via.placeholder.com/1",
 	})
-
-	if st != http.StatusOK {
-		t.Errorf("%v", err)
-	}
+	t.Require().NoError(err)
+	t.Assert().Equal(http.StatusOK, st)
+	t.Assert().Equal("1", uploadFileResponse.ID)
 
 	snd := SendData{
 		Message: Message{
-			ExternalID: ext + "file",
+			ExternalID: "file",
 			Type:       MsgTypeImage,
 			Items:      []Item{{ID: uploadFileResponse.ID}},
 		},
@@ -418,135 +543,138 @@ func TestMgClient_ImageMessages(t *testing.T) {
 			Nickname:   "octopus",
 			Firstname:  "Joe",
 		},
-		Channel:        channelID,
+		Channel:        1,
 		ExternalChatID: "24798237492374",
 	}
 
 	data, status, err := c.Messages(snd)
-
-	if status != http.StatusOK {
-		t.Errorf("%v", err)
-	}
-
-	if data.Time.String() == "" {
-		t.Errorf("%v", err)
-	}
-
-	t.Logf("Message %v is sent", data.MessageID)
+	t.Require().NoError(err)
+	t.Assert().Equal(http.StatusOK, status)
+	t.Assert().NotEmpty(data.Time.String())
+	t.Assert().Equal(1, data.MessageID)
 }
 
-func TestMgClient_UpdateMessages(t *testing.T) {
-	c := client()
-	t.Logf("%v", ext)
+func (t *MGClientTest) Test_UpdateMessages() {
+	c := t.client()
 
 	sndU := EditMessageRequest{
 		EditMessageRequestMessage{
-			ExternalID: ext,
+			ExternalID: "editing",
 			Text:       "hello hello!",
 		},
-		channelID,
+		1,
 	}
+
+	defer gock.Off()
+	t.gock().
+		Put(t.transportURL("messages")).
+		Reply(http.StatusOK).
+		JSON(MessagesResponse{
+			MessageID: 1,
+			Time:      time.Now(),
+		})
 
 	dataU, status, err := c.UpdateMessages(sndU)
-
-	if status != http.StatusOK {
-		t.Errorf("%v", err)
-	}
-
-	if dataU.Time.String() == "" {
-		t.Errorf("%v", err)
-	}
-
-	t.Logf("Message %v updated", dataU.MessageID)
+	t.Require().NoError(err)
+	t.Assert().Equal(http.StatusOK, status)
+	t.Assert().NotEmpty(dataU.Time.String())
+	t.Assert().Equal(1, dataU.MessageID)
 }
 
-func TestMgClient_MarkMessageReadAndDelete(t *testing.T) {
-	c := client()
-	t.Logf("%v", ext)
+func (t *MGClientTest) Test_MarkMessageReadAndDelete() {
+	c := t.client()
 
 	snd := MarkMessageReadRequest{
 		MarkMessageReadRequestMessage{
-			ExternalID: ext,
+			ExternalID: "external_1",
 		},
-		channelID,
+		1,
 	}
+
+	defer gock.Off()
+	t.gock().
+		Post(t.transportURL("messages/read")).
+		Reply(http.StatusOK).
+		JSON(MarkMessageReadResponse{})
+
+	t.gock().
+		Delete(t.transportURL("messages")).
+		JSON(DeleteData{
+			Message: Message{
+				ExternalID: "deleted",
+			},
+			Channel: 1,
+		}).
+		Reply(http.StatusOK).
+		JSON(MessagesResponse{
+			MessageID: 2,
+			Time:      time.Now(),
+		})
 
 	_, status, err := c.MarkMessageRead(snd)
+	t.Require().NoError(err)
+	t.Assert().Equal(http.StatusOK, status)
 
-	if status != http.StatusOK {
-		t.Errorf("%v", err)
-	}
-
-	t.Logf("Message ext marked as read")
-
-	sndD := DeleteData{
+	previousChatMessage, status, err := c.DeleteMessage(DeleteData{
 		Message{
-			ExternalID: ext,
+			ExternalID: "deleted",
 		},
-		channelID,
-	}
-
-	previousChatMessage, status, err := c.DeleteMessage(sndD)
-
-	if status != http.StatusOK {
-		t.Errorf("%v", err)
-	}
-
-	t.Logf("Message %v deleted", ext)
-	if previousChatMessage != nil {
-		t.Logf("Previous chat message %+v", *previousChatMessage)
-	}
-
-	sndD = DeleteData{
-		Message{
-			ExternalID: ext + "file",
-		},
-		channelID,
-	}
-
-	previousChatMessage, status, err = c.DeleteMessage(sndD)
-
-	if status != http.StatusOK {
-		t.Errorf("%v", err)
-	}
-
-	t.Logf("Message %v deleted", ext+"file")
-	if previousChatMessage != nil {
-		t.Logf("Previous chat message %+v", *previousChatMessage)
-	}
+		1,
+	})
+	t.Require().NoError(err)
+	t.Assert().Equal(http.StatusOK, status)
+	t.Assert().Equal(2, previousChatMessage.MessageID)
 }
 
-func TestMgClient_DeactivateTransportChannel(t *testing.T) {
-	c := client()
-	deleteData, status, err := c.DeactivateTransportChannel(channelID)
+func (t *MGClientTest) Test_DeactivateTransportChannel() {
+	c := t.client()
 
-	if err != nil {
-		t.Errorf("%d %v", status, err)
-	}
+	defer gock.Off()
+	t.gock().
+		Delete(t.transportURL("channels/1")).
+		Reply(http.StatusOK).
+		JSON(DeleteResponse{
+			ChannelID:     1,
+			DeactivatedAt: time.Now(),
+		})
 
-	if deleteData.DeactivatedAt.String() == "" {
-		t.Errorf("%v", err)
-	}
-
-	t.Logf("Deactivate selected channel: %v", deleteData.ChannelID)
+	deleteData, status, err := c.DeactivateTransportChannel(1)
+	t.Require().NoError(err)
+	t.Assert().Equal(http.StatusOK, status)
+	t.Assert().NotEmpty(deleteData.DeactivatedAt.String())
+	t.Assert().Equal(uint64(1), deleteData.ChannelID)
 }
 
-func TestMgClient_UploadFile(t *testing.T) {
-	c := client()
-	t.Logf("%v", ext)
+func (t *MGClientTest) Test_UploadFile() {
+	c := t.client()
 
 	// 1x1 png picture
 	img := "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAQMAAAAl21bKAAAAA1BMVEX/TQBcNTh/AAAAAXRSTlPM0jRW/QAAAApJREFUeJxjYgAAAAYAAzY3fKgAAAAASUVORK5CYII="
 	binary, err := base64.StdEncoding.DecodeString(img)
 	if err != nil {
-		t.Errorf("cannot convert base64 to binary: %s", err)
+		t.T().Errorf("cannot convert base64 to binary: %s", err)
 	}
+
+	resp := UploadFileResponse{
+		ID:        "1",
+		Hash:      "1",
+		Type:      "image/png",
+		MimeType:  "",
+		Size:      1024,
+		CreatedAt: time.Now(),
+	}
+
+	defer gock.Off()
+	t.gock().
+		Post(t.transportURL("files/upload")).
+		Body(bytes.NewReader(binary)).
+		Reply(http.StatusOK).
+		JSON(resp)
 
 	data, status, err := c.UploadFile(bytes.NewReader(binary))
+	t.Require().NoError(err)
+	t.Assert().Equal(http.StatusOK, status)
 
-	if status != http.StatusOK {
-		t.Errorf("%v", err)
-	}
-
-	t.Logf("Message %+v is sent", data)
+	resp.CreatedAt = data.CreatedAt
+	t.Assert().Equal(resp, data)
 }

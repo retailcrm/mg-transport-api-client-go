@@ -10,9 +10,6 @@ on:
 
 env:
   GO111MODULE: on
-  MG_URL: ${{ secrets.MG_URL }}
-  MG_TOKEN: ${{ secrets.MG_TOKEN }}
-  MG_CHANNEL: ${{ secrets.MG_CHANNEL }}
 
 jobs:
   golangci:
@@ -31,9 +28,8 @@ jobs:
     name: Tests
     runs-on: ubuntu-latest
     strategy:
-      max-parallel: 1
       matrix:
-        go-version: ['1.11', '1.12', '1.13', '1.14', '1.15']
+        go-version: ['1.11', '1.12', '1.13', '1.14', '1.15', '1.16', '1.17']
     steps:
       - name: Set up Go ${{ matrix.go-version }}
         uses: actions/setup-go@v2
