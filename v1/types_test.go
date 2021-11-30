@@ -98,6 +98,37 @@ func TestOriginator(t *testing.T) {
 	})
 
 	t.Run("MarshalJSON_Invalid", OriginatorMarshalJSONInvalid)
+
+	t.Run("UnmarshalText_Valid", func(t *testing.T) {
+		cases := []struct {
+			value Originator
+			text  []byte
+		}{
+			{1, []byte("customer")},
+			{2, []byte("channel")},
+		}
+		for _, c := range cases {
+			var o Originator
+			err := o.UnmarshalText(c.text)
+			assert.NoError(t, err)
+			assert.Equal(t, c.value, o)
+		}
+	})
+
+	t.Run("UnmarshalText_Invalid", func(t *testing.T) {
+		var o Originator
+		err := o.UnmarshalText([]byte{})
+		assert.Empty(t, o)
+		assert.Equal(t, err, ErrInvalidOriginator)
+	})
+
+	t.Run("UnmarshalJSON_Invalid", func(t *testing.T) {
+		var o Originator
+		err := json.Unmarshal([]byte("\"unknown\""), &o)
+		assert.Empty(t, o)
+		assert.Error(t, err)
+		assert.Equal(t, ErrInvalidOriginator, err)
+	})
 }
 
 func TestTransportErrorResponse(t *testing.T) {
