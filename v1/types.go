@@ -521,6 +521,20 @@ func (o Originator) MarshalText() ([]byte, error) {
 	return nil, ErrInvalidOriginator
 }
 
+// UnmarshalText unmarshals originator from text to the value.
+func (o *Originator) UnmarshalText(text []byte) error {
+	switch string(text) {
+	case "customer":
+		*o = OriginatorCustomer
+		return nil
+	case "channel":
+		*o = OriginatorChannel
+		return nil
+	}
+
+	return ErrInvalidOriginator
+}
+
 type TransportErrorCode string
 
 const (
