@@ -106,6 +106,7 @@ type ChannelSettings struct {
 	CustomerExternalID string                     `json:"customer_external_id,omitempty"`
 	SendingPolicy      SendingPolicy              `json:"sending_policy,omitempty"`
 	Suggestions        ChannelSettingsSuggestions `json:"suggestions,omitempty"`
+	Audio              ChannelSettingsAudioBase   `json:"audio"`
 }
 
 // Product type.
@@ -141,6 +142,16 @@ type ChannelSettingsText struct {
 type ChannelSettingsFilesBase struct {
 	Creating             string `json:"creating,omitempty"`
 	Editing              string `json:"editing,omitempty"`
+	Quoting              string `json:"quoting,omitempty"`
+	Deleting             string `json:"deleting,omitempty"`
+	Max                  uint64 `json:"max_items_count,omitempty"`
+	CommentAttribute     string `json:"comment_attribute,omitempty"`
+	CommentMaxCharsCount int    `json:"comment_max_chars_count,omitempty"`
+}
+
+// ChannelSettingsAudioBase struct.
+type ChannelSettingsAudioBase struct {
+	Creating             string `json:"creating,omitempty"`
 	Quoting              string `json:"quoting,omitempty"`
 	Deleting             string `json:"deleting,omitempty"`
 	Max                  uint64 `json:"max_items_count,omitempty"`
