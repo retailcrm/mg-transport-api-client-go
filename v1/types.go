@@ -324,9 +324,10 @@ type MarkMessageReadRequestMessage struct {
 
 // AckMessageRequest type.
 type AckMessageRequest struct {
-	ExternalMessageID string            `json:"external_message_id"`
-	Channel           uint64            `json:"channel"`
-	Error             *MessageSentError `json:"error,omitempty"`
+	ExternalMessageID  string            `json:"external_message_id"`
+	TransportMessageID string            `json:"transport_message_id,omitempty"`
+	Channel            uint64            `json:"channel"`
+	Error              *MessageSentError `json:"error,omitempty"`
 }
 
 // DeleteData struct.
@@ -379,6 +380,7 @@ type WebhookData struct {
 	Items             *[]FileItem         `json:"items,omitempty"`
 	Template          *TemplateInfo       `json:"template,omitempty"`
 	Attachments       *Attachments        `json:"attachments,omitempty"`
+	InAppID           int32               `json:"in_app_id,omitempty"`
 }
 
 type Attachments struct {
