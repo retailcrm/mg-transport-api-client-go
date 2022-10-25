@@ -66,6 +66,12 @@ const (
 	OriginatorChannel
 )
 
+type APIError string
+
+func (err APIError) Error() string {
+	return string(err)
+}
+
 type ErrorType string
 
 const (

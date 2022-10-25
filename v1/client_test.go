@@ -678,3 +678,11 @@ func (t *MGClientTest) Test_UploadFile() {
 	resp.CreatedAt = data.CreatedAt
 	t.Assert().Equal(resp, data)
 }
+
+func (t *MGClientTest) Test_SuccessHandleError() {
+	client := t.client()
+	handleError := client.Error([]byte(`{"errors": ["Channel not found"]}`))
+
+	t.Assert().IsType(APIError(""), handleError)
+	t.Assert().Equal(handleError.Error(), "Channel not found")
+}

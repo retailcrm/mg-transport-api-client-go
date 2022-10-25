@@ -674,7 +674,7 @@ func (c *MgClient) Error(info []byte) error {
 
 	values := data["errors"].([]interface{})
 
-	return errors.New(values[0].(string))
+	return APIError(values[0].(string))
 }
 
 // MakeTimestamp returns current unix timestamp.
