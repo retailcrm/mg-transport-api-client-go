@@ -73,11 +73,14 @@ func (err ClientError) Error() string {
 	return string(err)
 }
 
-// APIError is error from MG.
-type APIError string
+// APIError is error with 5xx status code.
+type APIError struct {
+	code     int
+	errorMsg string
+}
 
 func (err APIError) Error() string {
-	return string(err)
+	return fmt.Sprintf("Error message: %s, code: %v", err.errorMsg, err.code)
 }
 
 type ErrorType string

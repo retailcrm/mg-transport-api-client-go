@@ -666,15 +666,7 @@ func (c *MgClient) UploadFileByURL(request UploadFileByUrlRequest) (UploadFileRe
 }
 
 func (c *MgClient) Error(info []byte) error {
-	var data map[string]interface{}
-
-	if err := json.Unmarshal(info, &data); err != nil {
-		return err
-	}
-
-	values := data["errors"].([]interface{})
-
-	return APIError(values[0].(string))
+	return NewAPIClientError(info)
 }
 
 // MakeTimestamp returns current unix timestamp.
