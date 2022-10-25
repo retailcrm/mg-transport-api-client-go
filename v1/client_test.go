@@ -679,10 +679,21 @@ func (t *MGClientTest) Test_UploadFile() {
 	t.Assert().Equal(resp, data)
 }
 
-func (t *MGClientTest) Test_SuccessHandleError() {
+func (t *MGClientTest) Test_SuccessHandleAPIError() {
 	client := t.client()
 	handleError := client.Error([]byte(`{"errors": ["Channel not found"]}`))
 
 	t.Assert().IsType(APIError(""), handleError)
 	t.Assert().Equal(handleError.Error(), "Channel not found")
+
+	defer gock.Off()
+	t.gock().
+		Delete(t.transportURL("channels/123")).
+		Reply(http.StatusInternalServerError)
+
+	_, statusCode, err := client.DeactivateTransportChannel(123)
+
+	t.Assert().Equal(http.StatusInternalServerError, statusCode)
+	t.Assert().IsType(APIError(""), err)
+	t.Assert().Equal("http request error. status code: 500", err.Error())
 }

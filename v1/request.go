@@ -71,11 +71,11 @@ func makeRequest(reqType, url string, buf io.Reader, c *MgClient) ([]byte, int, 
 
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
-		return res, 0, err
+		return res, 0, ClientError(err.Error())
 	}
 
 	if resp.StatusCode >= http.StatusInternalServerError {
-		err = fmt.Errorf("http request error. status code: %d", resp.StatusCode)
+		err = APIError(fmt.Sprintf("http request error. status code: %d", resp.StatusCode))
 		return res, resp.StatusCode, err
 	}
 

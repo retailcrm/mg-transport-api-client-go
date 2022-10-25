@@ -66,6 +66,14 @@ const (
 	OriginatorChannel
 )
 
+// ClientError is error of http-client or network.
+type ClientError string
+
+func (err ClientError) Error() string {
+	return string(err)
+}
+
+// APIError is error from MG.
 type APIError string
 
 func (err APIError) Error() string {
