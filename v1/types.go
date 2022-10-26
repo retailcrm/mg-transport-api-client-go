@@ -66,23 +66,6 @@ const (
 	OriginatorChannel
 )
 
-// ClientError is error of http-client or network.
-type ClientError string
-
-func (err ClientError) Error() string {
-	return string(err)
-}
-
-// APIError is error with 5xx status code.
-type APIError struct {
-	code     int
-	errorMsg string
-}
-
-func (err APIError) Error() string {
-	return fmt.Sprintf("Error message: %s, code: %v", err.errorMsg, err.code)
-}
-
 type ErrorType string
 
 const (

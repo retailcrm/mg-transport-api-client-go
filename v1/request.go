@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"strings"
 )
@@ -74,14 +73,14 @@ func makeRequest(reqType, url string, buf io.Reader, c *MgClient) ([]byte, int, 
 		return res, 0, NewCriticalHTTPError(err)
 	}
 
+	if resp.StatusCode >= http.StatusInternalServerError {
+		err = NewServerError(resp)
+		return res, resp.StatusCode, err
+	}
+
 	res, err = buildRawResponse(resp)
 	if err != nil {
 		return res, 0, err
-	}
-
-	if resp.StatusCode >= http.StatusInternalServerError {
-		err = NewAPIClientError(res)
-		return res, resp.StatusCode, err
 	}
 
 	if c.Debug {
@@ -89,15 +88,4 @@ func makeRequest(reqType, url string, buf io.Reader, c *MgClient) ([]byte, int, 
 	}
 
 	return res, resp.StatusCode, err
-}
-
-func buildRawResponse(resp *http.Response) ([]byte, error) {
-	defer resp.Body.Close()
-
-	res, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return res, err
-	}
-
-	return res, nil
 }

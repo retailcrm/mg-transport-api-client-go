@@ -2,14 +2,19 @@ package v1
 
 import (
 	"encoding/json"
+	"errors"
+	"fmt"
+	"io"
+	"net/http"
 )
 
 var defaultErrorMessage = "Internal http client error"
 var internalServerError = "Internal server error"
 
 type httpClientError struct {
-	ErrorMsg  string
-	BaseError error
+	ErrorMsg     string
+	BaseError    error
+	ResponseBody io.ReadCloser
 }
 
 func (err *httpClientError) Unwrap() error {
@@ -20,10 +25,10 @@ func (err *httpClientError) Error() string {
 	message := defaultErrorMessage
 
 	if err.BaseError != nil {
-		message = err.BaseError.Error()
+		message = fmt.Sprintf("%s - %s", defaultErrorMessage, err.BaseError.Error())
 	}
 
-	if len([]rune(err.ErrorMsg)) > 0 {
+	if len(err.ErrorMsg) > 0 {
 		message = err.ErrorMsg
 	}
 
@@ -50,4 +55,22 @@ func NewAPIClientError(responseBody []byte) error {
 	}
 
 	return &httpClientError{ErrorMsg: message}
+}
+
+func NewServerError(response *http.Response) error {
+	var data []byte
+	body, err := buildRawResponse(response)
+	if err == nil {
+		data = body
+	}
+
+	err = NewAPIClientError(data)
+	var serverError *httpClientError
+
+	if errors.As(err, &serverError) {
+		serverError.ResponseBody = response.Body
+		return serverError
+	}
+
+	return err
 }
