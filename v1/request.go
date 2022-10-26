@@ -78,7 +78,7 @@ func makeRequest(reqType, url string, buf io.Reader, c *MgClient) ([]byte, int, 
 		return res, resp.StatusCode, err
 	}
 
-	res, err = buildRawResponse(resp)
+	res, err = buildLimitedRawResponse(resp)
 	if err != nil {
 		return res, 0, err
 	}

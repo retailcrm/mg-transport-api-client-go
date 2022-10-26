@@ -47,7 +47,7 @@ func TestNewServerError(t *testing.T) {
 
 	var err *httpClientError
 	if errors.As(serverErr, &err) {
-		assert.NotNil(t, err.ResponseBody)
+		assert.NotNil(t, err.LimitedResponse)
 	} else {
 		t.Fatal("Unexpected type of error")
 	}

@@ -742,10 +742,10 @@ func (t *MGClientTest) Test_SuccessHandleError() {
 
 	t.Assert().Equal(http.StatusInternalServerError, statusCode)
 	t.Assert().IsType(new(httpClientError), err)
-	t.Assert().Equal("Internal server error", err.Error())
+	t.Assert().Equal(internalServerError, err.Error())
 	var serverErr *httpClientError
 	if errors.As(err, &serverErr) {
-		t.Assert().NotNil(serverErr.ResponseBody)
+		t.Assert().NotNil(serverErr.LimitedResponse)
 	} else {
 		t.Fail("Unexpected type of error")
 	}

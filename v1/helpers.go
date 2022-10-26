@@ -5,13 +5,18 @@ import (
 	"net/http"
 )
 
-func buildRawResponse(resp *http.Response) ([]byte, error) {
+const MB = 1 << 20
+const MaxSizeBody = MB * 0.5
+
+func buildLimitedRawResponse(resp *http.Response) ([]byte, error) {
 	defer resp.Body.Close()
 
-	res, err := io.ReadAll(resp.Body)
+	limitReader := io.LimitReader(resp.Body, MaxSizeBody)
+	body, err := io.ReadAll(limitReader)
+
 	if err != nil {
-		return res, err
+		return body, err
 	}
 
-	return res, nil
+	return body, nil
 }
