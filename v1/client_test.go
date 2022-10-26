@@ -723,10 +723,6 @@ func (t *MGClientTest) Test_UploadFile() {
 func (t *MGClientTest) Test_SuccessHandleError() {
 	client := t.client()
 	json := `{"errors": ["Channel not found"]}`
-	handleError := client.Error([]byte(json))
-
-	t.Assert().IsType(new(httpClientError), handleError)
-	t.Assert().Equal(handleError.Error(), "Channel not found")
 
 	defer gock.Off()
 	t.gock().
@@ -745,7 +741,7 @@ func (t *MGClientTest) Test_SuccessHandleError() {
 	t.Assert().Equal(internalServerError, err.Error())
 	var serverErr *httpClientError
 	if errors.As(err, &serverErr) {
-		t.Assert().NotNil(serverErr.LimitedResponse)
+		t.Assert().Nil(serverErr.Response)
 	} else {
 		t.Fail("Unexpected type of error")
 	}

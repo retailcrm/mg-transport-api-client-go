@@ -9,28 +9,29 @@ import (
 	"net/http"
 )
 
-var defaultErrorMessage = "internal http client error"
+var defaultErrorMessage = "http client error"
 var internalServerError = "internal server error"
+var marshalError = "cannot unmarshal response body"
+
+type MGErrors struct {
+	Errors []string
+}
 
 type httpClientError struct {
-	ErrorMsg        string
-	BaseError       error
-	LimitedResponse io.Reader
+	ErrorMsg  string
+	BaseError error
+	Response  io.Reader
 }
 
 func (err *httpClientError) Unwrap() error {
 	return err.BaseError
 }
 
-func (err *httpClientError) Is(target error) bool {
-	return errors.As(target, &err)
-}
-
 func (err *httpClientError) Error() string {
 	message := defaultErrorMessage
 
 	if err.BaseError != nil {
-		message = fmt.Sprintf("%s - %s", defaultErrorMessage, err.BaseError.Error())
+		message = fmt.Sprintf("%s: %s", defaultErrorMessage, err.BaseError.Error())
 	}
 
 	if len(err.ErrorMsg) > 0 {
@@ -45,35 +46,32 @@ func NewCriticalHTTPError(err error) error {
 }
 
 func NewAPIClientError(responseBody []byte) error {
-	var data map[string]interface{}
+	var data MGErrors
 	var message string
 
 	if len(responseBody) == 0 {
 		message = internalServerError
 	} else {
-		if err := json.Unmarshal(responseBody, &data); err != nil {
-			return err
-		}
+		err := json.Unmarshal(responseBody, &data)
 
-		values := data["errors"].([]interface{})
-		message = values[0].(string)
+		if err != nil {
+			message = marshalError
+		} else if len(data.Errors) > 0 {
+			message = data.Errors[0]
+		}
 	}
 
 	return &httpClientError{ErrorMsg: message}
 }
 
 func NewServerError(response *http.Response) error {
-	var data []byte
-	body, err := buildLimitedRawResponse(response)
-	if err == nil {
-		data = body
-	}
-
-	err = NewAPIClientError(data)
 	var serverError *httpClientError
 
-	if errors.As(err, &serverError) {
-		serverError.LimitedResponse = bytes.NewBuffer(body)
+	body, _ := buildLimitedRawResponse(response)
+	err := NewAPIClientError(body)
+
+	if errors.As(err, &serverError) && len(body) > 0 {
+		serverError.Response = bytes.NewBuffer(body)
 		return serverError
 	}
 

@@ -19,7 +19,7 @@ func TestNewCriticalHTTPError(t *testing.T) {
 	assert.IsType(t, new(httpClientError), httpErr)
 	assert.IsType(t, new(url.Error), errors.Unwrap(httpErr))
 	assert.IsType(t, new(url.Error), errors.Unwrap(httpErr))
-	assert.Equal(t, httpErr.Error(), fmt.Sprintf("%s - %s", defaultErrorMessage, err.Error()))
+	assert.Equal(t, httpErr.Error(), fmt.Sprintf("%s: %s", defaultErrorMessage, err.Error()))
 }
 
 func TestNewApiClientError(t *testing.T) {
@@ -47,8 +47,20 @@ func TestNewServerError(t *testing.T) {
 
 	var err *httpClientError
 	if errors.As(serverErr, &err) {
-		assert.NotNil(t, err.LimitedResponse)
+		assert.NotNil(t, err.Response)
 	} else {
 		t.Fatal("Unexpected type of error")
+	}
+
+	body = []byte(`{"invalid_json"`)
+	response = new(http.Response)
+	response.Body = io.NopCloser(bytes.NewReader(body))
+	serverErr = NewServerError(response)
+
+	assert.IsType(t, new(httpClientError), serverErr)
+	assert.Equal(t, serverErr.Error(), marshalError)
+
+	if errors.As(serverErr, &err) {
+		assert.NotNil(t, err.Response)
 	}
 }
