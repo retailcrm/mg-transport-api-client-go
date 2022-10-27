@@ -737,9 +737,9 @@ func (t *MGClientTest) Test_SuccessHandleError() {
 	_, statusCode, err := client.DeactivateTransportChannel(123)
 
 	t.Assert().Equal(http.StatusInternalServerError, statusCode)
-	t.Assert().IsType(new(httpClientError), err)
+	t.Assert().IsType(new(HTTPClientError), err)
 	t.Assert().Equal(internalServerError, err.Error())
-	var serverErr *httpClientError
+	var serverErr *HTTPClientError
 	if errors.As(err, &serverErr) {
 		t.Assert().Nil(serverErr.Response)
 	} else {
@@ -748,6 +748,6 @@ func (t *MGClientTest) Test_SuccessHandleError() {
 
 	_, statusCode, err = client.DeactivateTransportChannel(455)
 	t.Assert().Equal(http.StatusBadRequest, statusCode)
-	t.Assert().IsType(new(httpClientError), err)
+	t.Assert().IsType(new(HTTPClientError), err)
 	t.Assert().Equal("Channel not found", err.Error())
 }

@@ -17,24 +17,22 @@ type MGErrors struct {
 	Errors []string
 }
 
-type httpClientError struct {
+type HTTPClientError struct {
 	ErrorMsg  string
 	BaseError error
 	Response  io.Reader
 }
 
-func (err *httpClientError) Unwrap() error {
+func (err *HTTPClientError) Unwrap() error {
 	return err.BaseError
 }
 
-func (err *httpClientError) Error() string {
+func (err *HTTPClientError) Error() string {
 	message := defaultErrorMessage
 
 	if err.BaseError != nil {
 		message = fmt.Sprintf("%s: %s", defaultErrorMessage, err.BaseError.Error())
-	}
-
-	if len(err.ErrorMsg) > 0 {
+	} else if len(err.ErrorMsg) > 0 {
 		message = err.ErrorMsg
 	}
 
@@ -42,7 +40,7 @@ func (err *httpClientError) Error() string {
 }
 
 func NewCriticalHTTPError(err error) error {
-	return &httpClientError{BaseError: err}
+	return &HTTPClientError{BaseError: err}
 }
 
 func NewAPIClientError(responseBody []byte) error {
@@ -61,11 +59,11 @@ func NewAPIClientError(responseBody []byte) error {
 		}
 	}
 
-	return &httpClientError{ErrorMsg: message}
+	return &HTTPClientError{ErrorMsg: message}
 }
 
 func NewServerError(response *http.Response) error {
-	var serverError *httpClientError
+	var serverError *HTTPClientError
 
 	body, _ := buildLimitedRawResponse(response)
 	err := NewAPIClientError(body)
