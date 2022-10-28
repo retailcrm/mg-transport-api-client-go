@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"io"
+	"io/ioutil"
 	"net/http"
 	"net/url"
 	"testing"
@@ -39,7 +39,7 @@ func TestNewApiClientError(t *testing.T) {
 func TestNewServerError(t *testing.T) {
 	body := []byte(`{"errors" : ["Something went wrong"]}`)
 	response := new(http.Response)
-	response.Body = io.NopCloser(bytes.NewReader(body))
+	response.Body = ioutil.NopCloser(bytes.NewReader(body))
 	serverErr := NewServerError(response)
 
 	assert.IsType(t, new(HTTPClientError), serverErr)
@@ -54,7 +54,7 @@ func TestNewServerError(t *testing.T) {
 
 	body = []byte(`{"invalid_json"`)
 	response = new(http.Response)
-	response.Body = io.NopCloser(bytes.NewReader(body))
+	response.Body = ioutil.NopCloser(bytes.NewReader(body))
 	serverErr = NewServerError(response)
 
 	assert.IsType(t, new(HTTPClientError), serverErr)
