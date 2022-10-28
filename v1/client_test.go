@@ -3,6 +3,7 @@ package v1
 import (
 	"bytes"
 	"encoding/base64"
+	"errors"
 	"fmt"
 	"net/http"
 	"strings"
@@ -45,61 +46,65 @@ func (t *MGClientTest) Test_TransportChannels() {
 	t.gock().
 		Get(t.transportURL("channels")).
 		Reply(http.StatusOK).
-		JSON([]ChannelListItem{{
-			ID:         1,
-			ExternalID: "external_id",
-			Type:       "whatsapp",
-			Name:       &chName,
-			Settings: ChannelSettings{
-				Status: Status{
-					Delivered: ChannelFeatureNone,
-					Read:      ChannelFeatureSend,
-				},
-				Text: ChannelSettingsText{
-					Creating:      ChannelFeatureBoth,
-					Editing:       ChannelFeatureBoth,
-					Quoting:       ChannelFeatureBoth,
-					Deleting:      ChannelFeatureReceive,
-					MaxCharsCount: 4096,
-				},
-				Product: Product{
-					Creating: ChannelFeatureReceive,
-					Editing:  ChannelFeatureReceive,
-				},
-				Order: Order{
-					Creating: ChannelFeatureReceive,
-					Editing:  ChannelFeatureReceive,
-				},
-				File: ChannelSettingsFilesBase{
-					Creating: ChannelFeatureBoth,
-					Editing:  ChannelFeatureBoth,
-					Quoting:  ChannelFeatureBoth,
-					Deleting: ChannelFeatureReceive,
-					Max:      1,
-				},
-				Image: ChannelSettingsFilesBase{
-					Creating: ChannelFeatureBoth,
-					Editing:  ChannelFeatureBoth,
-					Quoting:  ChannelFeatureBoth,
-					Deleting: ChannelFeatureReceive,
-					Max:      1, // nolint:gomnd
-				},
-				Suggestions: ChannelSettingsSuggestions{
-					Text:  ChannelFeatureBoth,
-					Phone: ChannelFeatureBoth,
-					Email: ChannelFeatureBoth,
-				},
-				CustomerExternalID: ChannelFeatureCustomerExternalIDPhone,
-				SendingPolicy: SendingPolicy{
-					NewCustomer: ChannelFeatureSendingPolicyTemplate,
+		JSON(
+			[]ChannelListItem{
+				{
+					ID:         1,
+					ExternalID: "external_id",
+					Type:       "whatsapp",
+					Name:       &chName,
+					Settings: ChannelSettings{
+						Status: Status{
+							Delivered: ChannelFeatureNone,
+							Read:      ChannelFeatureSend,
+						},
+						Text: ChannelSettingsText{
+							Creating:      ChannelFeatureBoth,
+							Editing:       ChannelFeatureBoth,
+							Quoting:       ChannelFeatureBoth,
+							Deleting:      ChannelFeatureReceive,
+							MaxCharsCount: 4096,
+						},
+						Product: Product{
+							Creating: ChannelFeatureReceive,
+							Editing:  ChannelFeatureReceive,
+						},
+						Order: Order{
+							Creating: ChannelFeatureReceive,
+							Editing:  ChannelFeatureReceive,
+						},
+						File: ChannelSettingsFilesBase{
+							Creating: ChannelFeatureBoth,
+							Editing:  ChannelFeatureBoth,
+							Quoting:  ChannelFeatureBoth,
+							Deleting: ChannelFeatureReceive,
+							Max:      1,
+						},
+						Image: ChannelSettingsFilesBase{
+							Creating: ChannelFeatureBoth,
+							Editing:  ChannelFeatureBoth,
+							Quoting:  ChannelFeatureBoth,
+							Deleting: ChannelFeatureReceive,
+							Max:      1, // nolint:gomnd
+						},
+						Suggestions: ChannelSettingsSuggestions{
+							Text:  ChannelFeatureBoth,
+							Phone: ChannelFeatureBoth,
+							Email: ChannelFeatureBoth,
+						},
+						CustomerExternalID: ChannelFeatureCustomerExternalIDPhone,
+						SendingPolicy: SendingPolicy{
+							NewCustomer: ChannelFeatureSendingPolicyTemplate,
+						},
+					},
+					CreatedAt:     createdAt,
+					UpdatedAt:     &createdAt,
+					ActivatedAt:   createdAt,
+					DeactivatedAt: nil,
+					IsActive:      true,
 				},
 			},
-			CreatedAt:     createdAt,
-			UpdatedAt:     &createdAt,
-			ActivatedAt:   createdAt,
-			DeactivatedAt: nil,
-			IsActive:      true,
-		}})
+		)
 
 	data, status, err := c.TransportChannels(Channels{Active: true})
 	t.Require().NoError(err)
@@ -147,11 +152,13 @@ func (t *MGClientTest) Test_ActivateTransportChannel() {
 	t.gock().
 		Post(t.transportURL("channels")).
 		Reply(http.StatusCreated).
-		JSON(ActivateResponse{
-			ChannelID:   1,
-			ExternalID:  "external_id_1",
-			ActivatedAt: time.Now(),
-		})
+		JSON(
+			ActivateResponse{
+				ChannelID:   1,
+				ExternalID:  "external_id_1",
+				ActivatedAt: time.Now(),
+			},
+		)
 
 	data, status, err := c.ActivateTransportChannel(ch)
 	t.Require().NoError(err)
@@ -200,19 +207,23 @@ func (t *MGClientTest) Test_ActivateNewTransportChannel() {
 	t.gock().
 		Post(t.transportURL("channels")).
 		Reply(http.StatusCreated).
-		JSON(ActivateResponse{
-			ChannelID:   1,
-			ExternalID:  "external_id_1",
-			ActivatedAt: time.Now(),
-		})
+		JSON(
+			ActivateResponse{
+				ChannelID:   1,
+				ExternalID:  "external_id_1",
+				ActivatedAt: time.Now(),
+			},
+		)
 
 	t.gock().
 		Delete(t.transportURL("channels/1")).
 		Reply(http.StatusOK).
-		JSON(DeleteResponse{
-			ChannelID:     1,
-			DeactivatedAt: time.Now(),
-		})
+		JSON(
+			DeleteResponse{
+				ChannelID:     1,
+				DeactivatedAt: time.Now(),
+			},
+		)
 
 	data, status, err := c.ActivateTransportChannel(ch)
 	t.Require().NoError(err)
@@ -266,11 +277,13 @@ func (t *MGClientTest) Test_UpdateTransportChannel() {
 	t.gock().
 		Put(t.transportURL("channels/1")).
 		Reply(http.StatusOK).
-		JSON(UpdateResponse{
-			ChannelID:  uint64(1),
-			ExternalID: "external_id_1",
-			UpdatedAt:  time.Now(),
-		})
+		JSON(
+			UpdateResponse{
+				ChannelID:  uint64(1),
+				ExternalID: "external_id_1",
+				UpdatedAt:  time.Now(),
+			},
+		)
 
 	data, status, err := c.UpdateTransportChannel(ch)
 	t.Require().NoError(err)
@@ -287,27 +300,31 @@ func (t *MGClientTest) Test_TransportTemplates() {
 	t.gock().
 		Get(t.transportURL("templates")).
 		Reply(http.StatusOK).
-		JSON([]Template{{
-			Code:      "tpl_code",
-			ChannelID: 1,
-			Name:      "Test Template",
-			Enabled:   true,
-			Type:      TemplateTypeText,
-			Template: []TemplateItem{
+		JSON(
+			[]Template{
 				{
-					Type: TemplateItemTypeText,
-					Text: "Hello, ",
-				},
-				{
-					Type:    TemplateItemTypeVar,
-					VarType: TemplateVarFirstName,
-				},
-				{
-					Type: TemplateItemTypeText,
-					Text: "! We're glad to see you back in our store.",
+					Code:      "tpl_code",
+					ChannelID: 1,
+					Name:      "Test Template",
+					Enabled:   true,
+					Type:      TemplateTypeText,
+					Template: []TemplateItem{
+						{
+							Type: TemplateItemTypeText,
+							Text: "Hello, ",
+						},
+						{
+							Type:    TemplateItemTypeVar,
+							VarType: TemplateVarFirstName,
+						},
+						{
+							Type: TemplateItemTypeText,
+							Text: "! We're glad to see you back in our store.",
+						},
+					},
 				},
 			},
-		}})
+		)
 
 	data, status, err := c.TransportTemplates()
 	t.Assert().NoError(err, fmt.Sprintf("%d %s", status, err))
@@ -390,10 +407,12 @@ func (t *MGClientTest) Test_UpdateTemplate() {
 	defer gock.Off()
 
 	t.gock().
-		Filter(func(r *http.Request) bool {
-			return r.Method == http.MethodPut &&
-				r.URL.Path == "/api/transport/v1/channels/1/templates/encodable#code"
-		}).
+		Filter(
+			func(r *http.Request) bool {
+				return r.Method == http.MethodPut &&
+					r.URL.Path == "/api/transport/v1/channels/1/templates/encodable#code"
+			},
+		).
 		Reply(http.StatusOK).
 		JSON(map[string]interface{}{})
 
@@ -440,9 +459,11 @@ func (t *MGClientTest) Test_UpdateTemplateFail() {
 	defer gock.Off()
 	t.gock().
 		Reply(http.StatusBadRequest).
-		JSON(map[string][]string{
-			"errors": {"Some weird error message..."},
-		})
+		JSON(
+			map[string][]string{
+				"errors": {"Some weird error message..."},
+			},
+		)
 
 	status, err := c.UpdateTemplate(tpl)
 	t.Assert().Error(err, fmt.Sprintf("%d %s", status, err))
@@ -453,10 +474,12 @@ func (t *MGClientTest) Test_DeactivateTemplate() {
 
 	defer gock.Off()
 	t.gock().
-		Filter(func(r *http.Request) bool {
-			return r.Method == http.MethodDelete &&
-				r.URL.Path == t.transportURL("channels/1/templates/test_template#code")
-		}).
+		Filter(
+			func(r *http.Request) bool {
+				return r.Method == http.MethodDelete &&
+					r.URL.Path == t.transportURL("channels/1/templates/test_template#code")
+			},
+		).
 		Reply(http.StatusOK).
 		JSON(map[string]interface{}{})
 
@@ -487,10 +510,12 @@ func (t *MGClientTest) Test_TextMessages() {
 	t.gock().
 		Post(t.transportURL("messages")).
 		Reply(http.StatusOK).
-		JSON(MessagesResponse{
-			MessageID: 1,
-			Time:      time.Now(),
-		})
+		JSON(
+			MessagesResponse{
+				MessageID: 1,
+				Time:      time.Now(),
+			},
+		)
 
 	data, status, err := c.Messages(snd)
 	t.Require().NoError(err)
@@ -507,26 +532,32 @@ func (t *MGClientTest) Test_ImageMessages() {
 	t.gock().
 		Post(t.transportURL("files/upload_by_url")).
 		Reply(http.StatusOK).
-		JSON(UploadFileResponse{
-			ID:        "1",
-			Hash:      "1",
-			Type:      "image/png",
-			MimeType:  "",
-			Size:      1024,
-			CreatedAt: time.Now(),
-		})
+		JSON(
+			UploadFileResponse{
+				ID:        "1",
+				Hash:      "1",
+				Type:      "image/png",
+				MimeType:  "",
+				Size:      1024,
+				CreatedAt: time.Now(),
+			},
+		)
 
 	t.gock().
 		Post(t.transportURL("messages")).
 		Reply(http.StatusOK).
-		JSON(MessagesResponse{
-			MessageID: 1,
-			Time:      time.Now(),
-		})
+		JSON(
+			MessagesResponse{
+				MessageID: 1,
+				Time:      time.Now(),
+			},
+		)
 
-	uploadFileResponse, st, err := c.UploadFileByURL(UploadFileByUrlRequest{
-		Url: "https://via.placeholder.com/1",
-	})
+	uploadFileResponse, st, err := c.UploadFileByURL(
+		UploadFileByUrlRequest{
+			Url: "https://via.placeholder.com/1",
+		},
+	)
 	t.Require().NoError(err)
 	t.Assert().Equal(http.StatusOK, st)
 	t.Assert().Equal("1", uploadFileResponse.ID)
@@ -569,10 +600,12 @@ func (t *MGClientTest) Test_UpdateMessages() {
 	t.gock().
 		Put(t.transportURL("messages")).
 		Reply(http.StatusOK).
-		JSON(MessagesResponse{
-			MessageID: 1,
-			Time:      time.Now(),
-		})
+		JSON(
+			MessagesResponse{
+				MessageID: 1,
+				Time:      time.Now(),
+			},
+		)
 
 	dataU, status, err := c.UpdateMessages(sndU)
 	t.Require().NoError(err)
@@ -599,28 +632,34 @@ func (t *MGClientTest) Test_MarkMessageReadAndDelete() {
 
 	t.gock().
 		Delete(t.transportURL("messages")).
-		JSON(DeleteData{
-			Message: Message{
-				ExternalID: "deleted",
+		JSON(
+			DeleteData{
+				Message: Message{
+					ExternalID: "deleted",
+				},
+				Channel: 1,
 			},
-			Channel: 1,
-		}).
+		).
 		Reply(http.StatusOK).
-		JSON(MessagesResponse{
-			MessageID: 2,
-			Time:      time.Now(),
-		})
+		JSON(
+			MessagesResponse{
+				MessageID: 2,
+				Time:      time.Now(),
+			},
+		)
 
 	_, status, err := c.MarkMessageRead(snd)
 	t.Require().NoError(err)
 	t.Assert().Equal(http.StatusOK, status)
 
-	previousChatMessage, status, err := c.DeleteMessage(DeleteData{
-		Message{
-			ExternalID: "deleted",
+	previousChatMessage, status, err := c.DeleteMessage(
+		DeleteData{
+			Message{
+				ExternalID: "deleted",
+			},
+			1,
 		},
-		1,
-	})
+	)
 	t.Require().NoError(err)
 	t.Assert().Equal(http.StatusOK, status)
 	t.Assert().Equal(2, previousChatMessage.MessageID)
@@ -633,10 +672,12 @@ func (t *MGClientTest) Test_DeactivateTransportChannel() {
 	t.gock().
 		Delete(t.transportURL("channels/1")).
 		Reply(http.StatusOK).
-		JSON(DeleteResponse{
-			ChannelID:     1,
-			DeactivatedAt: time.Now(),
-		})
+		JSON(
+			DeleteResponse{
+				ChannelID:     1,
+				DeactivatedAt: time.Now(),
+			},
+		)
 
 	deleteData, status, err := c.DeactivateTransportChannel(1)
 	t.Require().NoError(err)
@@ -677,4 +718,36 @@ func (t *MGClientTest) Test_UploadFile() {
 
 	resp.CreatedAt = data.CreatedAt
 	t.Assert().Equal(resp, data)
+}
+
+func (t *MGClientTest) Test_SuccessHandleError() {
+	client := t.client()
+	json := `{"errors": ["Channel not found"]}`
+
+	defer gock.Off()
+	t.gock().
+		Delete(t.transportURL("channels/123")).
+		Reply(http.StatusInternalServerError)
+
+	t.gock().
+		Delete(t.transportURL("channels/455")).
+		Reply(http.StatusBadRequest).
+		JSON(json)
+
+	_, statusCode, err := client.DeactivateTransportChannel(123)
+
+	t.Assert().Equal(http.StatusInternalServerError, statusCode)
+	t.Assert().IsType(new(HTTPClientError), err)
+	t.Assert().Equal(internalServerError, err.Error())
+	var serverErr *HTTPClientError
+	if errors.As(err, &serverErr) {
+		t.Assert().Nil(serverErr.Response)
+	} else {
+		t.Fail("Unexpected type of error")
+	}
+
+	_, statusCode, err = client.DeactivateTransportChannel(455)
+	t.Assert().Equal(http.StatusBadRequest, statusCode)
+	t.Assert().IsType(new(HTTPClientError), err)
+	t.Assert().Equal("Channel not found", err.Error())
 }

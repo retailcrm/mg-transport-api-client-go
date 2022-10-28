@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"strings"
 )
@@ -71,15 +70,15 @@ func makeRequest(reqType, url string, buf io.Reader, c *MgClient) ([]byte, int, 
 
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
-		return res, 0, err
+		return res, 0, NewCriticalHTTPError(err)
 	}
 
 	if resp.StatusCode >= http.StatusInternalServerError {
-		err = fmt.Errorf("http request error. status code: %d", resp.StatusCode)
+		err = NewServerError(resp)
 		return res, resp.StatusCode, err
 	}
 
-	res, err = buildRawResponse(resp)
+	res, err = buildLimitedRawResponse(resp)
 	if err != nil {
 		return res, 0, err
 	}
@@ -89,15 +88,4 @@ func makeRequest(reqType, url string, buf io.Reader, c *MgClient) ([]byte, int, 
 	}
 
 	return res, resp.StatusCode, err
-}
-
-func buildRawResponse(resp *http.Response) ([]byte, error) {
-	defer resp.Body.Close()
-
-	res, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return res, err
-	}
-
-	return res, nil
 }

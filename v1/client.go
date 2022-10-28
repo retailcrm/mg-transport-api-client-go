@@ -71,7 +71,7 @@ func (c *MgClient) TransportTemplates() ([]Template, int, error) {
 	}
 
 	if status > http.StatusCreated || status < http.StatusOK {
-		return resp, status, c.Error(data)
+		return resp, status, NewAPIClientError(data)
 	}
 
 	return resp, status, err
@@ -116,7 +116,7 @@ func (c *MgClient) ActivateTemplate(channelID uint64, request ActivateTemplateRe
 	}
 
 	if status > http.StatusCreated || status < http.StatusOK {
-		return status, c.Error(data)
+		return status, NewAPIClientError(data)
 	}
 
 	return status, err
@@ -165,7 +165,7 @@ func (c *MgClient) UpdateTemplate(request Template) (int, error) {
 	}
 
 	if status != http.StatusOK {
-		return status, c.Error(data)
+		return status, NewAPIClientError(data)
 	}
 
 	return status, err
@@ -190,7 +190,7 @@ func (c *MgClient) DeactivateTemplate(channelID uint64, templateCode string) (in
 	}
 
 	if status > http.StatusCreated || status < http.StatusOK {
-		return status, c.Error(data)
+		return status, NewAPIClientError(data)
 	}
 
 	return status, err
@@ -224,7 +224,7 @@ func (c *MgClient) TransportChannels(request Channels) ([]ChannelListItem, int, 
 	}
 
 	if status > http.StatusCreated || status < http.StatusOK {
-		return resp, status, c.Error(data)
+		return resp, status, NewAPIClientError(data)
 	}
 
 	return resp, status, err
@@ -283,7 +283,7 @@ func (c *MgClient) ActivateTransportChannel(request Channel) (ActivateResponse, 
 	}
 
 	if status > http.StatusCreated || status < http.StatusOK {
-		return resp, status, c.Error(data)
+		return resp, status, NewAPIClientError(data)
 	}
 
 	return resp, status, err
@@ -342,7 +342,7 @@ func (c *MgClient) UpdateTransportChannel(request Channel) (UpdateResponse, int,
 	}
 
 	if status != http.StatusOK {
-		return resp, status, c.Error(data)
+		return resp, status, NewAPIClientError(data)
 	}
 
 	return resp, status, err
@@ -378,7 +378,7 @@ func (c *MgClient) DeactivateTransportChannel(id uint64) (DeleteResponse, int, e
 	}
 
 	if status != http.StatusOK {
-		return resp, status, c.Error(data)
+		return resp, status, NewAPIClientError(data)
 	}
 
 	return resp, status, err
@@ -427,7 +427,7 @@ func (c *MgClient) Messages(request SendData) (MessagesResponse, int, error) {
 	}
 
 	if status != http.StatusOK {
-		return resp, status, c.Error(data)
+		return resp, status, NewAPIClientError(data)
 	}
 
 	return resp, status, err
@@ -471,7 +471,7 @@ func (c *MgClient) UpdateMessages(request EditMessageRequest) (MessagesResponse,
 	}
 
 	if status != http.StatusOK {
-		return resp, status, c.Error(data)
+		return resp, status, NewAPIClientError(data)
 	}
 
 	return resp, status, err
@@ -510,7 +510,7 @@ func (c *MgClient) MarkMessageRead(request MarkMessageReadRequest) (MarkMessageR
 	}
 
 	if status != http.StatusOK {
-		return resp, status, c.Error(data)
+		return resp, status, NewAPIClientError(data)
 	}
 
 	return resp, status, err
@@ -541,7 +541,7 @@ func (c *MgClient) AckMessage(request AckMessageRequest) (int, error) {
 	}
 
 	if status != http.StatusOK {
-		return status, c.Error(data)
+		return status, NewAPIClientError(data)
 	}
 
 	return status, err
@@ -579,7 +579,7 @@ func (c *MgClient) DeleteMessage(request DeleteData) (*MessagesResponse, int, er
 		return nil, status, err
 	}
 	if status != http.StatusOK {
-		return nil, status, c.Error(data)
+		return nil, status, NewAPIClientError(data)
 	}
 
 	var previousChatMessage *MessagesResponse
@@ -618,7 +618,7 @@ func (c *MgClient) GetFile(request string) (FullFileResponse, int, error) {
 	}
 
 	if status != http.StatusOK {
-		return resp, status, c.Error(data)
+		return resp, status, NewAPIClientError(data)
 	}
 
 	return resp, status, err
@@ -638,7 +638,7 @@ func (c *MgClient) UploadFile(request io.Reader) (UploadFileResponse, int, error
 	}
 
 	if status != http.StatusOK {
-		return resp, status, c.Error(data)
+		return resp, status, NewAPIClientError(data)
 	}
 
 	return resp, status, err
@@ -659,22 +659,10 @@ func (c *MgClient) UploadFileByURL(request UploadFileByUrlRequest) (UploadFileRe
 	}
 
 	if status != http.StatusOK {
-		return resp, status, c.Error(data)
+		return resp, status, NewAPIClientError(data)
 	}
 
 	return resp, status, err
-}
-
-func (c *MgClient) Error(info []byte) error {
-	var data map[string]interface{}
-
-	if err := json.Unmarshal(info, &data); err != nil {
-		return err
-	}
-
-	values := data["errors"].([]interface{})
-
-	return errors.New(values[0].(string))
 }
 
 // MakeTimestamp returns current unix timestamp.
