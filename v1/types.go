@@ -330,6 +330,18 @@ type AckMessageRequest struct {
 	Error              *MessageSentError `json:"error,omitempty"`
 }
 
+// MarkMessagesReadUntilRequest type.
+type MarkMessagesReadUntilRequest struct {
+	CustomerExternalID string    `json:"customer_external_id"`
+	ChannelID          uint64    `json:"channel_id"`
+	Until              time.Time `json:"until"`
+}
+
+// MarkMessagesReadUntilResponse type.
+type MarkMessagesReadUntilResponse struct {
+	IDs []int64 `json:"ids"`
+}
+
 // DeleteData struct.
 type DeleteData struct {
 	Message Message `json:"message"`

@@ -614,6 +614,28 @@ func (t *MGClientTest) Test_UpdateMessages() {
 	t.Assert().Equal(1, dataU.MessageID)
 }
 
+func (t *MGClientTest) Test_ReadUntil() {
+	c := t.client()
+	req := MarkMessagesReadUntilRequest{
+		CustomerExternalID: "customer",
+		ChannelID:          1,
+		Until:              time.Unix(0, 0),
+	}
+
+	defer gock.Off()
+	t.gock().
+		Post("messages/read_until").
+		Reply(http.StatusOK).
+		JSON(MarkMessagesReadUntilResponse{
+			IDs: []int64{1},
+		})
+
+	resp, st, err := c.ReadUntil(req)
+	t.Require().NoError(err)
+	t.Assert().Equal(http.StatusOK, st)
+	t.Assert().Equal([]int64{1}, resp.IDs)
+}
+
 func (t *MGClientTest) Test_MarkMessageReadAndDelete() {
 	c := t.client()
 

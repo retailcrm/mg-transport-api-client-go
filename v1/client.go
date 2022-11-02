@@ -49,13 +49,13 @@ func (c *MgClient) writeLog(format string, v ...interface{}) {
 //
 // Example:
 //
-// 	var client = v1.New("https://token.url", "cb8ccf05e38a47543ad8477d4999be73bff503ea6")
+//	var client = v1.New("https://token.url", "cb8ccf05e38a47543ad8477d4999be73bff503ea6")
 //
-// 	data, status, err := client.TransportTemplates()
+//	data, status, err := client.TransportTemplates()
 //
-// 	if err != nil {
-// 		fmt.Printf("%v", err)
-// 	}
+//	if err != nil {
+//		fmt.Printf("%v", err)
+//	}
 //
 //	fmt.Printf("Status: %v, Templates found: %v", status, len(data))
 func (c *MgClient) TransportTemplates() ([]Template, int, error) {
@@ -80,33 +80,34 @@ func (c *MgClient) TransportTemplates() ([]Template, int, error) {
 // ActivateTemplate implements template activation
 //
 // Example:
-// 		var client = v1.New("https://token.url", "cb8ccf05e38a47543ad8477d4999be73bff503ea6")
 //
-// 		request := v1.ActivateTemplateRequest{
-// 				Code: "code",
-// 				Name: "name",
-// 				Type: v1.TemplateTypeText,
-// 				Template: []v1.TemplateItem{
-// 					{
-// 						Type: v1.TemplateItemTypeText,
-// 						Text: "Hello, ",
-// 					},
-// 					{
-// 						Type:    v1.TemplateItemTypeVar,
-// 						VarType: v1.TemplateVarName,
-// 					},
-// 					{
-// 						Type: v1.TemplateItemTypeText,
-// 						Text: "!",
-// 					},
-// 				},
-// 		}
+//	var client = v1.New("https://token.url", "cb8ccf05e38a47543ad8477d4999be73bff503ea6")
 //
-// 		_, err := client.ActivateTemplate(uint64(1), request)
+//	request := v1.ActivateTemplateRequest{
+//			Code: "code",
+//			Name: "name",
+//			Type: v1.TemplateTypeText,
+//			Template: []v1.TemplateItem{
+//				{
+//					Type: v1.TemplateItemTypeText,
+//					Text: "Hello, ",
+//				},
+//				{
+//					Type:    v1.TemplateItemTypeVar,
+//					VarType: v1.TemplateVarName,
+//				},
+//				{
+//					Type: v1.TemplateItemTypeText,
+//					Text: "!",
+//				},
+//			},
+//	}
 //
-// 		if err != nil {
-// 			fmt.Printf("%v", err)
-// 		}
+//	_, err := client.ActivateTemplate(uint64(1), request)
+//
+//	if err != nil {
+//		fmt.Printf("%v", err)
+//	}
 func (c *MgClient) ActivateTemplate(channelID uint64, request ActivateTemplateRequest) (int, error) {
 	outgoing, _ := json.Marshal(&request)
 
@@ -124,33 +125,34 @@ func (c *MgClient) ActivateTemplate(channelID uint64, request ActivateTemplateRe
 
 // UpdateTemplate implements template updating
 // Example:
-// 		var client = New("https://token.url", "cb8ccf05e38a47543ad8477d4999be73bff503ea6")
 //
-// 		request := v1.Template{
-// 			Code:      "templateCode",
-// 			ChannelID: 1,
-// 			Name:      "templateName",
-// 			Template:  []v1.TemplateItem{
-// 				{
-// 					Type: v1.TemplateItemTypeText,
-// 					Text: "Welcome, ",
-// 				},
-// 				{
-// 					Type: v1.TemplateItemTypeVar,
-// 					VarType: v1.TemplateVarName,
-// 				},
-// 				{
-// 					Type: v1.TemplateItemTypeText,
-// 					Text: "!",
-// 				},
-// 			},
-// 		}
+//	var client = New("https://token.url", "cb8ccf05e38a47543ad8477d4999be73bff503ea6")
 //
-// 		_, err := client.UpdateTemplate(request)
+//	request := v1.Template{
+//		Code:      "templateCode",
+//		ChannelID: 1,
+//		Name:      "templateName",
+//		Template:  []v1.TemplateItem{
+//			{
+//				Type: v1.TemplateItemTypeText,
+//				Text: "Welcome, ",
+//			},
+//			{
+//				Type: v1.TemplateItemTypeVar,
+//				VarType: v1.TemplateVarName,
+//			},
+//			{
+//				Type: v1.TemplateItemTypeText,
+//				Text: "!",
+//			},
+//		},
+//	}
 //
-// 		if err != nil {
-// 			fmt.Printf("%#v", err)
-// 		}
+//	_, err := client.UpdateTemplate(request)
+//
+//	if err != nil {
+//		fmt.Printf("%#v", err)
+//	}
 func (c *MgClient) UpdateTemplate(request Template) (int, error) {
 	outgoing, _ := json.Marshal(&request)
 
@@ -175,13 +177,13 @@ func (c *MgClient) UpdateTemplate(request Template) (int, error) {
 //
 // Example:
 //
-// 	var client = v1.New("https://token.url", "cb8ccf05e38a47543ad8477d4999be73bff503ea6")
+//	var client = v1.New("https://token.url", "cb8ccf05e38a47543ad8477d4999be73bff503ea6")
 //
-// 	_, err := client.DeactivateTemplate(3053450384, "templateCode")
+//	_, err := client.DeactivateTemplate(3053450384, "templateCode")
 //
-// 	if err != nil {
-// 		fmt.Printf("%v", err)
-// 	}
+//	if err != nil {
+//		fmt.Printf("%v", err)
+//	}
 func (c *MgClient) DeactivateTemplate(channelID uint64, templateCode string) (int, error) {
 	data, status, err := c.DeleteRequest(
 		fmt.Sprintf("/channels/%d/templates/%s", channelID, url.PathEscape(templateCode)), []byte{})
@@ -200,13 +202,13 @@ func (c *MgClient) DeactivateTemplate(channelID uint64, templateCode string) (in
 //
 // Example:
 //
-// 	var client = v1.New("https://token.url", "cb8ccf05e38a47543ad8477d4999be73bff503ea6")
+//	var client = v1.New("https://token.url", "cb8ccf05e38a47543ad8477d4999be73bff503ea6")
 //
-// 	data, status, err := client.TransportChannels(Channels{Active: true})
+//	data, status, err := client.TransportChannels(Channels{Active: true})
 //
-// 	if err != nil {
-// 		fmt.Printf("%v", err)
-// 	}
+//	if err != nil {
+//		fmt.Printf("%v", err)
+//	}
 //
 //	fmt.Printf("Status: %v, Channels found: %v", status, len(data))
 func (c *MgClient) TransportChannels(request Channels) ([]ChannelListItem, int, error) {
@@ -234,7 +236,7 @@ func (c *MgClient) TransportChannels(request Channels) ([]ChannelListItem, int, 
 //
 // Example:
 //
-// 	var client = v1.New("https://token.url", "cb8ccf05e38a47543ad8477d4999be73bff503ea6")
+//	var client = v1.New("https://token.url", "cb8ccf05e38a47543ad8477d4999be73bff503ea6")
 //
 //	request := ActivateRequest{
 //		Type: "telegram",
@@ -243,30 +245,30 @@ func (c *MgClient) TransportChannels(request Channels) ([]ChannelListItem, int, 
 //			Status: Status{
 //				Delivered: ChannelFeatureNone,
 //				Read: ChannelFeatureReceive,
-// 			},
+//			},
 //			Text: ChannelSettingsText{
 //				Creating: ChannelFeatureBoth,
 //				Editing:  ChannelFeatureBoth,
 //				Quoting:  ChannelFeatureReceive,
 //				Deleting: ChannelFeatureSend,
 //				MaxCharsCount: 2000,
-// 			},
+//			},
 //			Product: Product{
 //				Creating: ChannelFeatureSend,
 //				Deleting: ChannelFeatureSend,
-// 			},
+//			},
 //			Order: Order{
 //				Creating: ChannelFeatureBoth,
 //				Deleting: ChannelFeatureSend,
-// 			},
-// 		},
+//			},
+//		},
 //	}
 //
-// 	data, status, err := client.ActivateTransportChannel(request)
+//	data, status, err := client.ActivateTransportChannel(request)
 //
-// 	if err != nil {
-// 		fmt.Printf("%v", err)
-// 	}
+//	if err != nil {
+//		fmt.Printf("%v", err)
+//	}
 //
 //	fmt.Printf("%s\n", data.CreatedAt)
 func (c *MgClient) ActivateTransportChannel(request Channel) (ActivateResponse, int, error) {
@@ -303,29 +305,29 @@ func (c *MgClient) ActivateTransportChannel(request Channel) (ActivateResponse, 
 //			Status: Status{
 //				Delivered: ChannelFeatureNone,
 //				Read: ChannelFeatureReceive,
-// 			},
+//			},
 //			Text: ChannelSettingsText{
 //				Creating: ChannelFeatureBoth,
 //				Editing:  ChannelFeatureSend,
 //				Quoting:  ChannelFeatureReceive,
 //				Deleting: ChannelFeatureBoth,
-// 			},
+//			},
 //			Product: Product{
 //				Creating: ChannelFeatureSend,
 //				Deleting: ChannelFeatureSend,
-// 			},
+//			},
 //			Order: Order{
 //				Creating: ChannelFeatureBoth,
 //				Deleting: ChannelFeatureSend,
-// 			},
-// 		},
+//			},
+//		},
 //	}
 //
-// 	data, status, err := client.UpdateTransportChannel(request)
+//	data, status, err := client.UpdateTransportChannel(request)
 //
-// 	if err != nil {
-// 		fmt.Printf("%v", err)
-// 	}
+//	if err != nil {
+//		fmt.Printf("%v", err)
+//	}
 //
 //	fmt.Printf("%s\n", data.UpdatedAt)
 func (c *MgClient) UpdateTransportChannel(request Channel) (UpdateResponse, int, error) {
@@ -352,13 +354,13 @@ func (c *MgClient) UpdateTransportChannel(request Channel) (UpdateResponse, int,
 //
 // Example:
 //
-// 	var client = v1.New("https://token.url", "cb8ccf05e38a47543ad8477d4999be73bff503ea6")
+//	var client = v1.New("https://token.url", "cb8ccf05e38a47543ad8477d4999be73bff503ea6")
 //
-// 	data, status, err := client.DeactivateTransportChannel(3053450384)
+//	data, status, err := client.DeactivateTransportChannel(3053450384)
 //
-// 	if err != nil {
-// 		fmt.Printf("%v", err)
-// 	}
+//	if err != nil {
+//		fmt.Printf("%v", err)
+//	}
 //
 //	fmt.Printf("%s\n", data.DeactivatedAt)
 func (c *MgClient) DeactivateTransportChannel(id uint64) (DeleteResponse, int, error) {
@@ -388,7 +390,7 @@ func (c *MgClient) DeactivateTransportChannel(id uint64) (DeleteResponse, int, e
 //
 // Example:
 //
-// 	var client = v1.New("https://token.url", "cb8ccf05e38a47543ad8477d4999be73bff503ea6")
+//	var client = v1.New("https://token.url", "cb8ccf05e38a47543ad8477d4999be73bff503ea6")
 //	msg := SendData{
 //		SendMessage{
 //			Message{
@@ -406,11 +408,11 @@ func (c *MgClient) DeactivateTransportChannel(id uint64) (DeleteResponse, int, e
 //		10,
 //	}
 //
-// 	data, status, err := client.Messages(msg)
+//	data, status, err := client.Messages(msg)
 //
-// 	if err != nil {
-// 		fmt.Printf("%v", err)
-// 	}
+//	if err != nil {
+//		fmt.Printf("%v", err)
+//	}
 //
 //	fmt.Printf("%s\n", data.MessageID)
 func (c *MgClient) Messages(request SendData) (MessagesResponse, int, error) {
@@ -437,7 +439,7 @@ func (c *MgClient) Messages(request SendData) (MessagesResponse, int, error) {
 //
 // Example:
 //
-// 	var client = v1.New("https://token.url", "cb8ccf05e38a47543ad8477d4999be73bff503ea6")
+//	var client = v1.New("https://token.url", "cb8ccf05e38a47543ad8477d4999be73bff503ea6")
 //	msg := UpdateData{
 //		UpdateMessage{
 //			Message{
@@ -450,11 +452,11 @@ func (c *MgClient) Messages(request SendData) (MessagesResponse, int, error) {
 //		10,
 //	}
 //
-// 	data, status, err := client.UpdateMessages(msg)
+//	data, status, err := client.UpdateMessages(msg)
 //
-// 	if err != nil {
-// 		fmt.Printf("%v", err)
-// 	}
+//	if err != nil {
+//		fmt.Printf("%v", err)
+//	}
 //
 //	fmt.Printf("%s\n", data.MessageID)
 func (c *MgClient) UpdateMessages(request EditMessageRequest) (MessagesResponse, int, error) {
@@ -481,7 +483,7 @@ func (c *MgClient) UpdateMessages(request EditMessageRequest) (MessagesResponse,
 //
 // Example:
 //
-// 	var client = v1.New("https://token.url", "cb8ccf05e38a47543ad8477d4999be73bff503ea6")
+//	var client = v1.New("https://token.url", "cb8ccf05e38a47543ad8477d4999be73bff503ea6")
 //	msg := MarkMessageReadRequest{
 //		Message{
 //			ExternalID: "274628",
@@ -489,11 +491,11 @@ func (c *MgClient) UpdateMessages(request EditMessageRequest) (MessagesResponse,
 //		10,
 //	}
 //
-// 	data, status, err := client.MarkMessageRead(msg)
+//	data, status, err := client.MarkMessageRead(msg)
 //
-// 	if err != nil {
-// 		fmt.Printf("%v", err)
-// 	}
+//	if err != nil {
+//		fmt.Printf("%v", err)
+//	}
 //
 //	fmt.Printf("%v %v\n", status, data)
 func (c *MgClient) MarkMessageRead(request MarkMessageReadRequest) (MarkMessageReadResponse, int, error) {
@@ -547,27 +549,63 @@ func (c *MgClient) AckMessage(request AckMessageRequest) (int, error) {
 	return status, err
 }
 
+// ReadUntil will mark all messages from specified timestamp as read.
+//
+// Example:
+//
+//	var client = v1.New("https://token.url", "cb8ccf05e38a47543ad8477d4999be73bff503ea6")
+//
+//	request := ReadUntilRequest{
+//		ExternalMessageID: "274628",
+//		Channel: 10,
+//	}
+//
+//	resp, status, err := client.ReadUntil(request)
+//	if err != nil {
+//		fmt.Printf("%v", err)
+//	}
+//	if resp != nil {
+//		fmt.Printf("Marked these as read: %s", resp.IDs)
+//	}
+func (c *MgClient) ReadUntil(request MarkMessagesReadUntilRequest) (*MarkMessagesReadUntilResponse, int, error) {
+	outgoing, _ := json.Marshal(&request)
+
+	data, status, err := c.PostRequest("/messages/read_until", bytes.NewBuffer(outgoing))
+	if err != nil {
+		return nil, status, err
+	}
+	if status != http.StatusOK {
+		return nil, status, NewAPIClientError(data)
+	}
+
+	var resp *MarkMessagesReadUntilResponse
+	if e := json.Unmarshal(data, &resp); e != nil {
+		return nil, status, e
+	}
+	return resp, status, nil
+}
+
 // DeleteMessage implement delete message
 //
 // Example:
 //
-// 	var client = v1.New("https://token.url", "cb8ccf05e38a47543ad8477d4999be73bff503ea6")
+//		var client = v1.New("https://token.url", "cb8ccf05e38a47543ad8477d4999be73bff503ea6")
 //
-//	msg := DeleteData{
-//		Message{
-//			ExternalID: "274628",
-//		},
-//		10,
-//	}
+//		msg := DeleteData{
+//			Message{
+//				ExternalID: "274628",
+//			},
+//			10,
+//		}
 //
-// 	previousChatMessage, status, err := client.DeleteMessage(msg)
-// 	if err != nil {
-// 		fmt.Printf("%v", err)
-// 	}
+//		previousChatMessage, status, err := client.DeleteMessage(msg)
+//		if err != nil {
+//			fmt.Printf("%v", err)
+//		}
 //
-//  if previousChatMessage != nil {
-//  	fmt.Printf("Previous chat message id = %d", previousChatMessage.MessageID)
-//  }
+//	 if previousChatMessage != nil {
+//	 	fmt.Printf("Previous chat message id = %d", previousChatMessage.MessageID)
+//	 }
 func (c *MgClient) DeleteMessage(request DeleteData) (*MessagesResponse, int, error) {
 	outgoing, _ := json.Marshal(&request)
 
@@ -594,13 +632,13 @@ func (c *MgClient) DeleteMessage(request DeleteData) (*MessagesResponse, int, er
 //
 // Example:
 //
-// 	var client = v1.New("https://token.url", "cb8ccf05e38a47543ad8477d4999be73bff503ea6")
+//	var client = v1.New("https://token.url", "cb8ccf05e38a47543ad8477d4999be73bff503ea6")
 //
-// 	data, status, err := client.GetFile("file_ID")
+//	data, status, err := client.GetFile("file_ID")
 //
-// 	if err != nil {
-// 		fmt.Printf("%v", err)
-// 	}
+//	if err != nil {
+//		fmt.Printf("%v", err)
+//	}
 //
 //	fmt.Printf("%s\n", data.MessageID)
 func (c *MgClient) GetFile(request string) (FullFileResponse, int, error) {
