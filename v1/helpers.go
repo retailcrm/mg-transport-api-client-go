@@ -4,6 +4,7 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
+	"time"
 )
 
 const MB = 1 << 20
@@ -19,4 +20,12 @@ func buildLimitedRawResponse(resp *http.Response) ([]byte, error) {
 	}
 
 	return body, nil
+}
+
+func BoolPtr(v bool) *bool {
+	return &v
+}
+
+func TimePtr(v time.Time) *time.Time {
+	return &v
 }

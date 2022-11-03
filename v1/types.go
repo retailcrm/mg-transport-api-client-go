@@ -286,6 +286,26 @@ type EditMessageRequestMessage struct {
 	EditedAt   int64  `json:"edited_at"`
 }
 
+type SendHistoryMessageRequest struct {
+	Message        SendMessageRequestMessage `json:"message"`
+	ChannelID      uint64                    `json:"channel_id"`
+	ExternalChatID string                    `json:"external_chat_id"`
+	Customer       *Customer                 `json:"customer"`
+	Quote          *SendMessageRequestQuote  `json:"quote,omitempty"`
+	Originator     Originator                `json:"originator,omitempty"`
+	ReplyDeadline  *time.Time                `json:"reply_deadline,omitempty"`
+}
+
+type SendMessageRequestMessage struct {
+	Type       string     `json:"type"`
+	ExternalID string     `json:"external_id,omitempty"`
+	CreatedAt  *time.Time `json:"created_at,omitempty"`
+	IsComment  bool       `json:"is_comment,omitempty"`
+	Text       string     `json:"text"`
+	Items      []Item     `json:"items"`
+	Note       string     `json:"note,omitempty"`
+}
+
 // SendData struct.
 type SendData struct {
 	Message        Message                  `json:"message"`
@@ -352,6 +372,7 @@ type DeleteData struct {
 type MessagesResponse struct {
 	MessageID int       `json:"message_id,omitempty"`
 	Time      time.Time `json:"time,omitempty"`
+	Warnings  []string  `json:"warnings"`
 }
 
 // WebhookRequest type.

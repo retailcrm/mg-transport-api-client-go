@@ -435,6 +435,60 @@ func (c *MgClient) Messages(request SendData) (MessagesResponse, int, error) {
 	return resp, status, err
 }
 
+// MessagesHistory implement history message sending.
+//
+// Example:
+//
+//	var client = v1.New("https://token.url", "cb8ccf05e38a47543ad8477d4999be73bff503ea6")
+//	msg := v1.SendHistoryMessageRequest{
+//		Message: v1.SendMessageRequestMessage{
+//			Type:       v1.MsgTypeText,
+//			ExternalID: "external_id",
+//			CreatedAt:  v1.TimePtr(time.Now()),
+//			IsComment:  false,
+//			Text:       "Test message",
+//		},
+//		ChannelID:      1,
+//		ExternalChatID: "chat_id",
+//		Customer: &v1.Customer{
+//			ExternalID: "1",
+//			Nickname:   "@john_doe",
+//			Firstname:  "John",
+//			Lastname:   "Doe",
+//		},
+//		Originator:    v1.OriginatorCustomer,
+//		ReplyDeadline: v1.TimePtr(time.Now().Add(time.Hour * 24)),
+//	}
+//
+//	data, status, err := client.MessagesHistory(msg)
+//	if err != nil {
+//		fmt.Printf("[%d]: %v", status, err)
+//	}
+//
+//	fmt.Printf("%d\n", data.MessageID)
+func (c *MgClient) MessagesHistory(request SendHistoryMessageRequest) (MessagesResponse, int, error) {
+	var (
+		resp     MessagesResponse
+		outgoing = &bytes.Buffer{}
+	)
+	_ = json.NewEncoder(outgoing).Encode(request)
+
+	data, status, err := c.PostRequest("/messages/history", outgoing)
+	if err != nil {
+		return resp, status, err
+	}
+
+	if e := json.Unmarshal(data, &resp); e != nil {
+		return resp, status, e
+	}
+
+	if status != http.StatusOK {
+		return resp, status, NewAPIClientError(data)
+	}
+
+	return resp, status, err
+}
+
 // UpdateMessages implement edit message
 //
 // Example:
