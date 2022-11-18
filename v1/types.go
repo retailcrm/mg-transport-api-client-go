@@ -256,6 +256,15 @@ type Customer struct {
 	Language   string `json:"language,omitempty"`
 	Phone      string `json:"phone,omitempty"`
 	Email      string `json:"email,omitempty"`
+	Utm        *Utm   `json:"utm,omitempty"`
+}
+
+type Utm struct {
+	Source   string `json:"source,omitempty"`
+	Medium   string `json:"medium,omitempty"`
+	Campaign string `json:"campaign,omitempty"`
+	Term     string `json:"term,omitempty"`
+	Content  string `json:"content,omitempty" `
 }
 
 // Message struct.
