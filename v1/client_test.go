@@ -501,6 +501,10 @@ func (t *MGClientTest) Test_TextMessages() {
 			ExternalID: "6",
 			Nickname:   "octopus",
 			Firstname:  "Joe",
+			Utm: &Utm{
+				Source: "test-source",
+				Term:   "",
+			},
 		},
 		Channel:        1,
 		ExternalChatID: "24798237492374",
