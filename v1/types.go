@@ -264,7 +264,7 @@ type Utm struct {
 	Medium   string `json:"medium,omitempty"`
 	Campaign string `json:"campaign,omitempty"`
 	Term     string `json:"term,omitempty"`
-	Content  string `json:"content,omitempty" `
+	Content  string `json:"content,omitempty"`
 }
 
 // Message struct.
