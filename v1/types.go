@@ -159,6 +159,7 @@ type ChannelSettingsAudio struct {
 type SendingPolicy struct {
 	NewCustomer       string `json:"new_customer,omitempty"`
 	AfterReplyTimeout string `json:"after_reply_timeout,omitempty"`
+	Outgoing          string `json:"outgoing,omitempty"`
 }
 
 type ChannelSettingsSuggestions struct {
