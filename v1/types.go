@@ -146,14 +146,16 @@ type ChannelSettingsFilesBase struct {
 	Deleting          string  `json:"deleting,omitempty"`
 	Max               uint64  `json:"max_items_count,omitempty"`
 	NoteMaxCharsCount *uint16 `json:"note_max_chars_count,omitempty"`
+	MaxItemSize       *uint64 `json:"max_item_size,omitempty"`
 }
 
 // ChannelSettingsAudio struct.
 type ChannelSettingsAudio struct {
-	Creating      string `json:"creating,omitempty"`
-	Quoting       string `json:"quoting,omitempty"`
-	Deleting      string `json:"deleting,omitempty"`
-	MaxItemsCount uint64 `json:"max_items_count,omitempty"`
+	Creating      string  `json:"creating,omitempty"`
+	Quoting       string  `json:"quoting,omitempty"`
+	Deleting      string  `json:"deleting,omitempty"`
+	MaxItemsCount uint64  `json:"max_items_count,omitempty"`
+	MaxItemSize   *uint64 `json:"max_item_size,omitempty"`
 }
 
 type SendingPolicy struct {
