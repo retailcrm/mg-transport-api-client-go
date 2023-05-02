@@ -629,3 +629,24 @@ func NewTransportErrorResponse(code TransportErrorCode, message string) Transpor
 		},
 	}
 }
+
+type HeaderParams struct {
+	TextVars    []string `json:"textVars,omitempty"`
+	ImageURL    string   `json:"imageUrl,omitempty"`
+	VideoURL    string   `json:"videoUrl,omitempty"`
+	DocumentURL string   `json:"documentUrl,omitempty"`
+}
+
+const (
+	QuickReplyButton  ButtonType = "QUICK_REPLY"
+	PhoneNumberButton ButtonType = "PHONE_NUMBER"
+	URLButton         ButtonType = "URL"
+)
+
+type ButtonType string
+
+type ButtonParam struct {
+	ButtonType   ButtonType `json:"type"`
+	Text         string     `json:"text,omitempty"`
+	URLParameter string     `json:"urlParameter,omitempty"`
+}
