@@ -8,11 +8,12 @@ import (
 )
 
 const MB = 1 << 20
+const LimitResponse = 3 * MB
 
 func buildLimitedRawResponse(resp *http.Response) ([]byte, error) {
 	defer resp.Body.Close()
 
-	limitReader := io.LimitReader(resp.Body, MB)
+	limitReader := io.LimitReader(resp.Body, LimitResponse)
 	body, err := ioutil.ReadAll(limitReader)
 
 	if err != nil {
