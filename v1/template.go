@@ -37,15 +37,15 @@ var templateVarAssoc = map[string]interface{}{
 
 // Template struct.
 type Template struct {
-	Code      string         `json:"code"`
-	ChannelID uint64         `json:"channel_id,omitempty"`
-	Name      string         `json:"name"`
-	Enabled   bool           `json:"enabled,omitempty"`
-	Type      string         `json:"type"`
-	Template  []TemplateItem `json:"template"`
-	HeaderParams *HeaderParams `json:"headerParams,omitempty"`
-	Footer *string `json:"footer,omitempty"`
-	ButtonParams []ButtonParam `json:"buttonParams,omitempty"`
+	Code         string         `json:"code"`
+	ChannelID    uint64         `json:"channel_id,omitempty"`
+	Name         string         `json:"name"`
+	Enabled      bool           `json:"enabled,omitempty"`
+	Type         string         `json:"type"`
+	Template     []TemplateItem `json:"template"`
+	HeaderParams *HeaderParams  `json:"headerParams,omitempty"`
+	Footer       *string        `json:"footer,omitempty"`
+	ButtonParams []ButtonParam  `json:"buttonParams,omitempty"`
 }
 
 // TemplateItem is a part of template.
