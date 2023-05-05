@@ -63,3 +63,50 @@ func TestTemplateItem_UnmarshalJSON(t *testing.T) {
 	assert.Equal(t, TemplateVarCustom, emptyVariableResult.VarType)
 	assert.Empty(t, emptyVariableResult.Text)
 }
+
+func TestUnmarshalMediaInteractiveTemplate(t *testing.T) {
+	var template Template
+	input := `{
+	"code":"aaa#bbb#ru",
+    "phone": "79252223456",
+    "channel_id": 1,
+    "headerParams": {
+        "textVars": [
+            "Johny",
+            "1234C"
+        ],
+        "imageUrl": "http://example.com/intaro/d2354125",
+        "videoUrl": "http://example.com/intaro/d2222",
+        "documentUrl": "http://example.com/intaro/d4444"
+    },
+    "footer": "Scooter",
+    "buttonParams": [
+        {
+            "type": "URL",
+            "urlParameter": "222ddd"
+        },
+        {
+            "type": "QUICK_REPLY",
+            "text": "Yes"
+        }
+    ]
+}`
+	assert.NoError(t, json.Unmarshal([]byte(input), &template))
+
+	assert.Equal(t, "aaa#bbb#ru", template.Code)
+	assert.Equal(t, []string{"Johny", "1234C"}, template.HeaderParams.TextVars)
+	assert.Equal(t, "http://example.com/intaro/d2354125", template.HeaderParams.ImageURL)
+	assert.Equal(t, "http://example.com/intaro/d2222", template.HeaderParams.VideoURL)
+	assert.Equal(t, "http://example.com/intaro/d4444", template.HeaderParams.DocumentURL)
+	assert.Equal(t, "Scooter", *template.Footer)
+	assert.Equal(t, URLButton, template.ButtonParams[0].ButtonType)
+	assert.Equal(t, "222ddd", template.ButtonParams[0].URLParameter)
+	assert.Equal(t, QuickReplyButton, template.ButtonParams[1].ButtonType)
+	assert.Equal(t, "Yes", template.ButtonParams[1].Text)
+
+	input = `{"footer": "Scooter"}`
+	template = Template{}
+	assert.NoError(t, json.Unmarshal([]byte(input), &template))
+	assert.Nil(t, template.HeaderParams)
+	assert.Empty(t, template.ButtonParams)
+}
