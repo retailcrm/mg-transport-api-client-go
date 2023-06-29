@@ -176,6 +176,7 @@ type FullFileResponse struct {
 	Type string `json:"type,omitempty"`
 	Size int    `json:"size,omitempty"`
 	Url  string `json:"url,omitempty"`
+	MimeType string `json:"mime_type,omitempty"`
 }
 
 // UploadFileResponse uploaded file data.
