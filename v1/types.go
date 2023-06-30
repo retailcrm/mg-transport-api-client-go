@@ -172,10 +172,10 @@ type ChannelSettingsSuggestions struct {
 
 // FullFileResponse uploaded file data.
 type FullFileResponse struct {
-	ID   string `json:"id,omitempty"`
-	Type string `json:"type,omitempty"`
-	Size int    `json:"size,omitempty"`
-	Url  string `json:"url,omitempty"`
+	ID       string `json:"id,omitempty"`
+	Type     string `json:"type,omitempty"`
+	Size     int    `json:"size,omitempty"`
+	URL      string `json:"url,omitempty"`
 	MimeType string `json:"mime_type,omitempty"`
 }
 
@@ -447,8 +447,14 @@ type Suggestion struct {
 }
 
 type TemplateInfo struct {
-	Code string   `json:"code,omitempty"`
-	Args []string `json:"args,omitempty"`
+	Code         string        `json:"code"`
+	Name         string        `json:"name"`
+	Namespace    string        `json:"namespace"`
+	Lang         string        `json:"lang"`
+	HeaderParams *HeaderParams `json:"headerParams,omitempty"`
+	Footer       string        `json:"footer,omitempty"`
+	ButtonParams []ButtonParam `json:"buttonParams,omitempty"`
+	Args         []string      `json:"args,omitempty"`
 }
 
 // FileItem struct.
