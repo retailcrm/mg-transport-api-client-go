@@ -175,7 +175,7 @@ type FullFileResponse struct {
 	ID       string `json:"id,omitempty"`
 	Type     string `json:"type,omitempty"`
 	Size     int    `json:"size,omitempty"`
-	URL      string `json:"url,omitempty"`
+	Url      string `json:"url,omitempty"` //nolint:golint
 	MimeType string `json:"mime_type,omitempty"`
 }
 
