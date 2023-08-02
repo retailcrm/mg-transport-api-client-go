@@ -43,6 +43,8 @@ type Template struct {
 	Enabled   bool           `json:"enabled,omitempty"`
 	Type      string         `json:"type"`
 	Template  []TemplateItem `json:"template"`
+	Lang      string         `json:"lang,omitempty"`
+	Category  string         `json:"category,omitempty"`
 }
 
 // TemplateItem is a part of template.
