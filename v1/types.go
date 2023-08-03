@@ -146,14 +146,16 @@ type ChannelSettingsFilesBase struct {
 	Deleting          string  `json:"deleting,omitempty"`
 	Max               uint64  `json:"max_items_count,omitempty"`
 	NoteMaxCharsCount *uint16 `json:"note_max_chars_count,omitempty"`
+	MaxItemSize       *uint64 `json:"max_item_size,omitempty"`
 }
 
 // ChannelSettingsAudio struct.
 type ChannelSettingsAudio struct {
-	Creating      string `json:"creating,omitempty"`
-	Quoting       string `json:"quoting,omitempty"`
-	Deleting      string `json:"deleting,omitempty"`
-	MaxItemsCount uint64 `json:"max_items_count,omitempty"`
+	Creating      string  `json:"creating,omitempty"`
+	Quoting       string  `json:"quoting,omitempty"`
+	Deleting      string  `json:"deleting,omitempty"`
+	MaxItemsCount uint64  `json:"max_items_count,omitempty"`
+	MaxItemSize   *uint64 `json:"max_item_size,omitempty"`
 }
 
 type SendingPolicy struct {
@@ -170,10 +172,11 @@ type ChannelSettingsSuggestions struct {
 
 // FullFileResponse uploaded file data.
 type FullFileResponse struct {
-	ID   string `json:"id,omitempty"`
-	Type string `json:"type,omitempty"`
-	Size int    `json:"size,omitempty"`
-	Url  string `json:"url,omitempty"`
+	ID       string `json:"id,omitempty"`
+	Type     string `json:"type,omitempty"`
+	Size     int    `json:"size,omitempty"`
+	Url      string `json:"url,omitempty"` //nolint:golint
+	MimeType string `json:"mime_type,omitempty"`
 }
 
 // UploadFileResponse uploaded file data.
@@ -444,8 +447,14 @@ type Suggestion struct {
 }
 
 type TemplateInfo struct {
-	Code string   `json:"code,omitempty"`
-	Args []string `json:"args,omitempty"`
+	Code         string        `json:"code"`
+	Name         string        `json:"name"`
+	Namespace    string        `json:"namespace"`
+	Lang         string        `json:"lang"`
+	HeaderParams *HeaderParams `json:"headerParams,omitempty"`
+	Footer       string        `json:"footer,omitempty"`
+	ButtonParams []ButtonParam `json:"buttonParams,omitempty"`
+	Args         []string      `json:"args,omitempty"`
 }
 
 // FileItem struct.
@@ -628,4 +637,25 @@ func NewTransportErrorResponse(code TransportErrorCode, message string) Transpor
 			Message: message,
 		},
 	}
+}
+
+type HeaderParams struct {
+	TextVars    []string `json:"textVars,omitempty"`
+	ImageURL    string   `json:"imageUrl,omitempty"`
+	VideoURL    string   `json:"videoUrl,omitempty"`
+	DocumentURL string   `json:"documentUrl,omitempty"`
+}
+
+const (
+	QuickReplyButton  ButtonType = "QUICK_REPLY"
+	PhoneNumberButton ButtonType = "PHONE_NUMBER"
+	URLButton         ButtonType = "URL"
+)
+
+type ButtonType string
+
+type ButtonParam struct {
+	ButtonType   ButtonType `json:"type"`
+	Text         string     `json:"text,omitempty"`
+	URLParameter string     `json:"urlParameter,omitempty"`
 }
