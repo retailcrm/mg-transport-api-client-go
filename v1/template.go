@@ -46,6 +46,8 @@ type Template struct {
 	HeaderParams *HeaderParams  `json:"headerParams,omitempty"`
 	Footer       *string        `json:"footer,omitempty"`
 	ButtonParams []ButtonParam  `json:"buttonParams,omitempty"`
+	Lang         string         `json:"lang,omitempty"`
+	Category     string         `json:"category,omitempty"`
 }
 
 // TemplateItem is a part of template.

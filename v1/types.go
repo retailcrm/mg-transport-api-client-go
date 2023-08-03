@@ -564,6 +564,8 @@ type ActivateTemplateRequest struct {
 	Name     string         `binding:"required,min=1,max=512" json:"name"`
 	Type     string         `binding:"required" json:"type"`
 	Template []TemplateItem `json:"template"`
+	Lang     string         `json:"lang,omitempty"`
+	Category string         `json:"category,omitempty"`
 }
 
 var ErrInvalidOriginator = errors.New("invalid originator")
