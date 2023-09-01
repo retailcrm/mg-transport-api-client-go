@@ -8,7 +8,7 @@ import (
 )
 
 const MB = 1 << 20
-const LimitResponse = 3 * MB
+const LimitResponse = 25 * MB
 
 func buildLimitedRawResponse(resp *http.Response) ([]byte, error) {
 	defer resp.Body.Close()
