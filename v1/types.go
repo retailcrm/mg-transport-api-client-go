@@ -388,13 +388,6 @@ type MessagesResponse struct {
 	Warnings  []string  `json:"warnings"`
 }
 
-// WebhookRequest type.
-type WebhookRequest struct {
-	Type string               `json:"type"`
-	Meta TransportRequestMeta `json:"meta"`
-	Data WebhookData          `json:"data"`
-}
-
 // WebhookMessageSentResponse type
 // Consider using this structure while processing webhook request.
 type WebhookMessageSentResponse struct {
@@ -409,8 +402,8 @@ type MessageSentError struct {
 	Message string    `json:"message"`
 }
 
-// WebhookData request data.
-type WebhookData struct {
+// MessageWebhookData request data.
+type MessageWebhookData struct {
 	ExternalUserID    string              `json:"external_user_id"`
 	ExternalMessageID string              `json:"external_message_id,omitempty"`
 	ExternalChatID    string              `json:"external_chat_id"`
@@ -659,3 +652,43 @@ type ButtonParam struct {
 	Text         string     `json:"text,omitempty"`
 	URLParameter string     `json:"urlParameter,omitempty"`
 }
+
+type TemplateContent struct {
+	Name     string `json:"name"`
+	Lang     string `json:"lang"`
+	Category string `json:"category"`
+	Body     string `json:"body"`
+	Example  struct {
+		Body []string `json:"body"`
+	} `json:"example"`
+}
+
+type TemplateCreateWebhookData struct {
+	TemplateContent
+	ChannelID int64 `json:"channel_id"`
+}
+
+type TemplateCreateWebhookResponse struct {
+	Code               string                     `json:"code" binding:"required"`
+	VerificationStatus TemplateVerificationStatus `json:"verification_status" binding:"required"`
+}
+
+type TemplateUpdateWebhookData struct {
+	TemplateContent
+	ChannelID int64  `json:"channel_id"`
+	Code      string `json:"code"`
+}
+
+type TemplateDeleteWebhookData struct {
+	ChannelID int64  `json:"channel_id"`
+	Code      string `json:"code"`
+}
+
+type TemplateVerificationStatus string
+
+const (
+	TemplateStatusApproved TemplateVerificationStatus = "approved"
+	TemplateStatusPending  TemplateVerificationStatus = "pending"
+	TemplateStatusRejected TemplateVerificationStatus = "rejected"
+	TemplateStatusNew      TemplateVerificationStatus = "new"
+)
