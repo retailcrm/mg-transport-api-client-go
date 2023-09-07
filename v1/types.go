@@ -422,10 +422,6 @@ type MessageWebhookData struct {
 	InAppID           int32               `json:"in_app_id,omitempty"`
 }
 
-// TemplateData request data.
-type TemplateData struct {
-}
-
 type Attachments struct {
 	Suggestions []Suggestion `json:"suggestions,omitempty"`
 }
