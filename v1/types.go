@@ -682,6 +682,7 @@ type TemplateUpdateWebhookData struct {
 type TemplateDeleteWebhookData struct {
 	ChannelID int64  `json:"channel_id"`
 	Code      string `json:"code"`
+	Lang      string `json:"lang"`
 }
 
 type TemplateVerificationStatus string
