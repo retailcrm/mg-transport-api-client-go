@@ -107,6 +107,7 @@ type ChannelSettings struct {
 	SendingPolicy      SendingPolicy              `json:"sending_policy,omitempty"`
 	Suggestions        ChannelSettingsSuggestions `json:"suggestions,omitempty"`
 	Audio              ChannelSettingsAudio       `json:"audio"`
+	Template           ChannelSettingsTemplate    `json:"template"`
 }
 
 // Product type.
@@ -168,6 +169,10 @@ type ChannelSettingsSuggestions struct {
 	Text  string `json:"text,omitempty"`
 	Phone string `json:"phone,omitempty"`
 	Email string `json:"email,omitempty"`
+}
+
+type ChannelSettingsTemplate struct {
+	Creation bool `json:"creation,omitempty"`
 }
 
 // FullFileResponse uploaded file data.
