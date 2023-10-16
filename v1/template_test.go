@@ -89,7 +89,9 @@ func TestUnmarshalMediaInteractiveTemplate(t *testing.T) {
             "type": "QUICK_REPLY",
             "text": "Yes"
         }
-    ]
+    ],
+	"rejected_reason": "NONE",
+    "status": "APPROVED"
 }`
 	assert.NoError(t, json.Unmarshal([]byte(input), &template))
 
