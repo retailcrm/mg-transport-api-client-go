@@ -48,7 +48,7 @@ type Template struct {
 	ButtonParams       []ButtonParam  `json:"buttonParams,omitempty"`
 	Lang               string         `json:"lang,omitempty"`
 	Category           string         `json:"category,omitempty"`
-	RejectedReason     string         `json:"rejected_reason,omitempty"`
+	RejectionReason    string         `json:"rejection_reason,omitempty"`
 	VerificationStatus string         `json:"verification_status,omitempty"`
 }
 
