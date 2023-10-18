@@ -367,6 +367,8 @@ func (t *MGClientTest) Test_ActivateTemplate() {
 				Text: "!",
 			},
 		},
+		RejectionReason:    "",
+		VerificationStatus: "approved",
 	}
 
 	defer gock.Off()

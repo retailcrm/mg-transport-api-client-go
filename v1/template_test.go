@@ -90,8 +90,7 @@ func TestUnmarshalMediaInteractiveTemplate(t *testing.T) {
             "text": "Yes"
         }
     ],
-	"rejected_reason": "NONE",
-    "status": "APPROVED"
+    "verification_status": "approved"
 }`
 	assert.NoError(t, json.Unmarshal([]byte(input), &template))
 
@@ -101,6 +100,7 @@ func TestUnmarshalMediaInteractiveTemplate(t *testing.T) {
 	assert.Equal(t, "http://example.com/intaro/d2222", template.HeaderParams.VideoURL)
 	assert.Equal(t, "http://example.com/intaro/d4444", template.HeaderParams.DocumentURL)
 	assert.Equal(t, "Scooter", *template.Footer)
+	assert.Equal(t, "approved", template.VerificationStatus)
 	assert.Equal(t, URLButton, template.ButtonParams[0].ButtonType)
 	assert.Equal(t, "222ddd", template.ButtonParams[0].URLParameter)
 	assert.Equal(t, QuickReplyButton, template.ButtonParams[1].ButtonType)

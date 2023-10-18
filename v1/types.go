@@ -558,12 +558,14 @@ type TransportRequestMeta struct {
 }
 
 type ActivateTemplateRequest struct {
-	Code     string         `binding:"required,min=1,max=512" json:"code"`
-	Name     string         `binding:"required,min=1,max=512" json:"name"`
-	Type     string         `binding:"required" json:"type"`
-	Template []TemplateItem `json:"template"`
-	Lang     string         `json:"lang,omitempty"`
-	Category string         `json:"category,omitempty"`
+	Code               string         `binding:"required,min=1,max=512" json:"code"`
+	Name               string         `binding:"required,min=1,max=512" json:"name"`
+	Type               string         `binding:"required" json:"type"`
+	Template           []TemplateItem `json:"template"`
+	Lang               string         `json:"lang,omitempty"`
+	Category           string         `json:"category,omitempty"`
+	RejectionReason    string         `json:"rejection_reason,omitempty"`
+	VerificationStatus string         `json:"verification_status,omitempty"`
 }
 
 var ErrInvalidOriginator = errors.New("invalid originator")
