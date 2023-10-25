@@ -95,15 +95,15 @@ func TestUnmarshalMediaInteractiveTemplate(t *testing.T) {
 	assert.NoError(t, json.Unmarshal([]byte(input), &template))
 
 	assert.Equal(t, "aaa#bbb#ru", template.Code)
-	assert.Equal(t, []string{"Johny", "1234C"}, template.HeaderParams.TextVars)
+	assert.Equal(t, []string{"Johny", "1234C"}, template.Header.Content.TextVars)
 	assert.Equal(t, "http://example.com/intaro/d2354125", template.HeaderParams.ImageURL)
 	assert.Equal(t, "http://example.com/intaro/d2222", template.HeaderParams.VideoURL)
 	assert.Equal(t, "http://example.com/intaro/d4444", template.HeaderParams.DocumentURL)
 	assert.Equal(t, "Scooter", *template.Footer)
 	assert.Equal(t, "approved", template.VerificationStatus)
-	assert.Equal(t, URLButton, template.ButtonParams[0].ButtonType)
+	assert.Equal(t, "URL", template.ButtonParams[0].ButtonType)
 	assert.Equal(t, "222ddd", template.ButtonParams[0].URLParameter)
-	assert.Equal(t, QuickReplyButton, template.ButtonParams[1].ButtonType)
+	assert.Equal(t, "QUICK_REPLY", template.ButtonParams[1].ButtonType)
 	assert.Equal(t, "Yes", template.ButtonParams[1].Text)
 
 	input = `{"footer": "Scooter"}`

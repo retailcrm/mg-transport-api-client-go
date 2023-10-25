@@ -557,15 +557,25 @@ type TransportRequestMeta struct {
 	Timestamp int64  `json:"timestamp"`
 }
 
+type UpdateTemplateRequest struct {
+	Name               string                     `json:"name"`
+	Template           []TemplateItem             `json:"template,omitempty"`
+	Body               string                     `json:"body"`
+	Lang               string                     `json:"lang,omitempty"`
+	Category           string                     `json:"category,omitempty"`
+	Example            *TemplateExample           `json:"example,omitempty"`
+	VerificationStatus TemplateVerificationStatus `json:"verification_status"`
+	RejectionReason    TemplateRejectionReason    `json:"rejection_reason,omitempty"`
+	Header             *TemplateHeader            `json:"header,omitempty"`
+	Footer             string                     `json:"footer,omitempty"`
+	Buttons            *TemplateButtons           `json:"buttons,omitempty"`
+}
+
 type ActivateTemplateRequest struct {
-	Code               string         `binding:"required,min=1,max=512" json:"code"`
-	Name               string         `binding:"required,min=1,max=512" json:"name"`
-	Type               string         `binding:"required" json:"type"`
-	Template           []TemplateItem `json:"template"`
-	Lang               string         `json:"lang,omitempty"`
-	Category           string         `json:"category,omitempty"`
-	RejectionReason    string         `json:"rejection_reason,omitempty"`
-	VerificationStatus string         `json:"verification_status,omitempty"`
+	UpdateTemplateRequest
+
+	Code string       `json:"code"`
+	Type TemplateType `json:"type"`
 }
 
 var ErrInvalidOriginator = errors.New("invalid originator")
@@ -646,14 +656,6 @@ type HeaderParams struct {
 	DocumentURL string   `json:"documentUrl,omitempty"`
 }
 
-const (
-	QuickReplyButton  ButtonType = "QUICK_REPLY"
-	PhoneNumberButton ButtonType = "PHONE_NUMBER"
-	URLButton         ButtonType = "URL"
-)
-
-type ButtonType string
-
 type ButtonParam struct {
 	ButtonType   ButtonType `json:"type"`
 	Text         string     `json:"text,omitempty"`
@@ -661,13 +663,14 @@ type ButtonParam struct {
 }
 
 type TemplateContent struct {
-	Name     string `json:"name"`
-	Lang     string `json:"lang"`
-	Category string `json:"category"`
-	Body     string `json:"body"`
-	Example  struct {
-		Body []string `json:"body"`
-	} `json:"example"`
+	Name     string           `json:"name"`
+	Lang     string           `json:"lang"`
+	Category string           `json:"category"`
+	Body     string           `json:"body"`
+	Header   *TemplateHeader  `json:"header,omitempty"`
+	Footer   string           `json:"footer,omitempty"`
+	Buttons  *TemplateButtons `json:"buttons,omitempty"`
+	Example  *TemplateExample `json:"example,omitempty"`
 }
 
 type TemplateCreateWebhookData struct {
@@ -699,4 +702,13 @@ const (
 	TemplateStatusPending  TemplateVerificationStatus = "pending"
 	TemplateStatusRejected TemplateVerificationStatus = "rejected"
 	TemplateStatusNew      TemplateVerificationStatus = "new"
+)
+
+type TemplateRejectionReason string
+
+const (
+	ReasonAbusiveContent    TemplateRejectionReason = "abusive_content"
+	ReasonIncorrectCategory TemplateRejectionReason = "incorrect_category"
+	ReasonInvalidFormat     TemplateRejectionReason = "invalid_format"
+	ReasonScam              TemplateRejectionReason = "scam"
 )

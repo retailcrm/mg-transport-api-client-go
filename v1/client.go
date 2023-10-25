@@ -153,15 +153,15 @@ func (c *MgClient) ActivateTemplate(channelID uint64, request ActivateTemplateRe
 //	if err != nil {
 //		fmt.Printf("%#v", err)
 //	}
-func (c *MgClient) UpdateTemplate(request Template) (int, error) {
+func (c *MgClient) UpdateTemplate(channelID uint64, code string, request UpdateTemplateRequest) (int, error) {
 	outgoing, _ := json.Marshal(&request)
 
-	if request.ChannelID == 0 || request.Code == "" {
+	if channelID == 0 || code == "" {
 		return 0, errors.New("`ChannelID` and `Code` cannot be blank")
 	}
 
 	data, status, err := c.PutRequest(
-		fmt.Sprintf("/channels/%d/templates/%s", request.ChannelID, url.PathEscape(request.Code)), outgoing)
+		fmt.Sprintf("/channels/%d/templates/%s", channelID, url.PathEscape(code)), outgoing)
 	if err != nil {
 		return status, err
 	}

@@ -351,24 +351,26 @@ func (t *MGClientTest) Test_ActivateTemplate() {
 	c := t.client()
 	req := ActivateTemplateRequest{
 		Code: "tplCode",
-		Name: "tplCode",
 		Type: TemplateTypeText,
-		Template: []TemplateItem{
-			{
-				Type: TemplateItemTypeText,
-				Text: "Hello ",
+		UpdateTemplateRequest: UpdateTemplateRequest{
+			Name: "tplCode",
+			Template: []TemplateItem{
+				{
+					Type: TemplateItemTypeText,
+					Text: "Hello ",
+				},
+				{
+					Type:    TemplateItemTypeVar,
+					VarType: TemplateVarFirstName,
+				},
+				{
+					Type: TemplateItemTypeText,
+					Text: "!",
+				},
 			},
-			{
-				Type:    TemplateItemTypeVar,
-				VarType: TemplateVarFirstName,
-			},
-			{
-				Type: TemplateItemTypeText,
-				Text: "!",
-			},
+			RejectionReason:    "",
+			VerificationStatus: TemplateStatusApproved,
 		},
-		RejectionReason:    "",
-		VerificationStatus: "approved",
 	}
 
 	defer gock.Off()
@@ -384,12 +386,8 @@ func (t *MGClientTest) Test_ActivateTemplate() {
 
 func (t *MGClientTest) Test_UpdateTemplate() {
 	c := t.client()
-	tpl := Template{
-		Code:      "encodable#code",
-		ChannelID: 1,
-		Name:      "updated name",
-		Enabled:   true,
-		Type:      TemplateTypeText,
+	tpl := UpdateTemplateRequest{
+		Name: "updated name",
 		Template: []TemplateItem{
 			{
 				Type: TemplateItemTypeText,
@@ -421,16 +419,20 @@ func (t *MGClientTest) Test_UpdateTemplate() {
 	t.gock().
 		Get(t.transportURL("templates")).
 		Reply(http.StatusOK).
-		JSON([]Template{tpl})
+		JSON([]ActivateTemplateRequest{ActivateTemplateRequest{
+			UpdateTemplateRequest: tpl,
+			Code:                  "encodable#code",
+			Type:                  TemplateTypeText,
+		}})
 
-	status, err := c.UpdateTemplate(tpl)
+	status, err := c.UpdateTemplate(1, "encodable#code", tpl)
 	t.Assert().NoError(err, fmt.Sprintf("%d %s", status, err))
 
 	templates, status, err := c.TransportTemplates()
 	t.Assert().NoError(err, fmt.Sprintf("%d %s", status, err))
 
 	for _, template := range templates {
-		if template.Code == tpl.Code {
+		if template.Code == "encodable#code" {
 			t.Assert().Equal(tpl.Name, template.Name)
 		}
 	}
@@ -438,10 +440,8 @@ func (t *MGClientTest) Test_UpdateTemplate() {
 
 func (t *MGClientTest) Test_UpdateTemplateFail() {
 	c := t.client()
-	tpl := Template{
-		Name:    "updated name",
-		Enabled: true,
-		Type:    TemplateTypeText,
+	tpl := UpdateTemplateRequest{
+		Name: "updated name",
 		Template: []TemplateItem{
 			{
 				Type: TemplateItemTypeText,
@@ -467,7 +467,7 @@ func (t *MGClientTest) Test_UpdateTemplateFail() {
 			},
 		)
 
-	status, err := c.UpdateTemplate(tpl)
+	status, err := c.UpdateTemplate(1, "encodable#code", tpl)
 	t.Assert().Error(err, fmt.Sprintf("%d %s", status, err))
 }
 
