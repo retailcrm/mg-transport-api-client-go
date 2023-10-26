@@ -90,7 +90,13 @@ func TestUnmarshalMediaInteractiveTemplate(t *testing.T) {
             "text": "Yes"
         }
     ],
-    "verification_status": "approved"
+    "verification_status": "approved",
+	"example": {
+		"body": [
+			"Alex",
+			"Emily"
+		]
+	}
 }`
 	assert.NoError(t, json.Unmarshal([]byte(input), &template))
 
@@ -105,6 +111,8 @@ func TestUnmarshalMediaInteractiveTemplate(t *testing.T) {
 	assert.Equal(t, "222ddd", template.ButtonParams[0].URLParameter)
 	assert.Equal(t, QuickReplyButton, template.ButtonParams[1].ButtonType)
 	assert.Equal(t, "Yes", template.ButtonParams[1].Text)
+	assert.NotNil(t, template.Example)
+	assert.Equal(t, &TemplateExample{Body: []string{"Alex", "Emily"}}, template.Example)
 
 	input = `{"footer": "Scooter"}`
 	template = Template{}

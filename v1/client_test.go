@@ -322,6 +322,11 @@ func (t *MGClientTest) Test_TransportTemplates() {
 							Text: "! We're glad to see you back in our store.",
 						},
 					},
+					Lang:               "ru",
+					Category:           "marketing",
+					Example:            &TemplateExample{Body: []string{"Alex", "Emily"}},
+					RejectionReason:    "spam",
+					VerificationStatus: "rejected",
 				},
 			},
 		)
@@ -344,6 +349,12 @@ func (t *MGClientTest) Test_TransportTemplates() {
 				}
 			}
 		}
+
+		t.Assert().Equal("ru", item.Lang)
+		t.Assert().Equal("marketing", item.Category)
+		t.Assert().Equal("spam", item.RejectionReason)
+		t.Assert().Equal("rejected", item.VerificationStatus)
+		t.Assert().Equal(&TemplateExample{Body: []string{"Alex", "Emily"}}, item.Example)
 	}
 }
 
@@ -369,6 +380,9 @@ func (t *MGClientTest) Test_ActivateTemplate() {
 		},
 		RejectionReason:    "",
 		VerificationStatus: "approved",
+		Example:            &TemplateExample{Body: []string{"Alex", "Emily"}},
+		Lang:               "en",
+		Category:           "marketing",
 	}
 
 	defer gock.Off()

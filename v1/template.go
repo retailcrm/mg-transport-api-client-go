@@ -37,19 +37,20 @@ var templateVarAssoc = map[string]interface{}{
 
 // Template struct.
 type Template struct {
-	Code               string         `json:"code"`
-	ChannelID          uint64         `json:"channel_id,omitempty"`
-	Name               string         `json:"name"`
-	Enabled            bool           `json:"enabled,omitempty"`
-	Type               string         `json:"type"`
-	Template           []TemplateItem `json:"template"`
-	HeaderParams       *HeaderParams  `json:"headerParams,omitempty"`
-	Footer             *string        `json:"footer,omitempty"`
-	ButtonParams       []ButtonParam  `json:"buttonParams,omitempty"`
-	Lang               string         `json:"lang,omitempty"`
-	Category           string         `json:"category,omitempty"`
-	RejectionReason    string         `json:"rejection_reason,omitempty"`
-	VerificationStatus string         `json:"verification_status,omitempty"`
+	Code               string           `json:"code"`
+	ChannelID          uint64           `json:"channel_id,omitempty"`
+	Name               string           `json:"name"`
+	Enabled            bool             `json:"enabled,omitempty"`
+	Type               string           `json:"type"`
+	Template           []TemplateItem   `json:"template"`
+	HeaderParams       *HeaderParams    `json:"headerParams,omitempty"`
+	Footer             *string          `json:"footer,omitempty"`
+	ButtonParams       []ButtonParam    `json:"buttonParams,omitempty"`
+	Lang               string           `json:"lang,omitempty"`
+	Category           string           `json:"category,omitempty"`
+	RejectionReason    string           `json:"rejection_reason,omitempty"`
+	VerificationStatus string           `json:"verification_status,omitempty"`
+	Example            *TemplateExample `json:"example,omitempty"`
 }
 
 // TemplateItem is a part of template.
@@ -57,6 +58,10 @@ type TemplateItem struct {
 	Type    uint8
 	Text    string
 	VarType string
+}
+
+type TemplateExample struct {
+	Body []string `json:"body,omitempty"`
 }
 
 // MarshalJSON controls how TemplateItem will be marshaled into JSON.
