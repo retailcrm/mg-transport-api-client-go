@@ -197,6 +197,34 @@ type TemplateHeader struct {
 	Content HeaderContent `json:"content"`
 }
 
+func (h *TemplateHeader) TextContent() *HeaderContentText {
+	if h.Content.HeaderContentType() != HeaderContentTypeText {
+		return nil
+	}
+	return h.Content.(*HeaderContentText)
+}
+
+func (h *TemplateHeader) DocumentContent() *HeaderContentDocument {
+	if h.Content.HeaderContentType() != HeaderContentTypeDocument {
+		return nil
+	}
+	return h.Content.(*HeaderContentDocument)
+}
+
+func (h *TemplateHeader) ImageContent() *HeaderContentImage {
+	if h.Content.HeaderContentType() != HeaderContentTypeImage {
+		return nil
+	}
+	return h.Content.(*HeaderContentImage)
+}
+
+func (h *TemplateHeader) VideoContent() *HeaderContentVideo {
+	if h.Content.HeaderContentType() != HeaderContentTypeVideo {
+		return nil
+	}
+	return h.Content.(*HeaderContentVideo)
+}
+
 func (h *TemplateHeader) UnmarshalJSON(value []byte) error {
 	var ScanType struct {
 		Content json.RawMessage `json:"content"`
