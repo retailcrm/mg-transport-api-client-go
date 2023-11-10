@@ -87,8 +87,8 @@ func (b *TemplateButtons) UnmarshalJSON(value []byte) error {
 			btn = &PlainButton{}
 		case ButtonTypePhone:
 			btn = &PhoneButton{}
-		case ButtonTypeUrl:
-			btn = &UrlButton{}
+		case ButtonTypeURL:
+			btn = &URLButton{}
 		default:
 			return errors.New("undefined type of button")
 		}
@@ -139,7 +139,7 @@ type ButtonType string
 const (
 	ButtonTypePlain ButtonType = "plain"
 	ButtonTypePhone ButtonType = "phone"
-	ButtonTypeUrl   ButtonType = "url"
+	ButtonTypeURL   ButtonType = "url"
 )
 
 type PlainButton struct {
@@ -155,12 +155,12 @@ type PhoneButton struct {
 
 func (PhoneButton) ButtonType() ButtonType { return ButtonTypePhone }
 
-type UrlButton struct {
+type URLButton struct {
 	Label string `json:"label"`
-	Url   string `json:"url"`
+	URL   string `json:"url"`
 }
 
-func (UrlButton) ButtonType() ButtonType { return ButtonTypeUrl }
+func (URLButton) ButtonType() ButtonType { return ButtonTypeURL }
 
 type HeaderContent interface {
 	HeaderContentType() HeaderContentType

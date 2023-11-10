@@ -17,14 +17,14 @@ var TypeMap = [][]byte{
 	TemplateTypeMedia: []byte("media"),
 }
 
-var UnknownTypeValue = errors.New("unknown TemplateType")
+var ErrUnknownTypeValue = errors.New("unknown TemplateType")
 
 func (e TemplateType) MarshalText() (text []byte, err error) {
 	if e.isValid() {
 		return TypeMap[e], nil
 	}
 
-	return nil, UnknownTypeValue
+	return nil, ErrUnknownTypeValue
 }
 
 func (e TemplateType) String() string {
@@ -32,7 +32,7 @@ func (e TemplateType) String() string {
 		return string(TypeMap[e])
 	}
 
-	panic(UnknownTypeValue)
+	panic(ErrUnknownTypeValue)
 }
 
 func (e *TemplateType) UnmarshalText(text []byte) error {
@@ -45,7 +45,7 @@ func (e *TemplateType) UnmarshalText(text []byte) error {
 		return nil
 	}
 
-	return UnknownTypeValue
+	return ErrUnknownTypeValue
 }
 
 func (e TemplateType) isValid() bool {
