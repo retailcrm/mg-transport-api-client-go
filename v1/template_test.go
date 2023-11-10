@@ -64,51 +64,193 @@ func TestTemplateItem_UnmarshalJSON(t *testing.T) {
 	assert.Empty(t, emptyVariableResult.Text)
 }
 
-func TestUnmarshalMediaInteractiveTemplate(t *testing.T) {
+func TestUnmarshalInteractiveTemplate_TextHeader(t *testing.T) {
 	var template Template
 	input := `{
 	"code":"aaa#bbb#ru",
     "phone": "79252223456",
     "channel_id": 1,
-    "headerParams": {
-        "textVars": [
-            "Johny",
-            "1234C"
-        ],
-        "imageUrl": "http://example.com/intaro/d2354125",
-        "videoUrl": "http://example.com/intaro/d2222",
-        "documentUrl": "http://example.com/intaro/d4444"
+    "header": {
+        "content": {
+			"type": "text",
+	        "body": "Hello, {{1}}!"
+		}
     },
     "footer": "Scooter",
-    "buttonParams": [
-        {
-            "type": "URL",
-            "urlParameter": "222ddd"
-        },
-        {
-            "type": "QUICK_REPLY",
-            "text": "Yes"
-        }
-    ],
+    "buttons": {
+		"items": [
+			{
+	            "type": "url",
+				"label": "Go to website",
+	            "url": "222ddd"
+	        },
+	        {
+	            "type": "plain",
+	            "label": "Yes"
+	        }
+		]
+	},
     "verification_status": "approved"
 }`
 	assert.NoError(t, json.Unmarshal([]byte(input), &template))
 
 	assert.Equal(t, "aaa#bbb#ru", template.Code)
-	assert.Equal(t, []string{"Johny", "1234C"}, template.HeaderParams.TextVars)
-	assert.Equal(t, "http://example.com/intaro/d2354125", template.HeaderParams.ImageURL)
-	assert.Equal(t, "http://example.com/intaro/d2222", template.HeaderParams.VideoURL)
-	assert.Equal(t, "http://example.com/intaro/d4444", template.HeaderParams.DocumentURL)
-	assert.Equal(t, "Scooter", *template.Footer)
-	assert.Equal(t, "approved", template.VerificationStatus)
-	assert.Equal(t, URLButton, template.ButtonParams[0].ButtonType)
-	assert.Equal(t, "222ddd", template.ButtonParams[0].URLParameter)
-	assert.Equal(t, QuickReplyButton, template.ButtonParams[1].ButtonType)
-	assert.Equal(t, "Yes", template.ButtonParams[1].Text)
+	assert.Equal(t, HeaderContentTypeText, template.Header.Content.HeaderContentType())
+
+	h := template.Header.TextContent()
+	assert.Equal(t, "Hello, {{1}}!", h.Body)
+	assert.Equal(t, "Scooter", template.Footer)
+	assert.Equal(t, TemplateStatusApproved, template.VerificationStatus)
+	assert.Equal(t, ButtonTypeURL, template.Buttons.Items[0].ButtonType())
+	assert.Equal(t, "222ddd", template.Buttons.Items[0].(*URLButton).URL)
+	assert.Equal(t, "Go to website", template.Buttons.Items[0].(*URLButton).Label)
+	assert.Equal(t, ButtonTypePlain, template.Buttons.Items[1].ButtonType())
+	assert.Equal(t, "Yes", template.Buttons.Items[1].(*PlainButton).Label)
 
 	input = `{"footer": "Scooter"}`
 	template = Template{}
 	assert.NoError(t, json.Unmarshal([]byte(input), &template))
-	assert.Nil(t, template.HeaderParams)
-	assert.Empty(t, template.ButtonParams)
+	assert.Nil(t, template.Header)
+	assert.Empty(t, template.Buttons)
+}
+
+func TestUnmarshalInteractiveTemplate_DocumentHeader(t *testing.T) {
+	var template Template
+	input := `{
+	"code":"aaa#bbb#ru",
+    "phone": "79252223456",
+    "channel_id": 1,
+    "header": {
+        "content": {
+			"type": "document"
+		}
+    },
+    "footer": "Scooter",
+    "buttons": {
+		"items": [
+			{
+	            "type": "url",
+				"label": "Go to website",
+	            "url": "222ddd"
+	        },
+	        {
+	            "type": "plain",
+	            "label": "Yes"
+	        }
+		]
+	},
+    "verification_status": "approved"
+}`
+	assert.NoError(t, json.Unmarshal([]byte(input), &template))
+
+	assert.Equal(t, "aaa#bbb#ru", template.Code)
+	assert.Equal(t, HeaderContentTypeDocument, template.Header.Content.HeaderContentType())
+	assert.NotNil(t, template.Header.DocumentContent())
+	assert.Equal(t, "Scooter", template.Footer)
+	assert.Equal(t, TemplateStatusApproved, template.VerificationStatus)
+	assert.Equal(t, ButtonTypeURL, template.Buttons.Items[0].ButtonType())
+	assert.Equal(t, "222ddd", template.Buttons.Items[0].(*URLButton).URL)
+	assert.Equal(t, "Go to website", template.Buttons.Items[0].(*URLButton).Label)
+	assert.Equal(t, ButtonTypePlain, template.Buttons.Items[1].ButtonType())
+	assert.Equal(t, "Yes", template.Buttons.Items[1].(*PlainButton).Label)
+
+	input = `{"footer": "Scooter"}`
+	template = Template{}
+	assert.NoError(t, json.Unmarshal([]byte(input), &template))
+	assert.Nil(t, template.Header)
+	assert.Empty(t, template.Buttons)
+}
+
+func TestUnmarshalInteractiveTemplate_ImageHeader(t *testing.T) {
+	var template Template
+	input := `{
+	"code":"aaa#bbb#ru",
+    "phone": "79252223456",
+    "channel_id": 1,
+    "header": {
+        "content": {
+			"type": "image"
+		}
+    },
+    "footer": "Scooter",
+    "buttons": {
+		"items": [
+			{
+	            "type": "url",
+				"label": "Go to website",
+	            "url": "222ddd"
+	        },
+	        {
+	            "type": "plain",
+	            "label": "Yes"
+	        }
+		]
+	},
+    "verification_status": "approved"
+}`
+	assert.NoError(t, json.Unmarshal([]byte(input), &template))
+
+	assert.Equal(t, "aaa#bbb#ru", template.Code)
+	assert.Equal(t, HeaderContentTypeImage, template.Header.Content.HeaderContentType())
+	assert.NotNil(t, template.Header.ImageContent())
+	assert.Equal(t, "Scooter", template.Footer)
+	assert.Equal(t, TemplateStatusApproved, template.VerificationStatus)
+	assert.Equal(t, ButtonTypeURL, template.Buttons.Items[0].ButtonType())
+	assert.Equal(t, "222ddd", template.Buttons.Items[0].(*URLButton).URL)
+	assert.Equal(t, "Go to website", template.Buttons.Items[0].(*URLButton).Label)
+	assert.Equal(t, ButtonTypePlain, template.Buttons.Items[1].ButtonType())
+	assert.Equal(t, "Yes", template.Buttons.Items[1].(*PlainButton).Label)
+
+	input = `{"footer": "Scooter"}`
+	template = Template{}
+	assert.NoError(t, json.Unmarshal([]byte(input), &template))
+	assert.Nil(t, template.Header)
+	assert.Empty(t, template.Buttons)
+}
+
+func TestUnmarshalInteractiveTemplate_VideoHeader(t *testing.T) {
+	var template Template
+	input := `{
+	"code":"aaa#bbb#ru",
+    "phone": "79252223456",
+    "channel_id": 1,
+    "header": {
+        "content": {
+			"type": "video"
+		}
+    },
+    "footer": "Scooter",
+    "buttons": {
+		"items": [
+			{
+	            "type": "url",
+				"label": "Go to website",
+	            "url": "222ddd"
+	        },
+	        {
+	            "type": "plain",
+	            "label": "Yes"
+	        }
+		]
+	},
+    "verification_status": "approved"
+}`
+	assert.NoError(t, json.Unmarshal([]byte(input), &template))
+
+	assert.Equal(t, "aaa#bbb#ru", template.Code)
+	assert.Equal(t, HeaderContentTypeVideo, template.Header.Content.HeaderContentType())
+	assert.NotNil(t, template.Header.VideoContent())
+	assert.Equal(t, "Scooter", template.Footer)
+	assert.Equal(t, TemplateStatusApproved, template.VerificationStatus)
+	assert.Equal(t, ButtonTypeURL, template.Buttons.Items[0].ButtonType())
+	assert.Equal(t, "222ddd", template.Buttons.Items[0].(*URLButton).URL)
+	assert.Equal(t, "Go to website", template.Buttons.Items[0].(*URLButton).Label)
+	assert.Equal(t, ButtonTypePlain, template.Buttons.Items[1].ButtonType())
+	assert.Equal(t, "Yes", template.Buttons.Items[1].(*PlainButton).Label)
+
+	input = `{"footer": "Scooter"}`
+	template = Template{}
+	assert.NoError(t, json.Unmarshal([]byte(input), &template))
+	assert.Nil(t, template.Header)
+	assert.Empty(t, template.Buttons)
 }
