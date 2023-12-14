@@ -283,6 +283,7 @@ type Message struct {
 	Text       string `json:"text,omitempty"`
 	Note       string `json:"note,omitempty"`
 	Items      []Item `json:"items,omitempty"`
+	PageLink   string `json:"page_link,omitempty"`
 }
 
 // SendMessage struct.
@@ -302,6 +303,7 @@ type EditMessageRequestMessage struct {
 	ExternalID string `json:"external_id"`
 	Text       string `json:"text"`
 	EditedAt   int64  `json:"edited_at"`
+	PageLink   string `json:"page_link,omitempty"`
 }
 
 type SendHistoryMessageRequest struct {
