@@ -3,8 +3,10 @@ package v1
 import (
 	"bytes"
 	"encoding/base64"
+	"encoding/json"
 	"errors"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"strings"
 	"testing"
@@ -497,6 +499,7 @@ func (t *MGClientTest) Test_TextMessages() {
 			ExternalID: "external_id",
 			Type:       MsgTypeText,
 			Text:       "hello!",
+			PageLink: "https://example.loca/catalog/1",
 		},
 		Originator: OriginatorCustomer,
 		Customer: Customer{
@@ -515,6 +518,17 @@ func (t *MGClientTest) Test_TextMessages() {
 	defer gock.Off()
 	t.gock().
 		Post(t.transportURL("messages")).
+		Filter(func(request *http.Request) bool {
+			data, err := ioutil.ReadAll(request.Body)
+			if err != nil {
+				return false
+			}
+			request.Body = ioutil.NopCloser(bytes.NewReader(data))
+
+			var snd SendData
+			t.Require().NoError(json.Unmarshal(data, &snd))
+			return t.Assert().Equal("https://example.loca/catalog/1", snd.Message.PageLink)
+		}).
 		Reply(http.StatusOK).
 		JSON(
 			MessagesResponse{
@@ -598,6 +612,7 @@ func (t *MGClientTest) Test_UpdateMessages() {
 		EditMessageRequestMessage{
 			ExternalID: "editing",
 			Text:       "hello hello!",
+			PageLink:   "https://example.local/1",
 		},
 		1,
 	}
@@ -605,6 +620,17 @@ func (t *MGClientTest) Test_UpdateMessages() {
 	defer gock.Off()
 	t.gock().
 		Put(t.transportURL("messages")).
+		Filter(func(request *http.Request) bool {
+			data, err := ioutil.ReadAll(request.Body)
+			if err != nil {
+				return false
+			}
+			request.Body = ioutil.NopCloser(bytes.NewReader(data))
+
+			var snd SendData
+			t.Require().NoError(json.Unmarshal(data, &snd))
+			return t.Assert().Equal("https://example.local/1", snd.Message.PageLink)
+		}).
 		Reply(http.StatusOK).
 		JSON(
 			MessagesResponse{
