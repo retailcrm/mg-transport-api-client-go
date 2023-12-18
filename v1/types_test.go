@@ -174,39 +174,32 @@ func TestTransportErrorResponse(t *testing.T) {
 func TestTemplateInfoUnmarshal(t *testing.T) {
 	tmplJSON := `{
 		"code": "namespace#BABA_JABA#ru",
-		"name": "BABA_JABA",
-		"lang": "ru",
-		"namespace": "namespace",
-		"args": ["BABA", "JABA"],
-		"headerParams": {
-			 "textVars":	["Hey", "Jony"],
-   			 "imageUrl":	"https://example.com/intaro/ddd22",
-   			 "videoUrl":	"https://example.com/intaro/ddd23",
-   			 "documentUrl": "https://example.com/intaro/ddd24"
-		},
-		"footer": "Scooter",
-		"buttonParams": [
-			{
-				"urlParameter": "ququq",
-				"type": "URL",
-				"text": "CHUCHUH"
-			}
-		]
+		"variables": {
+			"header": [
+				"header1",
+				"header2"
+			],
+			"attachments": [
+				{"caption":"test-caption", "id":"550e8400-e29b-41d4-a716-446655440000"}
+			],
+			"body": [
+				"BABA",
+				"JABA"
+			],
+			"buttons": [
+				["button1"],
+				[],
+				["button2"]
+			]
+		}
 	}`
 
 	var tmpl TemplateInfo
 	assert.NoError(t, json.Unmarshal([]byte(tmplJSON), &tmpl))
 	assert.Equal(t, "namespace#BABA_JABA#ru", tmpl.Code)
-	assert.Equal(t, "namespace", tmpl.Namespace)
-	assert.Equal(t, "BABA_JABA", tmpl.Name)
-	assert.Equal(t, "ru", tmpl.Lang)
-	assert.Equal(t, []string{"BABA", "JABA"}, tmpl.Args)
-	assert.Equal(t, []string{"Hey", "Jony"}, tmpl.HeaderParams.TextVars)
-	assert.Equal(t, "https://example.com/intaro/ddd22", tmpl.HeaderParams.ImageURL)
-	assert.Equal(t, "https://example.com/intaro/ddd23", tmpl.HeaderParams.VideoURL)
-	assert.Equal(t, "https://example.com/intaro/ddd24", tmpl.HeaderParams.DocumentURL)
-	assert.Equal(t, "Scooter", tmpl.Footer)
-	assert.Equal(t, "URL", string(tmpl.ButtonParams[0].ButtonType))
-	assert.Equal(t, "ququq", tmpl.ButtonParams[0].URLParameter)
-	assert.Equal(t, "CHUCHUH", tmpl.ButtonParams[0].Text)
+	assert.Equal(t, []string{"header1", "header2"}, tmpl.Variables.Header)
+	assert.Equal(t, "550e8400-e29b-41d4-a716-446655440000", tmpl.Variables.Attachments[0].ID)
+	assert.Equal(t, "test-caption", tmpl.Variables.Attachments[0].Caption)
+	assert.Equal(t, []string{"BABA", "JABA"}, tmpl.Variables.Body)
+	assert.Equal(t, [][]string{{"button1"}, {}, {"button2"}}, tmpl.Variables.Buttons)
 }

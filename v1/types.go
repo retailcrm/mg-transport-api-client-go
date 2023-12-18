@@ -447,14 +447,20 @@ type Suggestion struct {
 }
 
 type TemplateInfo struct {
-	Code         string        `json:"code"`
-	Name         string        `json:"name"`
-	Namespace    string        `json:"namespace"`
-	Lang         string        `json:"lang"`
-	HeaderParams *HeaderParams `json:"headerParams,omitempty"`
-	Footer       string        `json:"footer,omitempty"`
-	ButtonParams []ButtonParam `json:"buttonParams,omitempty"`
-	Args         []string      `json:"args,omitempty"`
+	Code      string            `json:"code"`
+	Variables TemplateVariables `json:"variables,omitempty"`
+}
+
+type TemplateVariables struct {
+	Header      []string             `json:"header,omitempty"`
+	Attachments []TemplateAttachment `json:"attachments,omitempty"`
+	Body        []string             `json:"body,omitempty"`
+	Buttons     [][]string           `json:"buttons,omitempty"`
+}
+
+type TemplateAttachment struct {
+	ID      string `json:"id"`
+	Caption string `json:"caption"`
 }
 
 // FileItem struct.
