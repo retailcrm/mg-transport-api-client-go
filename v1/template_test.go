@@ -254,3 +254,69 @@ func TestUnmarshalInteractiveTemplate_VideoHeader(t *testing.T) {
 	assert.Nil(t, template.Header)
 	assert.Empty(t, template.Buttons)
 }
+
+func TestUnmarshalInteractiveTemplate_Examples(t *testing.T) {
+	var template Template
+	input := `{
+	"code":"aaa#bbb#ru",
+    "phone": "79252223456",
+    "channel_id": 1,
+    "header": {
+        "content": {
+			"type": "text",
+			"body": "Hello, {{1}}!"
+		}
+    },
+    "body": "Order {{1}} successfully delivered",
+    "buttons": {
+		"items": [
+			{
+	            "type": "url",
+				"label": "Go to website",
+	            "url": "https://test.com/{{1}}"
+	        },
+	        {
+	            "type": "plain",
+	            "label": "OK"
+	        }
+		]
+	},
+    "verification_status": "approved",
+	"example": {
+		"header": ["Alex"],
+		"body": ["ORDER-111"],
+		"buttons": [["id123"], []]
+	}
+}`
+	assert.NoError(t, json.Unmarshal([]byte(input), &template))
+
+	assert.NotNil(t, template.Example)
+	assert.Equal(t, []string{"Alex"}, template.Example.Header)
+	assert.Equal(t, []string{"ORDER-111"}, template.Example.Body)
+	assert.Equal(t, [][]string{{"id123"}, {}}, template.Example.Buttons)
+}
+
+func TestUnmarshalInteractiveTemplate_Attachments(t *testing.T) {
+	var template Template
+	input := `{
+	"code":"aaa#bbb#ru",
+    "phone": "79252223456",
+    "channel_id": 1,
+    "header": {
+        "content": {
+			"type": "image"
+		}
+    },
+    "body": "Welcome to new delivery point",
+    "verification_status": "approved",
+	"example": {
+		"attachments": [{"id": "a6cf882e-6915-410a-8672-ed3a28a7875d", "caption": "test-cats.png"}]
+	}
+}`
+	assert.NoError(t, json.Unmarshal([]byte(input), &template))
+
+	assert.NotNil(t, template.Example)
+	assert.Len(t, template.Example.Attachments, 1)
+	assert.Equal(t, "a6cf882e-6915-410a-8672-ed3a28a7875d", template.Example.Attachments[0].ID)
+	assert.Equal(t, "test-cats.png", template.Example.Attachments[0].Caption)
+}
