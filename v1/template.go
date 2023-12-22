@@ -54,9 +54,10 @@ type Template struct {
 }
 
 type TemplateExample struct {
-	Body    []string   `json:"body,omitempty"`
-	Header  []string   `json:"header,omitempty"`
-	Buttons [][]string `json:"buttons,omitempty"`
+	Body        []string                    `json:"body,omitempty"`
+	Header      []string                    `json:"header,omitempty"`
+	Buttons     [][]string                  `json:"buttons,omitempty"`
+	Attachments []TemplateExampleAttachment `json:"attachments,omitempty"`
 }
 
 type TemplateButtons struct {
@@ -352,4 +353,9 @@ func (t *TemplateItem) UnmarshalJSON(b []byte) error {
 	}
 
 	return nil
+}
+
+type TemplateExampleAttachment struct {
+	ID      string `json:"id"`
+	Caption string `json:"caption"`
 }
