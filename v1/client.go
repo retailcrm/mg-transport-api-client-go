@@ -15,12 +15,12 @@ import (
 	"github.com/google/go-querystring/query"
 )
 
-// New initialize client.
+// New initializes the MgClient.
 func New(url string, token string) *MgClient {
 	return NewWithClient(url, token, &http.Client{Timeout: time.Minute})
 }
 
-// NewWithClient initializes client with provided http client.
+// NewWithClient initializes the MgClient with specified *http.Client.
 func NewWithClient(url string, token string, client *http.Client) *MgClient {
 	return &MgClient{
 		URL:        url,
@@ -29,13 +29,13 @@ func NewWithClient(url string, token string, client *http.Client) *MgClient {
 	}
 }
 
-// WithLogger sets the provided logger instance into the Client
+// WithLogger sets the provided logger instance into the Client.
 func (c *MgClient) WithLogger(logger BasicLogger) *MgClient {
 	c.logger = logger
 	return c
 }
 
-// writeLog writes to the log.
+// writeLog writes a message to the log.
 func (c *MgClient) writeLog(format string, v ...interface{}) {
 	if c.logger != nil {
 		c.logger.Printf(format, v...)
@@ -45,19 +45,18 @@ func (c *MgClient) writeLog(format string, v ...interface{}) {
 	log.Printf(format, v...)
 }
 
-// TransportTemplates returns templates list
+// TransportTemplates returns templates list.
 //
 // Example:
 //
-//	var client = v1.New("https://token.url", "cb8ccf05e38a47543ad8477d4999be73bff503ea6")
+//	client := v1.New("https://message-gateway.url", "cb8ccf05e38a47543ad8477d4999be73bff503ea6")
 //
 //	data, status, err := client.TransportTemplates()
-//
 //	if err != nil {
-//		fmt.Printf("%v", err)
+//	    log.Fatalf("request error: %s (%d)", err, status)
 //	}
 //
-//	fmt.Printf("Status: %v, Templates found: %v", status, len(data))
+//	log.Printf("status: %d, response: %#v", status, data)
 func (c *MgClient) TransportTemplates() ([]Template, int, error) {
 	var resp []Template
 
@@ -77,37 +76,63 @@ func (c *MgClient) TransportTemplates() ([]Template, int, error) {
 	return resp, status, err
 }
 
+func ooga() {
+	client := New("https://message-gateway.url", "cb8ccf05e38a47543ad8477d4999be73bff503ea6")
+
+	status, err := client.ActivateTemplate(1, ActivateTemplateRequest{
+		UpdateTemplateRequest: UpdateTemplateRequest{
+			Name:     "New Template",
+			Body:     "Hello, {{1}}! Welcome to our store!",
+			Lang:     "en",
+			Category: "marketing",
+			Example: &TemplateExample{
+				Header: []string{"https://example.com/image.png"},
+				Body:   []string{"John"},
+			},
+			VerificationStatus: TemplateStatusApproved,
+			Header: &TemplateHeader{
+				Content: HeaderContentImage{},
+			},
+		},
+		Code: "new_template",
+		Type: TemplateTypeMedia,
+	})
+	if err != nil {
+		log.Fatalf("request error: %s (%d)", err, status)
+	}
+
+	log.Printf("status: %d", status)
+}
+
 // ActivateTemplate implements template activation
 //
 // Example:
 //
-//	var client = v1.New("https://token.url", "cb8ccf05e38a47543ad8477d4999be73bff503ea6")
+//	client := v1.New("https://message-gateway.url", "cb8ccf05e38a47543ad8477d4999be73bff503ea6")
 //
-//	request := v1.ActivateTemplateRequest{
-//			Code: "code",
-//			Name: "name",
-//			Type: v1.TemplateTypeText,
-//			Template: []v1.TemplateItem{
-//				{
-//					Type: v1.TemplateItemTypeText,
-//					Text: "Hello, ",
-//				},
-//				{
-//					Type:    v1.TemplateItemTypeVar,
-//					VarType: v1.TemplateVarName,
-//				},
-//				{
-//					Type: v1.TemplateItemTypeText,
-//					Text: "!",
-//				},
+//	status, err := client.ActivateTemplate(1, v1.ActivateTemplateRequest{
+//		UpdateTemplateRequest: v1.UpdateTemplateRequest{
+//			Name:     "New Template",
+//			Body:     "Hello, {{1}}! Welcome to our store!",
+//			Lang:     "en",
+//			Category: "marketing",
+//			Example: &v1.TemplateExample{
+//				Header: []string{"https://example.com/image.png"},
+//				Body:   []string{"John"},
 //			},
-//	}
-//
-//	_, err := client.ActivateTemplate(uint64(1), request)
-//
+//			VerificationStatus: v1.TemplateStatusApproved,
+//			Header: &v1.TemplateHeader{
+//				Content: v1.HeaderContentImage{},
+//			},
+//		},
+//		Code: "new_template",
+//		Type: v1.TemplateTypeMedia,
+//	})
 //	if err != nil {
-//		fmt.Printf("%v", err)
+//		log.Fatalf("request error: %s (%d)", err, status)
 //	}
+//
+//	log.Printf("status: %d", status)
 func (c *MgClient) ActivateTemplate(channelID uint64, request ActivateTemplateRequest) (int, error) {
 	outgoing, _ := json.Marshal(&request)
 
