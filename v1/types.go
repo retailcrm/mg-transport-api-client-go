@@ -448,14 +448,29 @@ type Suggestion struct {
 
 type TemplateInfo struct {
 	Code      string            `json:"code"`
-	Variables TemplateVariables `json:"variables,omitempty"`
+	Variables TemplateArguments `json:"variables,omitempty"`
 }
 
-type TemplateVariables struct {
-	Header      []string             `json:"header,omitempty"`
-	Attachments []TemplateAttachment `json:"attachments,omitempty"`
-	Body        []string             `json:"body,omitempty"`
-	Buttons     [][]string           `json:"buttons,omitempty"`
+type TemplateArguments struct {
+	Header  *TemplateHeaderArguments  `json:"header,omitempty"`
+	Body    TemplateBodyArguments     `json:"body"`
+	Buttons []TemplateButtonArguments `json:"buttons,omitempty"`
+}
+
+type TemplateHeaderArguments struct {
+	Type        string               `json:"type"`
+	Args        []string             `json:"args,omitempty"`        // for type="text" only
+	Attachments []TemplateAttachment `json:"attachments,omitempty"` // for media templates only
+}
+
+type TemplateBodyArguments struct {
+	Args []string `json:"args"`
+}
+
+type TemplateButtonArguments struct {
+	Type  string   `json:"type"`
+	Title string   `json:"title"`
+	Args  []string `json:"args,omitempty"`
 }
 
 type TemplateAttachment struct {
