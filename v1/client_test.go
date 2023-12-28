@@ -499,7 +499,7 @@ func (t *MGClientTest) Test_TextMessages() {
 			ExternalID: "external_id",
 			Type:       MsgTypeText,
 			Text:       "hello!",
-			PageLink: "https://example.loca/catalog/1",
+			PageLink:   "https://example.loca/catalog/1",
 		},
 		Originator: OriginatorCustomer,
 		Customer: Customer{

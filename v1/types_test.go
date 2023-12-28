@@ -173,33 +173,108 @@ func TestTransportErrorResponse(t *testing.T) {
 
 func TestTemplateInfoUnmarshal(t *testing.T) {
 	tmplJSON := `{
-		"code": "namespace#BABA_JABA#ru",
-		"variables": {
-			"header": [
-				"header1",
-				"header2"
-			],
-			"attachments": [
-				{"caption":"test-caption", "id":"550e8400-e29b-41d4-a716-446655440000"}
-			],
-			"body": [
-				"BABA",
-				"JABA"
-			],
-			"buttons": [
-				["button1"],
-				[],
-				["button2"]
-			]
-		}
-	}`
+  "type": "message_sent",
+  "meta": {
+    "timestamp": 1703686050
+  },
+  "data": {
+    "external_user_id": "79998887766",
+    "external_chat_id": "",
+    "channel_id": 83,
+    "type": "image",
+    "content": "Thank you for your order\n\nYou have placed order No. 8061C in the amount of 17400. We have already started working on it and will soon notify you of a change in status.\n\nStay with us",
+    "quote_external_id": null,
+    "quote_content": null,
+    "in_app_id": 999,
+    "user": {
+      "id": 222,
+      "first_name": "Alex",
+      "last_name": "",
+      "avatar": ""
+    },
+    "customer": {
+      "first_name": "",
+      "last_name": "",
+      "avatar": ""
+    },
+    "items": [
+      {
+        "id": "aa4ff988-bafb-43a0-9551-b8e00f677e34",
+        "size": 71984,
+        "caption": "test.png",
+        "height": 742,
+        "width": 305
+      }
+    ],
+    "template": {
+      "code": "namespace#BABA_JABA#ru",
+      "args": [
+        "var0",
+        "var1"
+      ],
+      "variables": {
+        "header": {
+          "type": "image",
+          "attachments": [
+            {
+              "id": "aa4ff988-bafb-43a0-9551-b8e00f677e34",
+              "caption": "test.png"
+            }
+          ]
+        },
+        "body": {
+          "args": [
+            "var0",
+            "var1"
+          ]
+        },
+        "buttons": [
+          {
+            "type": "plain",
+            "title": "OK"
+          },
+          {
+            "type": "url",
+            "title": "Our site",
+            "args": [
+              "id0"
+            ]
+          },
+          {
+            "type": "phone",
+            "title": "Our phone"
+          }
+        ]
+      }
+    }
+  }
+}`
 
-	var tmpl TemplateInfo
-	assert.NoError(t, json.Unmarshal([]byte(tmplJSON), &tmpl))
+	var wh struct {
+		Data struct {
+			Template TemplateInfo `json:"template"`
+		} `json:"data"`
+	}
+	assert.NoError(t, json.Unmarshal([]byte(tmplJSON), &wh))
+
+	tmpl := wh.Data.Template
 	assert.Equal(t, "namespace#BABA_JABA#ru", tmpl.Code)
-	assert.Equal(t, []string{"header1", "header2"}, tmpl.Variables.Header)
-	assert.Equal(t, "550e8400-e29b-41d4-a716-446655440000", tmpl.Variables.Attachments[0].ID)
-	assert.Equal(t, "test-caption", tmpl.Variables.Attachments[0].Caption)
-	assert.Equal(t, []string{"BABA", "JABA"}, tmpl.Variables.Body)
-	assert.Equal(t, [][]string{{"button1"}, {}, {"button2"}}, tmpl.Variables.Buttons)
+
+	assert.NotNil(t, tmpl.Variables.Header)
+	assert.Empty(t, tmpl.Variables.Header.Args)
+	assert.Equal(t, "aa4ff988-bafb-43a0-9551-b8e00f677e34", tmpl.Variables.Header.Attachments[0].ID)
+	assert.Equal(t, "test.png", tmpl.Variables.Header.Attachments[0].Caption)
+
+	assert.Equal(t, []string{"var0", "var1"}, tmpl.Variables.Body.Args)
+
+	assert.Len(t, tmpl.Variables.Buttons, 3)
+	assert.Equal(t, "plain", tmpl.Variables.Buttons[0].Type)
+	assert.Equal(t, "OK", tmpl.Variables.Buttons[0].Title)
+	assert.Empty(t, tmpl.Variables.Buttons[0].Args)
+	assert.Equal(t, "url", tmpl.Variables.Buttons[1].Type)
+	assert.Equal(t, "Our site", tmpl.Variables.Buttons[1].Title)
+	assert.Equal(t, []string{"id0"}, tmpl.Variables.Buttons[1].Args)
+	assert.Equal(t, "phone", tmpl.Variables.Buttons[2].Type)
+	assert.Equal(t, "Our phone", tmpl.Variables.Buttons[2].Title)
+	assert.Empty(t, tmpl.Variables.Buttons[2].Args)
 }
