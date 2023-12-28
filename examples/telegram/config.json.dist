@@ -1,0 +1,7 @@
+{
+  "addr": ":8080",
+  "baseUrl": "https://demo.localhost.run",
+  "system": "https://test.retailcrm.pro",
+  "apiKey": "apiKey",
+  "tgBotToken": "telegram"
+}
