@@ -49,7 +49,7 @@ func (c *MgClient) writeLog(format string, v ...interface{}) {
 //
 // Example:
 //
-//	client := v1.New("https://message-gateway.url", "cb8ccf05e38a47543ad8477d4999be73bff503ea6")
+//	client := New("https://message-gateway.url", "cb8ccf05e38a47543ad8477d4999be73bff503ea6")
 //
 //	data, status, err := client.TransportTemplates()
 //	if err != nil {
@@ -76,57 +76,29 @@ func (c *MgClient) TransportTemplates() ([]Template, int, error) {
 	return resp, status, err
 }
 
-func ooga() {
-	client := New("https://message-gateway.url", "cb8ccf05e38a47543ad8477d4999be73bff503ea6")
-
-	status, err := client.ActivateTemplate(1, ActivateTemplateRequest{
-		UpdateTemplateRequest: UpdateTemplateRequest{
-			Name:     "New Template",
-			Body:     "Hello, {{1}}! Welcome to our store!",
-			Lang:     "en",
-			Category: "marketing",
-			Example: &TemplateExample{
-				Header: []string{"https://example.com/image.png"},
-				Body:   []string{"John"},
-			},
-			VerificationStatus: TemplateStatusApproved,
-			Header: &TemplateHeader{
-				Content: HeaderContentImage{},
-			},
-		},
-		Code: "new_template",
-		Type: TemplateTypeMedia,
-	})
-	if err != nil {
-		log.Fatalf("request error: %s (%d)", err, status)
-	}
-
-	log.Printf("status: %d", status)
-}
-
-// ActivateTemplate implements template activation
+// ActivateTemplate activates template with provided structure.
 //
 // Example:
 //
-//	client := v1.New("https://message-gateway.url", "cb8ccf05e38a47543ad8477d4999be73bff503ea6")
+//	client := New("https://message-gateway.url", "cb8ccf05e38a47543ad8477d4999be73bff503ea6")
 //
-//	status, err := client.ActivateTemplate(1, v1.ActivateTemplateRequest{
-//		UpdateTemplateRequest: v1.UpdateTemplateRequest{
+//	status, err := client.ActivateTemplate(1, ActivateTemplateRequest{
+//		UpdateTemplateRequest: UpdateTemplateRequest{
 //			Name:     "New Template",
 //			Body:     "Hello, {{1}}! Welcome to our store!",
 //			Lang:     "en",
 //			Category: "marketing",
-//			Example: &v1.TemplateExample{
+//			Example: &TemplateExample{
 //				Header: []string{"https://example.com/image.png"},
 //				Body:   []string{"John"},
 //			},
-//			VerificationStatus: v1.TemplateStatusApproved,
-//			Header: &v1.TemplateHeader{
-//				Content: v1.HeaderContentImage{},
+//			VerificationStatus: TemplateStatusApproved,
+//			Header: &TemplateHeader{
+//				Content: HeaderContentImage{},
 //			},
 //		},
 //		Code: "new_template",
-//		Type: v1.TemplateTypeMedia,
+//		Type: TemplateTypeMedia,
 //	})
 //	if err != nil {
 //		log.Fatalf("request error: %s (%d)", err, status)
@@ -148,36 +120,31 @@ func (c *MgClient) ActivateTemplate(channelID uint64, request ActivateTemplateRe
 	return status, err
 }
 
-// UpdateTemplate implements template updating
+// UpdateTemplate updates existing template by its code.
+//
 // Example:
 //
-//	var client = New("https://token.url", "cb8ccf05e38a47543ad8477d4999be73bff503ea6")
+//	client := New("https://message-gateway.url", "cb8ccf05e38a47543ad8477d4999be73bff503ea6")
 //
-//	request := v1.Template{
-//		Code:      "templateCode",
-//		ChannelID: 1,
-//		Name:      "templateName",
-//		Template:  []v1.TemplateItem{
-//			{
-//				Type: v1.TemplateItemTypeText,
-//				Text: "Welcome, ",
-//			},
-//			{
-//				Type: v1.TemplateItemTypeVar,
-//				VarType: v1.TemplateVarName,
-//			},
-//			{
-//				Type: v1.TemplateItemTypeText,
-//				Text: "!",
-//			},
+//	status, err := client.UpdateTemplate(1, "new_template", UpdateTemplateRequest{
+//		Name:     "New Template",
+//		Body:     "Hello, {{1}}! Welcome to our store!",
+//		Lang:     "en",
+//		Category: "marketing",
+//		Example: &TemplateExample{
+//			Header: []string{"https://example.com/image.png"},
+//			Body:   []string{"John"},
 //		},
-//	}
-//
-//	_, err := client.UpdateTemplate(request)
-//
+//		VerificationStatus: TemplateStatusApproved,
+//		Header: &TemplateHeader{
+//			Content: HeaderContentImage{},
+//		},
+//	})
 //	if err != nil {
-//		fmt.Printf("%#v", err)
+//		log.Fatalf("request error: %s (%d)", err, status)
 //	}
+//
+//	log.Printf("status: %d", status)
 func (c *MgClient) UpdateTemplate(channelID uint64, code string, request UpdateTemplateRequest) (int, error) {
 	outgoing, _ := json.Marshal(&request)
 
@@ -198,17 +165,18 @@ func (c *MgClient) UpdateTemplate(channelID uint64, code string, request UpdateT
 	return status, err
 }
 
-// DeactivateTemplate implements template deactivation
+// DeactivateTemplate deactivates the template by its code.
 //
 // Example:
 //
-//	var client = v1.New("https://token.url", "cb8ccf05e38a47543ad8477d4999be73bff503ea6")
+//	client := New("https://message-gateway.url", "cb8ccf05e38a47543ad8477d4999be73bff503ea6")
 //
-//	_, err := client.DeactivateTemplate(3053450384, "templateCode")
-//
+//	status, err := client.DeactivateTemplate(1, "new_template")
 //	if err != nil {
-//		fmt.Printf("%v", err)
+//		log.Fatalf("request error: %s (%d)", err, status)
 //	}
+//
+//	log.Printf("status: %d", status)
 func (c *MgClient) DeactivateTemplate(channelID uint64, templateCode string) (int, error) {
 	data, status, err := c.DeleteRequest(
 		fmt.Sprintf("/channels/%d/templates/%s", channelID, url.PathEscape(templateCode)), []byte{})
@@ -223,19 +191,20 @@ func (c *MgClient) DeactivateTemplate(channelID uint64, templateCode string) (in
 	return status, err
 }
 
-// TransportChannels returns channels list
+// TransportChannels returns channels for current transport.
 //
 // Example:
 //
-//	var client = v1.New("https://token.url", "cb8ccf05e38a47543ad8477d4999be73bff503ea6")
+//	client := New("https://message-gateway.url", "cb8ccf05e38a47543ad8477d4999be73bff503ea6")
 //
-//	data, status, err := client.TransportChannels(Channels{Active: true})
-//
+//	resp, status, err := client.TransportChannels(Channels{
+//		Active: true,
+//	})
 //	if err != nil {
-//		fmt.Printf("%v", err)
+//		log.Fatalf("request error: %s (%d)", err, status)
 //	}
 //
-//	fmt.Printf("Status: %v, Channels found: %v", status, len(data))
+//	log.Printf("status: %d, channels: %#v", status, resp)
 func (c *MgClient) TransportChannels(request Channels) ([]ChannelListItem, int, error) {
 	var resp []ChannelListItem
 	var b []byte
@@ -257,45 +226,80 @@ func (c *MgClient) TransportChannels(request Channels) ([]ChannelListItem, int, 
 	return resp, status, err
 }
 
-// ActivateTransportChannel implement channel activation
+// ActivateTransportChannel activates the channel with provided settings.
 //
 // Example:
 //
-//	var client = v1.New("https://token.url", "cb8ccf05e38a47543ad8477d4999be73bff503ea6")
+//	client := New("https://message-gateway.url", "cb8ccf05e38a47543ad8477d4999be73bff503ea6")
+//	uint16Ptr := func(val uint16) *uint16 {
+//		return &val
+//	}
+//	mbToBytes := func(val uint64) *uint64 {
+//		val = val * 1024 * 1024
+//		return &val
+//	}
 //
-//	request := ActivateRequest{
+//	resp, status, err := client.ActivateTransportChannel(Channel{
 //		Type: "telegram",
 //		Name: "@my_shopping_bot",
 //		Settings: ChannelSettings{
 //			Status: Status{
 //				Delivered: ChannelFeatureNone,
-//				Read: ChannelFeatureReceive,
+//				Read:      ChannelFeatureReceive,
 //			},
 //			Text: ChannelSettingsText{
-//				Creating: ChannelFeatureBoth,
-//				Editing:  ChannelFeatureBoth,
-//				Quoting:  ChannelFeatureReceive,
-//				Deleting: ChannelFeatureSend,
+//				Creating:      ChannelFeatureBoth,
+//				Editing:       ChannelFeatureBoth,
+//				Quoting:       ChannelFeatureReceive,
+//				Deleting:      ChannelFeatureSend,
 //				MaxCharsCount: 2000,
 //			},
 //			Product: Product{
 //				Creating: ChannelFeatureSend,
+//				Editing:  ChannelFeatureNone,
 //				Deleting: ChannelFeatureSend,
 //			},
 //			Order: Order{
 //				Creating: ChannelFeatureBoth,
+//				Editing:  ChannelFeatureNone,
 //				Deleting: ChannelFeatureSend,
 //			},
+//			File: ChannelSettingsFilesBase{
+//				Creating:          ChannelFeatureBoth,
+//				Editing:           ChannelFeatureBoth,
+//				Quoting:           ChannelFeatureBoth,
+//				Deleting:          ChannelFeatureBoth,
+//				Max:               10,
+//				NoteMaxCharsCount: uint16Ptr(256),
+//				MaxItemSize:       mbToBytes(50),
+//			},
+//			Image: ChannelSettingsFilesBase{
+//				Creating:          ChannelFeatureBoth,
+//				Editing:           ChannelFeatureBoth,
+//				Quoting:           ChannelFeatureBoth,
+//				Deleting:          ChannelFeatureBoth,
+//				Max:               10,
+//				NoteMaxCharsCount: uint16Ptr(256),
+//				MaxItemSize:       mbToBytes(10),
+//			},
+//			Suggestions: ChannelSettingsSuggestions{
+//				Text:  ChannelFeatureBoth,
+//				Phone: ChannelFeatureBoth,
+//				Email: ChannelFeatureBoth,
+//			},
+//			Audio: ChannelSettingsAudio{
+//				Creating:    ChannelFeatureBoth,
+//				Quoting:     ChannelFeatureBoth,
+//				Deleting:    ChannelFeatureBoth,
+//				MaxItemSize: mbToBytes(10),
+//			},
 //		},
-//	}
-//
-//	data, status, err := client.ActivateTransportChannel(request)
-//
+//	})
 //	if err != nil {
-//		fmt.Printf("%v", err)
+//		log.Fatalf("request error: %s (%d)", err, status)
 //	}
 //
-//	fmt.Printf("%s\n", data.CreatedAt)
+//	log.Printf("status: %d, channel external_id: %s", status, resp.ExternalID)
 func (c *MgClient) ActivateTransportChannel(request Channel) (ActivateResponse, int, error) {
 	var resp ActivateResponse
 	outgoing, _ := json.Marshal(&request)
@@ -316,45 +320,81 @@ func (c *MgClient) ActivateTransportChannel(request Channel) (ActivateResponse, 
 	return resp, status, err
 }
 
-// UpdateTransportChannel implement channel activation
+// UpdateTransportChannel updates an existing channel with provided settings.
 //
 // Example:
 //
-//	var client = v1.New("https://token.url", "cb8ccf05e38a47543ad8477d4999be73bff503ea6")
+//	client := New("https://message-gateway.url", "cb8ccf05e38a47543ad8477d4999be73bff503ea6")
+//	uint16Ptr := func(val uint16) *uint16 {
+//		return &val
+//	}
+//	mbToBytes := func(val uint64) *uint64 {
+//		val = val * 1024 * 1024
+//		return &val
+//	}
 //
-//	request := ActivateRequest{
-//		ID:   3053450384,
+//	resp, status, err := client.UpdateTransportChannel(Channel{
+//		ID:   305,
 //		Type: "telegram",
 //		Name: "@my_shopping_bot",
 //		Settings: ChannelSettings{
 //			Status: Status{
 //				Delivered: ChannelFeatureNone,
-//				Read: ChannelFeatureReceive,
+//				Read:      ChannelFeatureReceive,
 //			},
 //			Text: ChannelSettingsText{
-//				Creating: ChannelFeatureBoth,
-//				Editing:  ChannelFeatureSend,
-//				Quoting:  ChannelFeatureReceive,
-//				Deleting: ChannelFeatureBoth,
+//				Creating:      ChannelFeatureBoth,
+//				Editing:       ChannelFeatureBoth,
+//				Quoting:       ChannelFeatureReceive,
+//				Deleting:      ChannelFeatureSend,
+//				MaxCharsCount: 2000,
 //			},
 //			Product: Product{
 //				Creating: ChannelFeatureSend,
+//				Editing:  ChannelFeatureNone,
 //				Deleting: ChannelFeatureSend,
 //			},
 //			Order: Order{
 //				Creating: ChannelFeatureBoth,
+//				Editing:  ChannelFeatureNone,
 //				Deleting: ChannelFeatureSend,
 //			},
+//			File: ChannelSettingsFilesBase{
+//				Creating:          ChannelFeatureBoth,
+//				Editing:           ChannelFeatureBoth,
+//				Quoting:           ChannelFeatureBoth,
+//				Deleting:          ChannelFeatureBoth,
+//				Max:               10,
+//				NoteMaxCharsCount: uint16Ptr(256),
+//				MaxItemSize:       mbToBytes(50),
+//			},
+//			Image: ChannelSettingsFilesBase{
+//				Creating:          ChannelFeatureBoth,
+//				Editing:           ChannelFeatureBoth,
+//				Quoting:           ChannelFeatureBoth,
+//				Deleting:          ChannelFeatureBoth,
+//				Max:               10,
+//				NoteMaxCharsCount: uint16Ptr(256),
+//				MaxItemSize:       mbToBytes(10),
+//			},
+//			Suggestions: ChannelSettingsSuggestions{
+//				Text:  ChannelFeatureBoth,
+//				Phone: ChannelFeatureBoth,
+//				Email: ChannelFeatureBoth,
+//			},
+//			Audio: ChannelSettingsAudio{
+//				Creating:    ChannelFeatureBoth,
+//				Quoting:     ChannelFeatureBoth,
+//				Deleting:    ChannelFeatureBoth,
+//				MaxItemSize: mbToBytes(10),
+//			},
 //		},
-//	}
-//
-//	data, status, err := client.UpdateTransportChannel(request)
-//
+//	})
 //	if err != nil {
-//		fmt.Printf("%v", err)
+//		log.Fatalf("request error: %s (%d)", err, status)
 //	}
 //
-//	fmt.Printf("%s\n", data.UpdatedAt)
+//	log.Printf("status: %d, channel_id: %d", status, resp.ChannelID)
 func (c *MgClient) UpdateTransportChannel(request Channel) (UpdateResponse, int, error) {
 	var resp UpdateResponse
 	outgoing, _ := json.Marshal(&request)
@@ -375,19 +415,18 @@ func (c *MgClient) UpdateTransportChannel(request Channel) (UpdateResponse, int,
 	return resp, status, err
 }
 
-// DeactivateTransportChannel implement channel deactivation
+// DeactivateTransportChannel deactivates the channel by its ID.
 //
 // Example:
 //
-//	var client = v1.New("https://token.url", "cb8ccf05e38a47543ad8477d4999be73bff503ea6")
+//	client := New("https://message-gateway.url", "cb8ccf05e38a47543ad8477d4999be73bff503ea6")
 //
-//	data, status, err := client.DeactivateTransportChannel(3053450384)
-//
+//	resp, status, err := client.DeactivateTransportChannel(305)
 //	if err != nil {
-//		fmt.Printf("%v", err)
+//		log.Fatalf("request error: %s (%d)", err, status)
 //	}
 //
-//	fmt.Printf("%s\n", data.DeactivatedAt)
+//	log.Printf("status: %d, deactivated at: %s", status, resp.DeactivatedAt)
 func (c *MgClient) DeactivateTransportChannel(id uint64) (DeleteResponse, int, error) {
 	var resp DeleteResponse
 	var buf []byte
@@ -411,35 +450,49 @@ func (c *MgClient) DeactivateTransportChannel(id uint64) (DeleteResponse, int, e
 	return resp, status, err
 }
 
-// Messages implement send message
+// Messages sends new message.
 //
 // Example:
 //
-//	var client = v1.New("https://token.url", "cb8ccf05e38a47543ad8477d4999be73bff503ea6")
-//	msg := SendData{
-//		SendMessage{
-//			Message{
-//				ExternalID: "274628",
-//				Type:       "text",
-//				Text:       "hello!",
+//	client := New("https://message-gateway.url", "cb8ccf05e38a47543ad8477d4999be73bff503ea6")
+//	getReplyDeadline := func(after time.Duration) *time.Time {
+//		deadline := time.Now().Add(after)
+//		return &deadline
+//	}
+//
+//	resp, status, err := client.Messages(SendData{
+//		Message: Message{
+//			ExternalID: "uid_1",
+//			Type:       MsgTypeText,
+//			Text:       "Hello customer!",
+//			PageLink:   "https://example.com",
+//		},
+//		Originator: OriginatorCustomer,
+//		Customer: Customer{
+//			ExternalID: "client_id_1",
+//			Nickname:   "customer",
+//			Firstname:  "Tester",
+//			Lastname:   "Tester",
+//			Avatar:     "https://example.com/image.png",
+//			ProfileURL: "https://example.com/user/client_id_1",
+//			Language:   "en",
+//			Utm: &Utm{
+//				Source:   "myspace.com",
+//				Medium:   "social",
+//				Campaign: "something",
+//				Term:     "fedora",
+//				Content:  "autumn_collection",
 //			},
-//			time.Now(),
 //		},
-//		User{
-//			ExternalID: "8",
-//			Nickname:   "@octopus",
-//			Firstname:  "Joe",
-//		},
-//		10,
-//	}
-//
-//	data, status, err := client.Messages(msg)
-//
+//		Channel:        305,
+//		ExternalChatID: "chat_id_1",
+//		ReplyDeadline: getReplyDeadline(24 * time.Hour),
+//	})
 //	if err != nil {
-//		fmt.Printf("%v", err)
+//		log.Fatalf("request error: %s (%d)", err, status)
 //	}
 //
-//	fmt.Printf("%s\n", data.MessageID)
+//	log.Printf("status: %d, message ID: %d", status, resp.MessageID)
 func (c *MgClient) Messages(request SendData) (MessagesResponse, int, error) {
 	var resp MessagesResponse
 	outgoing, _ := json.Marshal(&request)
@@ -460,37 +513,49 @@ func (c *MgClient) Messages(request SendData) (MessagesResponse, int, error) {
 	return resp, status, err
 }
 
-// MessagesHistory implement history message sending.
+// MessagesHistory sends history message.
 //
 // Example:
 //
-//	var client = v1.New("https://token.url", "cb8ccf05e38a47543ad8477d4999be73bff503ea6")
-//	msg := v1.SendHistoryMessageRequest{
-//		Message: v1.SendMessageRequestMessage{
-//			Type:       v1.MsgTypeText,
-//			ExternalID: "external_id",
-//			CreatedAt:  v1.TimePtr(time.Now()),
-//			IsComment:  false,
-//			Text:       "Test message",
-//		},
-//		ChannelID:      1,
-//		ExternalChatID: "chat_id",
-//		Customer: &v1.Customer{
-//			ExternalID: "1",
-//			Nickname:   "@john_doe",
-//			Firstname:  "John",
-//			Lastname:   "Doe",
-//		},
-//		Originator:    v1.OriginatorCustomer,
-//		ReplyDeadline: v1.TimePtr(time.Now().Add(time.Hour * 24)),
+//	client := New("https://message-gateway.url", "cb8ccf05e38a47543ad8477d4999be73bff503ea6")
+//	getModifiedNow := func(after time.Duration) *time.Time {
+//		deadline := time.Now().Add(after)
+//		return &deadline
 //	}
 //
-//	data, status, err := client.MessagesHistory(msg)
+//	resp, status, err := client.MessagesHistory(SendHistoryMessageRequest{
+//		Message: SendMessageRequestMessage{
+//			ExternalID: "uid_1",
+//			Type:       MsgTypeText,
+//			Text:       "Hello customer!",
+//			CreatedAt:  getModifiedNow(-time.Hour),
+//		},
+//		Originator: OriginatorCustomer,
+//		Customer: &Customer{
+//			ExternalID: "client_id_1",
+//			Nickname:   "customer",
+//			Firstname:  "Tester",
+//			Lastname:   "Tester",
+//			Avatar:     "https://example.com/image.png",
+//			ProfileURL: "https://example.com/user/client_id_1",
+//			Language:   "en",
+//			Utm: &Utm{
+//				Source:   "myspace.com",
+//				Medium:   "social",
+//				Campaign: "something",
+//				Term:     "fedora",
+//				Content:  "autumn_collection",
+//			},
+//		},
+//		ChannelID:      305,
+//		ExternalChatID: "chat_id_1",
+//		ReplyDeadline:  getModifiedNow(24 * time.Hour),
+//	})
 //	if err != nil {
-//		fmt.Printf("[%d]: %v", status, err)
+//		log.Fatalf("request error: %s (%d)", err, status)
 //	}
 //
-//	fmt.Printf("%d\n", data.MessageID)
+//	log.Printf("status: %d, message ID: %d", status, resp.MessageID)
 func (c *MgClient) MessagesHistory(request SendHistoryMessageRequest) (MessagesResponse, int, error) {
 	var (
 		resp     MessagesResponse
@@ -514,30 +579,24 @@ func (c *MgClient) MessagesHistory(request SendHistoryMessageRequest) (MessagesR
 	return resp, status, err
 }
 
-// UpdateMessages implement edit message
+// UpdateMessages edits existing message. Only text messages are supported.
 //
 // Example:
 //
-//	var client = v1.New("https://token.url", "cb8ccf05e38a47543ad8477d4999be73bff503ea6")
-//	msg := UpdateData{
-//		UpdateMessage{
-//			Message{
-//				ExternalID: "274628",
-//				Type:       "text",
-//				Text:       "hello hello!",
-//			},
-//			MakeTimestamp(),
+//	client := New("https://message-gateway.url", "cb8ccf05e38a47543ad8477d4999be73bff503ea6")
+//
+//	resp, status, err := client.UpdateMessages(EditMessageRequest{
+//		Message: EditMessageRequestMessage{
+//			ExternalID: "message_id_1",
+//			Text:       "This is a new text!",
 //		},
-//		10,
-//	}
-//
-//	data, status, err := client.UpdateMessages(msg)
-//
+//		Channel: 305,
+//	})
 //	if err != nil {
-//		fmt.Printf("%v", err)
+//		log.Fatalf("request error: %s (%d)", err, status)
 //	}
 //
-//	fmt.Printf("%s\n", data.MessageID)
+//	log.Printf("status: %d, message ID: %d", status, resp.MessageID)
 func (c *MgClient) UpdateMessages(request EditMessageRequest) (MessagesResponse, int, error) {
 	var resp MessagesResponse
 	outgoing, _ := json.Marshal(&request)
@@ -558,25 +617,23 @@ func (c *MgClient) UpdateMessages(request EditMessageRequest) (MessagesResponse,
 	return resp, status, err
 }
 
-// MarkMessageRead send message read event to MG
+// MarkMessageRead send message read event to MG.
 //
 // Example:
 //
-//	var client = v1.New("https://token.url", "cb8ccf05e38a47543ad8477d4999be73bff503ea6")
-//	msg := MarkMessageReadRequest{
-//		Message{
-//			ExternalID: "274628",
+//	client := New("https://message-gateway.url", "cb8ccf05e38a47543ad8477d4999be73bff503ea6")
+//
+//	_, status, err := client.MarkMessageRead(MarkMessageReadRequest{
+//		Message: MarkMessageReadRequestMessage{
+//			ExternalID: "message_id_1",
 //		},
-//		10,
-//	}
-//
-//	data, status, err := client.MarkMessageRead(msg)
-//
+//		ChannelID: 305,
+//	})
 //	if err != nil {
-//		fmt.Printf("%v", err)
+//		log.Fatalf("request error: %s (%d)", err, status)
 //	}
 //
-//	fmt.Printf("%v %v\n", status, data)
+//	log.Printf("status: %d", status)
 func (c *MgClient) MarkMessageRead(request MarkMessageReadRequest) (MarkMessageReadResponse, int, error) {
 	var resp MarkMessageReadResponse
 	outgoing, _ := json.Marshal(&request)
@@ -597,22 +654,21 @@ func (c *MgClient) MarkMessageRead(request MarkMessageReadRequest) (MarkMessageR
 	return resp, status, err
 }
 
-// AckMessage implements ack of message
+// AckMessage sets success status for message or appends an error to message.
 //
 // Example:
 //
-//	var client = v1.New("https://token.url", "cb8ccf05e38a47543ad8477d4999be73bff503ea6")
+//	client := New("https://message-gateway.url", "cb8ccf05e38a47543ad8477d4999be73bff503ea6")
 //
-//	request := AckMessageRequest{
-//		ExternalMessageID: "274628",
-//		Channel: 10,
-//	}
-//
-//	status, err := client.AckMessage(request)
-//
+//	status, err := client.AckMessage(AckMessageRequest{
+//		ExternalMessageID: "message_id_1",
+//		Channel: 305,
+//	})
 //	if err != nil {
-//		fmt.Printf("%v", err)
+//		log.Fatalf("request error: %s (%d)", err, status)
 //	}
+//
+//	log.Printf("status: %d", status)
 func (c *MgClient) AckMessage(request AckMessageRequest) (int, error) {
 	outgoing, _ := json.Marshal(&request)
 
@@ -632,20 +688,18 @@ func (c *MgClient) AckMessage(request AckMessageRequest) (int, error) {
 //
 // Example:
 //
-//	var client = v1.New("https://token.url", "cb8ccf05e38a47543ad8477d4999be73bff503ea6")
+//	client := New("https://message-gateway.url", "cb8ccf05e38a47543ad8477d4999be73bff503ea6")
 //
-//	request := ReadUntilRequest{
-//		ExternalMessageID: "274628",
-//		Channel: 10,
-//	}
-//
-//	resp, status, err := client.ReadUntil(request)
+//	resp, status, err := client.ReadUntil(MarkMessagesReadUntilRequest{
+//		CustomerExternalID: "customer_id_1",
+//		ChannelID: 305,
+//		Until: time.Now().Add(-time.Hour),
+//	})
 //	if err != nil {
-//		fmt.Printf("%v", err)
+//		log.Fatalf("request error: %s (%d)", err, status)
 //	}
-//	if resp != nil {
-//		fmt.Printf("Marked these as read: %s", resp.IDs)
-//	}
+//
+//	log.Printf("status: %d, marked messages: %+v", status, resp.IDs)
 func (c *MgClient) ReadUntil(request MarkMessagesReadUntilRequest) (*MarkMessagesReadUntilResponse, int, error) {
 	outgoing, _ := json.Marshal(&request)
 
@@ -664,27 +718,23 @@ func (c *MgClient) ReadUntil(request MarkMessagesReadUntilRequest) (*MarkMessage
 	return resp, status, nil
 }
 
-// DeleteMessage implement delete message
+// DeleteMessage removes the message.
 //
 // Example:
 //
-//		var client = v1.New("https://token.url", "cb8ccf05e38a47543ad8477d4999be73bff503ea6")
+//	client := New("https://message-gateway.url", "cb8ccf05e38a47543ad8477d4999be73bff503ea6")
 //
-//		msg := DeleteData{
-//			Message{
-//				ExternalID: "274628",
-//			},
-//			10,
-//		}
+//	resp, status, err := client.DeleteMessage(DeleteData{
+//		Message: Message{
+//			ExternalID: "message_id_1",
+//		},
+//		Channel: 305,
+//	})
+//	if err != nil {
+//		log.Fatalf("request error: %s (%d)", err, status)
+//	}
 //
-//		previousChatMessage, status, err := client.DeleteMessage(msg)
-//		if err != nil {
-//			fmt.Printf("%v", err)
-//		}
-//
-//	 if previousChatMessage != nil {
-//	 	fmt.Printf("Previous chat message id = %d", previousChatMessage.MessageID)
-//	 }
+//	log.Printf("status: %d, message ID: %d", status, resp.MessageID)
 func (c *MgClient) DeleteMessage(request DeleteData) (*MessagesResponse, int, error) {
 	outgoing, _ := json.Marshal(&request)
 
@@ -707,19 +757,18 @@ func (c *MgClient) DeleteMessage(request DeleteData) (*MessagesResponse, int, er
 	return previousChatMessage, status, nil
 }
 
-// GetFile implement get file url
+// GetFile returns file information by its ID.
 //
 // Example:
 //
-//	var client = v1.New("https://token.url", "cb8ccf05e38a47543ad8477d4999be73bff503ea6")
+//	client := New("https://message-gateway.url", "cb8ccf05e38a47543ad8477d4999be73bff503ea6")
 //
-//	data, status, err := client.GetFile("file_ID")
-//
+//	resp, status, err := client.GetFile("file_id")
 //	if err != nil {
-//		fmt.Printf("%v", err)
+//		log.Fatalf("request error: %s (%d)", err, status)
 //	}
 //
-//	fmt.Printf("%s\n", data.MessageID)
+//	log.Printf("status: %d, file URL: %s", status, resp.Url)
 func (c *MgClient) GetFile(request string) (FullFileResponse, int, error) {
 	var resp FullFileResponse
 	var b []byte
@@ -741,7 +790,29 @@ func (c *MgClient) GetFile(request string) (FullFileResponse, int, error) {
 	return resp, status, err
 }
 
-// UploadFile upload file.
+// UploadFile uploads a file.
+//
+// Example:
+//
+//	client := New("https://message-gateway.url", "cb8ccf05e38a47543ad8477d4999be73bff503ea6")
+//
+//	file, err := os.Open("/tmp/file.png")
+//	if err != nil {
+//		log.Fatalf("cannot open file for reading: %s", err)
+//	}
+//	defer func() { _ = file.Close() }()
+//
+//	data, err := io.ReadAll(file)
+//	if err != nil {
+//		log.Fatalf("cannot read file data: %s", err)
+//	}
+//
+//	resp, status, err := client.UploadFile(bytes.NewReader(data))
+//	if err != nil {
+//		log.Fatalf("request error: %s (%d)", err, status)
+//	}
+//
+//	log.Printf("status: %d, file ID: %s", status, resp.ID)
 func (c *MgClient) UploadFile(request io.Reader) (UploadFileResponse, int, error) {
 	var resp UploadFileResponse
 
@@ -761,7 +832,20 @@ func (c *MgClient) UploadFile(request io.Reader) (UploadFileResponse, int, error
 	return resp, status, err
 }
 
-// UploadFileByURL upload file by url.
+// UploadFileByURL uploads a file from provided URL.
+//
+// Example:
+//
+//	client := New("https://message-gateway.url", "cb8ccf05e38a47543ad8477d4999be73bff503ea6")
+//
+//	resp, status, err := client.UploadFileByURL(UploadFileByUrlRequest{
+//		Url: "https://example.com/file.png",
+//	})
+//	if err != nil {
+//		log.Fatalf("request error: %s (%d)", err, status)
+//	}
+//
+//	log.Printf("status: %d, file ID: %s", status, resp.ID)
 func (c *MgClient) UploadFileByURL(request UploadFileByUrlRequest) (UploadFileResponse, int, error) {
 	var resp UploadFileResponse
 	outgoing, _ := json.Marshal(&request)
@@ -782,7 +866,11 @@ func (c *MgClient) UploadFileByURL(request UploadFileByUrlRequest) (UploadFileRe
 	return resp, status, err
 }
 
-// MakeTimestamp returns current unix timestamp.
+// MakeTimestamp returns current unix timestamp in milliseconds.
+//
+// Example:
+//
+//	fmt.Printf("UNIX timestamp in milliseconds: %d", MakeTimestamp())
 func MakeTimestamp() int64 {
 	return time.Now().UnixNano() / (int64(time.Millisecond) / int64(time.Nanosecond))
 }

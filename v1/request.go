@@ -10,7 +10,7 @@ import (
 
 var prefix = "/api/transport/v1"
 
-// GetRequest implements GET Request.
+// GetRequest performs GET request to the provided route.
 func (c *MgClient) GetRequest(url string, parameters []byte) ([]byte, int, error) {
 	return makeRequest(
 		"GET",
@@ -20,7 +20,7 @@ func (c *MgClient) GetRequest(url string, parameters []byte) ([]byte, int, error
 	)
 }
 
-// PostRequest implements POST Request.
+// PostRequest performs POST request to the provided route.
 func (c *MgClient) PostRequest(url string, parameters io.Reader) ([]byte, int, error) {
 	return makeRequest(
 		"POST",
@@ -30,7 +30,7 @@ func (c *MgClient) PostRequest(url string, parameters io.Reader) ([]byte, int, e
 	)
 }
 
-// PutRequest implements PUT Request.
+// PutRequest performs PUT request to the provided route.
 func (c *MgClient) PutRequest(url string, parameters []byte) ([]byte, int, error) {
 	return makeRequest(
 		"PUT",
@@ -40,7 +40,7 @@ func (c *MgClient) PutRequest(url string, parameters []byte) ([]byte, int, error
 	)
 }
 
-// DeleteRequest implements DELETE Request.
+// DeleteRequest performs DELETE request to the provided route.
 func (c *MgClient) DeleteRequest(url string, parameters []byte) ([]byte, int, error) {
 	return makeRequest(
 		"DELETE",

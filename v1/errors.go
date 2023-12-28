@@ -13,20 +13,24 @@ var defaultErrorMessage = "http client error"
 var internalServerError = "internal server error"
 var marshalError = "cannot unmarshal response body"
 
+// MGErrors contains a list of errors as sent by MessageGateway.
 type MGErrors struct {
 	Errors []string
 }
 
+// HTTPClientError is a common error type used in the client.
 type HTTPClientError struct {
 	ErrorMsg  string
 	BaseError error
 	Response  io.Reader
 }
 
+// Unwrap returns underlying error. Its presence usually indicates a problem with the network.
 func (err *HTTPClientError) Unwrap() error {
 	return err.BaseError
 }
 
+// Error message will contain either an error from MG or underlying error message.
 func (err *HTTPClientError) Error() string {
 	message := defaultErrorMessage
 
@@ -39,10 +43,12 @@ func (err *HTTPClientError) Error() string {
 	return message
 }
 
+// NewCriticalHTTPError wraps *http.Client error.
 func NewCriticalHTTPError(err error) error {
 	return &HTTPClientError{BaseError: err}
 }
 
+// NewAPIClientError wraps MG error.
 func NewAPIClientError(responseBody []byte) error {
 	var data MGErrors
 	var message string
@@ -62,6 +68,7 @@ func NewAPIClientError(responseBody []byte) error {
 	return &HTTPClientError{ErrorMsg: message}
 }
 
+// NewServerError wraps an unexpected API error (e.g. 5xx).
 func NewServerError(response *http.Response) error {
 	var serverError *HTTPClientError
 

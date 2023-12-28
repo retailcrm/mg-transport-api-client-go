@@ -27,27 +27,47 @@ func (w WebhookRequest) IsMessageWebhook() bool {
 		w.Type == MessageSendWebhookType || w.Type == MessageUpdateWebhookType
 }
 
+// IsTemplateWebhook returns true if current webhook contains data related to the templates changes.
 func (w WebhookRequest) IsTemplateWebhook() bool {
 	return w.Type == TemplateCreateWebhookType ||
 		w.Type == TemplateUpdateWebhookType ||
 		w.Type == TemplateDeleteWebhookType
 }
 
+// MessageWebhookData returns the message data from webhook contents.
+//
+// Note: this call will not fail even if underlying data is not related to the messages.
+// Use IsMessageWebhook to mitigate this.
 func (w WebhookRequest) MessageWebhookData() (wd MessageWebhookData) {
 	_ = json.Unmarshal(w.Data, &wd)
 	return
 }
 
+// TemplateCreateWebhookData returns new template data from webhook contents.
+// This method is used if current webhook was initiated because user created a template.
+//
+// Note: this call will not fail even if underlying data is not related to the templates.
+// Use IsTemplateWebhook or direct Type comparison (Type == TemplateCreateWebhookType) to mitigate this.
 func (w WebhookRequest) TemplateCreateWebhookData() (wd TemplateCreateWebhookData) {
 	_ = json.Unmarshal(w.Data, &wd)
 	return
 }
 
+// TemplateUpdateWebhookData returns existing template data from webhook contents.
+// This method is used if current webhook was initiated because user updated a template.
+//
+// Note: this call will not fail even if underlying data is not related to the templates.
+// Use IsTemplateWebhook or direct Type comparison (Type == TemplateUpdateWebhookData) to mitigate this.
 func (w WebhookRequest) TemplateUpdateWebhookData() (wd TemplateUpdateWebhookData) {
 	_ = json.Unmarshal(w.Data, &wd)
 	return
 }
 
+// TemplateDeleteWebhookData returns existing template data from webhook contents.
+// This method is used if current webhook was initiated because user deleted a template.
+//
+// Note: this call will not fail even if underlying data is not related to the templates.
+// Use IsTemplateWebhook or direct Type comparison (Type == TemplateDeleteWebhookType) to mitigate this.
 func (w WebhookRequest) TemplateDeleteWebhookData() (wd TemplateDeleteWebhookData) {
 	_ = json.Unmarshal(w.Data, &wd)
 	return
