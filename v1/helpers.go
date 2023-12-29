@@ -23,10 +23,12 @@ func buildLimitedRawResponse(resp *http.Response) ([]byte, error) {
 	return body, nil
 }
 
+// BoolPtr returns provided boolean as pointer. Can be used while editing the integration module activity.
 func BoolPtr(v bool) *bool {
 	return &v
 }
 
+// TimePtr returns provided time.Time's pointer.
 func TimePtr(v time.Time) *time.Time {
 	return &v
 }
