@@ -34,7 +34,6 @@ linters:
     - gosec
     - lll
     - makezero
-    - maligned
     - misspell
     - nestif
     - prealloc

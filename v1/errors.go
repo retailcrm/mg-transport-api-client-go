@@ -88,7 +88,7 @@ func AsClientError(err error) *HTTPClientError {
 		if err == nil {
 			return nil
 		}
-		if typed, ok := err.(*HTTPClientError); ok {
+		if typed, ok := err.(*HTTPClientError); ok { //nolint:errorlint
 			return typed
 		}
 		err = errors.Unwrap(err)
