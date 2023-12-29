@@ -18,7 +18,7 @@ func RegisterSystem() {
 		AccountURL:      AppConfig.BaseURL,
 		Integrations: &retailcrm.Integrations{
 			MgTransport: &retailcrm.MgTransport{
-				WebhookURL: AppConfig.BaseURL + "/api/v1/webhook",
+				WebhookURL: AppConfig.BaseURL + "/api/v1/mg",
 			},
 		},
 	})
