@@ -64,3 +64,9 @@ func TestNewServerError(t *testing.T) {
 		assert.NotNil(t, err.Response)
 	}
 }
+
+func TestAsClientError(t *testing.T) {
+	assert.Nil(t, AsClientError(nil))
+	assert.Nil(t, AsClientError(errors.New("arbitrary")))
+	assert.NotNil(t, AsClientError(NewCriticalHTTPError(errors.New("arbitrary"))))
+}
