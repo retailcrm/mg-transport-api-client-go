@@ -85,6 +85,12 @@ func NewServerError(response *http.Response) error {
 
 func AsClientError(err error) *HTTPClientError {
 	for {
-		
+		if err == nil {
+			return nil
+		}
+		if typed, ok := err.(*HTTPClientError); ok {
+			return typed
+		}
+		err = errors.Unwrap(err)
 	}
 }
