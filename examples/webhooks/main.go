@@ -85,12 +85,12 @@ func HandleTemplateDelete(rw http.ResponseWriter, tpl v1.TemplateDeleteWebhookDa
 	serveJSON(rw, http.StatusOK, H{})
 }
 
-func readJSON(req *http.Request, out any) error {
+func readJSON(req *http.Request, out interface{}) error {
 	defer func() { _ = req.Body.Close() }()
 	return json.NewDecoder(req.Body).Decode(out)
 }
 
-func serveJSON(rw http.ResponseWriter, st int, data any) {
+func serveJSON(rw http.ResponseWriter, st int, data interface{}) {
 	resp, _ := json.Marshal(data)
 	rw.Header().Set("Content-Type", "application/json; charset=utf-8")
 	rw.WriteHeader(st)
