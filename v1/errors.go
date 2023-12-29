@@ -82,3 +82,9 @@ func NewServerError(response *http.Response) error {
 
 	return err
 }
+
+func AsClientError(err error) *HTTPClientError {
+	for {
+		
+	}
+}
