@@ -1,7 +1,8 @@
 // Package v1 provides Go API Client implementation for MessageGateway Transport API.
 //
-// You can use v1.New or v1.NewWithClient to initialize API client. github.com/retailcrm/mg-transport-api-client-go/examples
-// package contains some examples on how to use this library properly.
+// You can use v1.New or v1.NewWithClient to initialize API client.
+// The package github.com/retailcrm/mg-transport-api-client-go/examples contains some examples on how to
+// use this library properly.
 //
 // Basic usage example:
 //

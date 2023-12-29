@@ -9,16 +9,13 @@ output:
 linters:
   disable-all: true
   enable:
-    - deadcode
     - errcheck
     - gosimple
     - govet
     - ineffassign
     - staticcheck
-    - structcheck
     - unused
     - unparam
-    - varcheck
     - bodyclose
     - dogsled
     - dupl
@@ -32,11 +29,9 @@ linters:
     - gocyclo
     - godot
     - goimports
-    - golint
+    - revive
     - gomnd
     - gosec
-    - ifshort
-    - interfacer
     - lll
     - makezero
     - maligned
@@ -44,10 +39,10 @@ linters:
     - nestif
     - prealloc
     - predeclared
-    - scopelint
     - sqlclosecheck
     - unconvert
     - whitespace
+    - unused
 
 linters-settings:
   govet:
@@ -143,8 +138,6 @@ linters-settings:
     local-prefixes: github.com/retailcrm/mg-transport-api-client-go
   lll:
     line-length: 120
-  maligned:
-    suggest-new: true
   misspell:
     locale: US
   nestif:
