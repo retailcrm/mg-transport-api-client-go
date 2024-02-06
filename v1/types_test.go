@@ -278,3 +278,82 @@ func TestTemplateInfoUnmarshal(t *testing.T) {
 	assert.Equal(t, "Our phone", tmpl.Variables.Buttons[2].Title)
 	assert.Empty(t, tmpl.Variables.Buttons[2].Args)
 }
+
+func TestUnmarshalMessageWebhook(t *testing.T) {
+	msgJSON := `{
+	  "type": "message_sent",
+	  "meta": {
+		"timestamp": 1703523308
+	  },
+	  "data": {
+		"external_user_id": "79998887766",
+		"external_chat_id": "",
+		"channel_id": 83,
+		"type": "text",
+		"content": "Thank you for your order\n\nYou have placed order No. 8061C in the amount of 17400. We have already started working on it and will soon notify you of a change in status.\n\nStay with us",
+		"quote_external_id": null,
+		"quote_content": null,
+		"in_app_id": 638,
+		"bot": {
+		  "id": 760,
+		  "name": "Bot system",
+		  "avatar": ""
+		},
+		"customer": {
+		  "first_name": "",
+		  "last_name": "",
+		  "avatar": ""
+		},
+		"template": {
+		  "code": "f87e678f_660b_461a_b60a_a6194e2e9094#thanks_for_order#ru",
+		  "args": [
+			"8061C",
+			"17400"
+		  ],
+		  "variables": {
+			"body": [
+			  "8061C",
+			  "17400"
+			],
+			"buttons": [
+			  [],
+			  [
+				"8061"
+			  ]
+			]
+		  }
+		},
+		"attachments": {
+		  "suggestions": [
+			{
+			  "type": "text",
+			  "title": "ОК"
+			},
+			{
+			  "type": "url",
+			  "title": "Our site",
+			  "payload": "https://site.com/8061"
+			}
+		  ]
+		}
+	  }
+	}`
+
+	var wh struct {
+		Data MessageWebhookData `json:"data"`
+	}
+	assert.NoError(t, json.Unmarshal([]byte(msgJSON), &wh))
+
+	assert.NotNil(t, wh.Data.Attachments)
+	assert.Len(t, wh.Data.Attachments.Suggestions, 2)
+
+	okButton := wh.Data.Attachments.Suggestions[0]
+	assert.Equal(t, SuggestionTypeText, okButton.Type)
+	assert.Equal(t, "ОК", okButton.Title)
+	assert.Empty(t, okButton.Payload)
+
+	urlButton := wh.Data.Attachments.Suggestions[1]
+	assert.Equal(t, SuggestionTypeURL, urlButton.Type)
+	assert.Equal(t, "Our site", urlButton.Title)
+	assert.Equal(t, "https://site.com/8061", urlButton.Payload)
+}

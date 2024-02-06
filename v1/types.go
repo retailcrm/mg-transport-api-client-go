@@ -169,6 +169,7 @@ type ChannelSettingsSuggestions struct {
 	Text  string `json:"text,omitempty"`
 	Phone string `json:"phone,omitempty"`
 	Email string `json:"email,omitempty"`
+	URL   string `json:"url,omitempty"`
 }
 
 type ChannelSettingsTemplate struct {
@@ -437,13 +438,15 @@ const (
 	SuggestionTypeText  SuggestionType = "text"
 	SuggestionTypeEmail SuggestionType = "email"
 	SuggestionTypePhone SuggestionType = "phone"
+	SuggestionTypeURL   SuggestionType = "url"
 )
 
 type SuggestionType string
 
 type Suggestion struct {
-	Type  SuggestionType `json:"type"`
-	Title string         `json:"title,omitempty"` // required for type=text and ignored for others
+	Type    SuggestionType `json:"type"`
+	Title   string         `json:"title,omitempty"`   // required for type=text and optional for others
+	Payload string         `json:"payload,omitempty"` // ignored for type=text
 }
 
 type TemplateInfo struct {
