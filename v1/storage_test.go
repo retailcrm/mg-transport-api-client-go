@@ -1,8 +1,9 @@
 package v1
 
 import (
-	"github.com/stretchr/testify/suite"
 	"testing"
+
+	"github.com/stretchr/testify/suite"
 )
 
 type StorageTest struct {
@@ -26,5 +27,5 @@ func (t *StorageTest) Test_MGClientPool() {
 
 func (t *StorageTest) Test_NegativeCapacity() {
 	_, err := NewMGClientPool(-1)
-	t.Assert().Equal(NegativeCapacity.Error(), err.Error())
+	t.Assert().Equal(ErrNegativeCapacity.Error(), err.Error())
 }

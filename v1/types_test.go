@@ -306,22 +306,19 @@ func TestUnmarshalMessageWebhook(t *testing.T) {
 		},
 		"template": {
 		  "code": "f87e678f_660b_461a_b60a_a6194e2e9094#thanks_for_order#ru",
-		  "args": [
-			"8061C",
-			"17400"
-		  ],
-		  "variables": {
-			"body": [
-			  "8061C",
-			  "17400"
-			],
-			"buttons": [
-			  [],
-			  [
-				"8061"
-			  ]
-			]
-		  }
+          "variables": {
+		  	"body": {
+				"args": [
+					"8061C",
+			  		"17400"
+				]
+			},
+		  	"buttons": [{
+				"args": [
+					"8061"
+				]
+        	}]
+          }
 		},
 		"attachments": {
 		  "suggestions": [

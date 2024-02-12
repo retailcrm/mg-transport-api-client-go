@@ -9,16 +9,16 @@ import (
 
 const mgClientCacheTTL = time.Hour * 1
 
-var NegativeCapacity = errors.New("capacity cannot be less than 1")
+var ErrNegativeCapacity = errors.New("capacity cannot be less than 1")
 
 type MGClientPool struct {
 	cache *otter.CacheWithVariableTTL[string, *MgClient]
 }
 
-// NewMGClientPool initializes the client cache
+// NewMGClientPool initializes the client cache.
 func NewMGClientPool(capacity int) (*MGClientPool, error) {
 	if capacity <= 0 {
-		return nil, NegativeCapacity
+		return nil, ErrNegativeCapacity
 	}
 
 	cache, _ := otter.MustBuilder[string, *MgClient](capacity).WithVariableTTL().Build()
