@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"sync"
 	"time"
 )
 
@@ -83,6 +84,9 @@ type MgClient struct {
 	Debug      bool         `json:"debug"`
 	httpClient *http.Client `json:"-"`
 	logger     BasicLogger  `json:"-"`
+	mux        sync.Mutex   `json:"-"`
+	lastTime   time.Time    `json:"-"`
+	rps        int          `json:"-"`
 }
 
 // Channel type.
