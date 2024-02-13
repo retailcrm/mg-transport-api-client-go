@@ -63,16 +63,8 @@ func makeRequest(reqType, url string, buf io.Reader, c *MgClient) ([]byte, int, 
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("X-Transport-Token", c.Token)
 
-	if c.Debug {
-		if strings.Contains(url, "/files/upload") {
-			c.writeLog("MG TRANSPORT API Request: %s %s %s [file data]", reqType, url, c.Token)
-		} else {
-			c.writeLog("MG TRANSPORT API Request: %s %s %s %v", reqType, url, c.Token, buf)
-		}
-	}
-
-	c.mux.Lock()
 	defer c.mux.Unlock()
+	c.mux.Lock()
 
 	attempt := 0
 tryAgain:
@@ -87,6 +79,14 @@ tryAgain:
 	}
 	c.rps++
 
+	if c.Debug {
+		if strings.Contains(url, "/files/upload") {
+			c.writeLog("MG TRANSPORT API Request: %s %s %s [file data]", reqType, url, c.Token)
+		} else {
+			c.writeLog("MG TRANSPORT API Request: %s %s %s %v", reqType, url, c.Token, buf)
+		}
+	}
+
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
 		return res, 0, NewCriticalHTTPError(err)
@@ -94,6 +94,7 @@ tryAgain:
 
 	if resp.StatusCode == http.StatusTooManyRequests && attempt < 3 {
 		attempt++
+		c.writeLog("MG TRANSPORT API Request rate limit hit on attempt %d, retrying", attempt)
 		goto tryAgain
 	}
 
