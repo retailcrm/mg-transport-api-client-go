@@ -6,7 +6,10 @@ import (
 	"io"
 	"net/http"
 	"strings"
+	"time"
 )
+
+const MaxRPS = 100
 
 var prefix = "/api/transport/v1"
 
@@ -60,6 +63,22 @@ func makeRequest(reqType, url string, buf io.Reader, c *MgClient) ([]byte, int, 
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("X-Transport-Token", c.Token)
 
+	defer c.mux.Unlock()
+	c.mux.Lock()
+
+	attempt := 0
+tryAgain:
+	sleepTime := time.Second - time.Since(c.lastTime)
+	if sleepTime < 0 {
+		c.lastTime = time.Now()
+		c.rps = 0
+	} else if c.rps == MaxRPS {
+		time.Sleep(sleepTime)
+		c.lastTime = time.Now()
+		c.rps = 0
+	}
+	c.rps++
+
 	if c.Debug {
 		if strings.Contains(url, "/files/upload") {
 			c.writeLog("MG TRANSPORT API Request: %s %s %s [file data]", reqType, url, c.Token)
@@ -71,6 +90,12 @@ func makeRequest(reqType, url string, buf io.Reader, c *MgClient) ([]byte, int, 
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
 		return res, 0, NewCriticalHTTPError(err)
+	}
+
+	if resp.StatusCode == http.StatusTooManyRequests && attempt < 3 {
+		attempt++
+		c.writeLog("MG TRANSPORT API Request rate limit hit on attempt %d, retrying", attempt)
+		goto tryAgain
 	}
 
 	if resp.StatusCode >= http.StatusInternalServerError {
