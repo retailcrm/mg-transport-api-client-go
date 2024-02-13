@@ -47,6 +47,7 @@ type Template struct {
 	Category           string                     `json:"category,omitempty"`
 	Example            *TemplateExample           `json:"example,omitempty"`
 	VerificationStatus TemplateVerificationStatus `json:"verification_status"`
+	Quality            *TemplateQuality           `json:"quality,omitempty"`
 	RejectionReason    TemplateRejectionReason    `json:"rejection_reason,omitempty"`
 	Header             *TemplateHeader            `json:"header,omitempty"`
 	Footer             string                     `json:"footer,omitempty"`
