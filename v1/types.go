@@ -733,6 +733,8 @@ const (
 	TemplateStatusPending  TemplateVerificationStatus = "pending"
 	TemplateStatusRejected TemplateVerificationStatus = "rejected"
 	TemplateStatusNew      TemplateVerificationStatus = "new"
+	TemplateStatusPaused   TemplateVerificationStatus = "paused"
+	TemplateStatusDisabled TemplateVerificationStatus = "disabled"
 )
 
 type TemplateQuality string
