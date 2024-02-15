@@ -35,6 +35,12 @@ func (c *MgClient) WithLogger(logger BasicLogger) *MgClient {
 	return c
 }
 
+// WithLimiter sets the provided limiter instance into the Client.
+func (c *MgClient) WithLimiter(limiter *TokensBucket) *MgClient {
+	c.limiter = limiter
+	return c
+}
+
 // writeLog writes a message to the log.
 func (c *MgClient) writeLog(format string, v ...interface{}) {
 	if c.logger != nil {
