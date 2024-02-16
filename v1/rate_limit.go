@@ -8,25 +8,25 @@ import (
 )
 
 type token struct {
-	rps     uint32
-	lastUse time.Time
+	rps     atomic.Uint32
+	lastUse atomic.Value
 }
 
 type TokensBucket struct {
 	maxRPS          uint32
-	mux             sync.Mutex
-	tokens          map[string]*token
+	tokens          sync.Map
 	unusedTokenTime time.Duration
 	checkTokenTime  time.Duration
 	cancel          atomic.Bool
+	sleep           sleeper
 }
 
 func NewTokensBucket(maxRPS uint32, unusedTokenTime, checkTokenTime time.Duration) *TokensBucket {
 	bucket := &TokensBucket{
 		maxRPS:          maxRPS,
-		tokens:          map[string]*token{},
 		unusedTokenTime: unusedTokenTime,
 		checkTokenTime:  checkTokenTime,
+		sleep:           realSleeper{},
 	}
 
 	go bucket.deleteUnusedToken()
@@ -35,27 +35,26 @@ func NewTokensBucket(maxRPS uint32, unusedTokenTime, checkTokenTime time.Duratio
 }
 
 func (m *TokensBucket) Obtain(id string) {
-	m.mux.Lock()
-	defer m.mux.Unlock()
-
-	if _, ok := m.tokens[id]; !ok {
-		m.tokens[id] = &token{
-			lastUse: time.Now(),
-			rps:     1,
-		}
+	val, ok := m.tokens.Load(id)
+	if !ok {
+		token := &token{}
+		token.lastUse.Store(time.Now())
+		token.rps.Store(1)
+		m.tokens.Store(id, token)
 		return
 	}
 
-	sleepTime := time.Second - time.Since(m.tokens[id].lastUse)
-	if sleepTime < 0 {
-		m.tokens[id].lastUse = time.Now()
-		m.tokens[id].rps = 0
-	} else if m.tokens[id].rps >= m.maxRPS {
-		time.Sleep(sleepTime)
-		m.tokens[id].lastUse = time.Now()
-		m.tokens[id].rps = 0
+	token := val.(*token)
+	sleepTime := time.Second - time.Since(token.lastUse.Load().(time.Time))
+	if sleepTime <= 0 {
+		token.lastUse.Store(time.Now())
+		token.rps.Store(0)
+	} else if token.rps.Load() >= m.maxRPS {
+		m.sleep.Sleep(sleepTime)
+		token.lastUse.Store(time.Now())
+		token.rps.Store(0)
 	}
-	m.tokens[id].rps++
+	token.rps.Add(1)
 }
 
 func destructBasket(m *TokensBucket) {
@@ -67,15 +66,25 @@ func (m *TokensBucket) deleteUnusedToken() {
 		if m.cancel.Load() {
 			return
 		}
-		m.mux.Lock()
 
-		for id, token := range m.tokens {
-			if time.Since(token.lastUse) >= m.unusedTokenTime {
-				delete(m.tokens, id)
+		m.tokens.Range(func(key, value any) bool {
+			id, token := key.(string), value.(*token)
+			if time.Since(token.lastUse.Load().(time.Time)) >= m.unusedTokenTime {
+				m.tokens.Delete(id)
 			}
-		}
-		m.mux.Unlock()
+			return false
+		})
 
-		time.Sleep(m.checkTokenTime)
+		m.sleep.Sleep(m.checkTokenTime)
 	}
+}
+
+type sleeper interface {
+	Sleep(time.Duration)
+}
+
+type realSleeper struct{}
+
+func (s realSleeper) Sleep(d time.Duration) {
+	time.Sleep(d)
 }
