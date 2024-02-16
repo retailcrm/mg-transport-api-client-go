@@ -6,7 +6,6 @@ import (
 	"io"
 	"net/http"
 	"strings"
-	"time"
 )
 
 const MaxRPS = 100
@@ -53,6 +52,12 @@ func (c *MgClient) DeleteRequest(url string, parameters []byte) ([]byte, int, er
 	)
 }
 
+func (c *MgClient) WaitForRateLimit() {
+	if c.limiter != nil && c.Token != "" {
+		c.limiter.Obtain(c.Token)
+	}
+}
+
 func makeRequest(reqType, url string, buf io.Reader, c *MgClient) ([]byte, int, error) {
 	var res []byte
 	req, err := http.NewRequest(reqType, url, buf)
@@ -63,22 +68,14 @@ func makeRequest(reqType, url string, buf io.Reader, c *MgClient) ([]byte, int, 
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("X-Transport-Token", c.Token)
 
-	defer c.mux.Unlock()
-	c.mux.Lock()
+	maxAttempt := 1
+	if c.limiter != nil && c.Token != "" {
+		maxAttempt = 3
+	}
 
 	attempt := 0
 tryAgain:
-	sleepTime := time.Second - time.Since(c.lastTime)
-	if sleepTime < 0 {
-		c.lastTime = time.Now()
-		c.rps = 0
-	} else if c.rps == MaxRPS {
-		time.Sleep(sleepTime)
-		c.lastTime = time.Now()
-		c.rps = 0
-	}
-	c.rps++
-
+	c.WaitForRateLimit()
 	if c.Debug {
 		if strings.Contains(url, "/files/upload") {
 			c.writeLog("MG TRANSPORT API Request: %s %s %s [file data]", reqType, url, c.Token)
@@ -92,7 +89,7 @@ tryAgain:
 		return res, 0, NewCriticalHTTPError(err)
 	}
 
-	if resp.StatusCode == http.StatusTooManyRequests && attempt < 3 {
+	if resp.StatusCode == http.StatusTooManyRequests && attempt < maxAttempt {
 		attempt++
 		c.writeLog("MG TRANSPORT API Request rate limit hit on attempt %d, retrying", attempt)
 		goto tryAgain
