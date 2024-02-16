@@ -68,6 +68,11 @@ func makeRequest(reqType, url string, buf io.Reader, c *MgClient) ([]byte, int, 
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("X-Transport-Token", c.Token)
 
+	maxAttempt := 1
+	if c.limiter != nil && c.Token != "" {
+		maxAttempt = 3
+	}
+
 	attempt := 0
 tryAgain:
 	c.WaitForRateLimit()
@@ -84,7 +89,7 @@ tryAgain:
 		return res, 0, NewCriticalHTTPError(err)
 	}
 
-	if resp.StatusCode == http.StatusTooManyRequests && attempt < 3 {
+	if resp.StatusCode == http.StatusTooManyRequests && attempt < maxAttempt {
 		attempt++
 		c.writeLog("MG TRANSPORT API Request rate limit hit on attempt %d, retrying", attempt)
 		goto tryAgain
