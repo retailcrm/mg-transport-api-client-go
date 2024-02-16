@@ -3,6 +3,7 @@ package v1
 import (
 	"github.com/jonboulle/clockwork"
 	"github.com/stretchr/testify/suite"
+	"runtime"
 	"sync"
 	"sync/atomic"
 	"testing"
@@ -21,8 +22,20 @@ func (t *TokensBucketTest) Test_NewTokensBucket() {
 	t.Assert().NotNil(NewTokensBucket(10, time.Hour, time.Hour))
 }
 
+func (t *TokensBucketTest) new(
+	maxRPS uint32, unusedTokenTime, checkTokenTime time.Duration, sleeper sleeper) *TokensBucket {
+	bucket := &TokensBucket{
+		maxRPS:          maxRPS,
+		unusedTokenTime: unusedTokenTime,
+		checkTokenTime:  checkTokenTime,
+		sleep:           sleeper,
+	}
+	runtime.SetFinalizer(bucket, destructBasket)
+	return bucket
+}
+
 func (t *TokensBucketTest) Test_Obtain_NoThrottle() {
-	tb := NewTokensBucket(100, time.Hour, time.Minute)
+	tb := t.new(100, time.Hour, time.Minute, &realSleeper{})
 	start := time.Now()
 	for i := 0; i < 100; i++ {
 		tb.Obtain("a")
@@ -32,9 +45,7 @@ func (t *TokensBucketTest) Test_Obtain_NoThrottle() {
 
 func (t *TokensBucketTest) Test_Obtain_Sleep() {
 	clock := &fakeSleeper{}
-	tb := NewTokensBucket(100, time.Hour, time.Minute)
-	tb.cancel.Store(true) // prevent unused token removal.
-	tb.sleep = clock
+	tb := t.new(100, time.Hour, time.Minute, clock)
 
 	var wg sync.WaitGroup
 	wg.Add(1)
@@ -51,8 +62,8 @@ func (t *TokensBucketTest) Test_Obtain_Sleep() {
 
 func (t *TokensBucketTest) Test_Obtain_AddRPS() {
 	clock := clockwork.NewFakeClock()
-	tb := NewTokensBucket(100, time.Hour, time.Minute)
-	tb.sleep = clock
+	tb := t.new(100, time.Hour, time.Minute, clock)
+	go tb.deleteUnusedToken()
 	tb.Obtain("a")
 	clock.Advance(time.Minute * 2)
 
