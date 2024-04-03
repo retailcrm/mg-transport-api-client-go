@@ -109,6 +109,7 @@ type ChannelSettings struct {
 	Suggestions        ChannelSettingsSuggestions `json:"suggestions,omitempty"`
 	Audio              ChannelSettingsAudio       `json:"audio"`
 	Template           ChannelSettingsTemplate    `json:"template"`
+	WhatsApp           *WhatsAppChannelProperties `json:"whatsapp,omitempty"` // for WhatsApp channels only.
 }
 
 // Product type.
@@ -176,6 +177,31 @@ type ChannelSettingsSuggestions struct {
 type ChannelSettingsTemplate struct {
 	Creation bool `json:"creation,omitempty"`
 }
+
+// WhatsAppChannelProperties WhatsApp-specific channel characteristics
+type WhatsAppChannelProperties struct {
+	Tier           *int                    `json:"tier"`
+	ChannelQuality *WhatsAppChannelQuality `json:"channel_quality"`
+	ChannelStatus  *WhatsAppChannelStatus  `json:"channel_status"`
+}
+
+type WhatsAppChannelQuality string
+
+var (
+	WhatsAppChannelQualityHigh   WhatsAppChannelQuality = "high"
+	WhatsAppChannelQualityMedium WhatsAppChannelQuality = "medium"
+	WhatsAppChannelQualityLow    WhatsAppChannelQuality = "low"
+)
+
+type WhatsAppChannelStatus string
+
+var (
+	WhatsAppChannelStatusConnected  WhatsAppChannelStatus = "connected"
+	WhatsAppChannelStatusFlagged    WhatsAppChannelStatus = "flagged"
+	WhatsAppChannelStatusOffline    WhatsAppChannelStatus = "offline"
+	WhatsAppChannelStatusPending    WhatsAppChannelStatus = "pending"
+	WhatsAppChannelStatusRestricted WhatsAppChannelStatus = "restricted"
+)
 
 // FullFileResponse uploaded file data.
 type FullFileResponse struct {
