@@ -78,12 +78,12 @@ const (
 
 // MgClient type.
 type MgClient struct {
-	URL        string        `json:"url"`
-	Token      string        `json:"token"`
-	Debug      bool          `json:"debug"`
-	httpClient *http.Client  `json:"-"`
-	logger     BasicLogger   `json:"-"`
-	limiter    *TokensBucket `json:"-"`
+	URL        string       `json:"url"`
+	Token      string       `json:"token"`
+	Debug      bool         `json:"debug"`
+	httpClient *http.Client `json:"-"`
+	logger     BasicLogger  `json:"-"`
+	limiter    Limiter      `json:"-"`
 }
 
 // Channel type.
