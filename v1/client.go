@@ -36,7 +36,7 @@ func (c *MgClient) WithLogger(logger BasicLogger) *MgClient {
 }
 
 // WithLimiter sets the provided limiter instance into the Client.
-func (c *MgClient) WithLimiter(limiter *TokensBucket) *MgClient {
+func (c *MgClient) WithLimiter(limiter Limiter) *MgClient {
 	c.limiter = limiter
 	return c
 }

@@ -7,11 +7,21 @@ import (
 	"time"
 )
 
+// NoopLimiter implements Limiter but doesn't limit anything.
+var NoopLimiter Limiter = &noopLimiter{}
+
 type token struct {
 	rps     atomic.Uint32
 	lastUse atomic.Value
 }
 
+// Limiter implements some form of rate limiting.
+type Limiter interface {
+	// Obtain the right to send a request. Should lock the execution if current goroutine needs to wait.
+	Obtain(string)
+}
+
+// TokensBucket implements basic Limiter with fixed window and fixed amount of tokens per window.
 type TokensBucket struct {
 	maxRPS          uint32
 	tokens          sync.Map
@@ -21,7 +31,8 @@ type TokensBucket struct {
 	sleep           sleeper
 }
 
-func NewTokensBucket(maxRPS uint32, unusedTokenTime, checkTokenTime time.Duration) *TokensBucket {
+// NewTokensBucket constructs TokensBucket with provided parameters.
+func NewTokensBucket(maxRPS uint32, unusedTokenTime, checkTokenTime time.Duration) Limiter {
 	bucket := &TokensBucket{
 		maxRPS:          maxRPS,
 		unusedTokenTime: unusedTokenTime,
@@ -79,6 +90,11 @@ func (m *TokensBucket) deleteUnusedToken() {
 	}
 }
 
+type noopLimiter struct{}
+
+func (l *noopLimiter) Obtain(string) {}
+
+// sleeper sleeps. This thing is necessary for tests.
 type sleeper interface {
 	Sleep(time.Duration)
 }
