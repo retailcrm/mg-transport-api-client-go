@@ -356,13 +356,14 @@ type SendMessageRequestMessage struct {
 
 // SendData struct.
 type SendData struct {
-	Message        Message                  `json:"message"`
-	Originator     Originator               `json:"originator,omitempty"`
-	Customer       Customer                 `json:"customer"`
-	Channel        uint64                   `json:"channel"`
-	ExternalChatID string                   `json:"external_chat_id"`
-	Quote          *SendMessageRequestQuote `json:"quote,omitempty"`
-	ReplyDeadline  *time.Time               `json:"reply_deadline,omitempty"`
+	Message                  Message                  `json:"message"`
+	Originator               Originator               `json:"originator,omitempty"`
+	Customer                 Customer                 `json:"customer"`
+	Channel                  uint64                   `json:"channel"`
+	ExternalChatID           string                   `json:"external_chat_id"`
+	Quote                    *SendMessageRequestQuote `json:"quote,omitempty"`
+	ReplyDeadline            *time.Time               `json:"reply_deadline,omitempty"`
+	SecondaryExternalChatIDs []string                 `json:"secondary_external_chat_ids,omitempty"`
 }
 
 // Item struct.
