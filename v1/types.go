@@ -306,12 +306,14 @@ type Utm struct {
 
 // Message struct.
 type Message struct {
-	ExternalID string `json:"external_id"`
-	Type       string `json:"type,omitempty"`
-	Text       string `json:"text,omitempty"`
-	Note       string `json:"note,omitempty"`
-	Items      []Item `json:"items,omitempty"`
-	PageLink   string `json:"page_link,omitempty"`
+	ExternalID string              `json:"external_id"`
+	Type       string              `json:"type,omitempty"`
+	Text       string              `json:"text,omitempty"`
+	Note       string              `json:"note,omitempty"`
+	Items      []Item              `json:"items,omitempty"`
+	PageLink   string              `json:"page_link,omitempty"`
+	Product    *MessageDataProduct `json:"product,omitempty"`
+	Order      *MessageDataOrder   `json:"order,omitempty"`
 }
 
 // SendMessage struct.
@@ -546,15 +548,16 @@ type MessageDataProduct struct {
 
 // MessageDataOrder order data from webhook.
 type MessageDataOrder struct {
-	Number   string                    `json:"number"`
-	Url      string                    `json:"url,omitempty"`
-	Date     string                    `json:"date,omitempty"`
-	Cost     *MessageDataOrderCost     `json:"cost,omitempty"`
-	Discount *MessageDataOrderCost     `json:"discount,omitempty"`
-	Status   *MessageDataOrderStatus   `json:"status,omitempty"`
-	Delivery *MessageDataOrderDelivery `json:"delivery"`
-	Payments []MessageDataOrderPayment `json:"payments"`
-	Items    []MessageDataOrderItem    `json:"items,omitempty"`
+	ExternalID int64                     `json:"external_id"`
+	Number     string                    `json:"number"`
+	URL        string                    `json:"url,omitempty"`
+	Date       string                    `json:"date,omitempty"`
+	Cost       *MessageDataOrderCost     `json:"cost,omitempty"`
+	Discount   *MessageDataOrderCost     `json:"discount,omitempty"`
+	Status     *MessageDataOrderStatus   `json:"status,omitempty"`
+	Delivery   *MessageDataOrderDelivery `json:"delivery"`
+	Payments   []MessageDataOrderPayment `json:"payments"`
+	Items      []MessageDataOrderItem    `json:"items,omitempty"`
 }
 
 // MessageDataOrderStatus type.

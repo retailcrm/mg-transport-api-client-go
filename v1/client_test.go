@@ -13,7 +13,6 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/suite"
-	"gopkg.in/h2non/gock.v1"
 )
 
 type MGClientTest struct {
@@ -597,6 +596,134 @@ func (t *MGClientTest) Test_ImageMessages() {
 		Channel:        1,
 		ExternalChatID: "24798237492374",
 	}
+
+	data, status, err := c.Messages(snd)
+	t.Require().NoError(err)
+	t.Assert().Equal(http.StatusOK, status)
+	t.Assert().NotEmpty(data.Time.String())
+	t.Assert().Equal(1, data.MessageID)
+}
+
+func (t *MGClientTest) Test_ProductMessages() {
+	c := t.client()
+
+	snd := SendData{
+		Message: Message{
+			ExternalID: "external_id",
+			Type:       MsgTypeProduct,
+			Product: &MessageDataProduct{
+				ID:      2,
+				Name:    "Product name",
+				Article: "Product article",
+				Url:     "https://example.loca/product/1",
+				Img:     "https://example.loca/product/1/img",
+				Cost: &MessageDataOrderCost{
+					Value:    100,
+					Currency: "USD",
+				},
+				Unit: "pcs",
+			},
+		},
+		Originator: OriginatorCustomer,
+		Customer: Customer{
+			ExternalID: "6",
+			Nickname:   "octopus",
+			Firstname:  "Joe",
+			Utm: &Utm{
+				Source: "test-source",
+				Term:   "",
+			},
+		},
+		Channel:        1,
+		ExternalChatID: "24798237492374",
+	}
+
+	defer gock.Off()
+	t.gock().
+		Post(t.transportURL("messages")).
+		Filter(func(request *http.Request) bool {
+			data, err := ioutil.ReadAll(request.Body)
+			if err != nil {
+				return false
+			}
+			request.Body = ioutil.NopCloser(bytes.NewReader(data))
+
+			var snd SendData
+			t.Require().NoError(json.Unmarshal(data, &snd))
+			return t.Assert().Equal(uint64(2), snd.Message.Product.ID)
+		}).
+		Reply(http.StatusOK).
+		JSON(
+			MessagesResponse{
+				MessageID: 1,
+				Time:      time.Now(),
+			},
+		)
+
+	data, status, err := c.Messages(snd)
+	t.Require().NoError(err)
+	t.Assert().Equal(http.StatusOK, status)
+	t.Assert().NotEmpty(data.Time.String())
+	t.Assert().Equal(1, data.MessageID)
+}
+
+func (t *MGClientTest) Test_OrderMessages() {
+	c := t.client()
+
+	snd := SendData{
+		Message: Message{
+			ExternalID: "external_id",
+			Type:       MsgTypeOrder,
+			Order: &MessageDataOrder{
+				Number:     "C1234",
+				ExternalID: 123,
+				Date:       time.Now().String(),
+				Cost: &MessageDataOrderCost{
+					Value:    100,
+					Currency: "USD",
+				},
+				Discount: nil,
+				Status:   nil,
+				Delivery: nil,
+				Payments: nil,
+				Items:    nil,
+			},
+		},
+		Originator: OriginatorCustomer,
+		Customer: Customer{
+			ExternalID: "6",
+			Nickname:   "octopus",
+			Firstname:  "Joe",
+			Utm: &Utm{
+				Source: "test-source",
+				Term:   "",
+			},
+		},
+		Channel:        1,
+		ExternalChatID: "24798237492374",
+	}
+
+	defer gock.Off()
+	t.gock().
+		Post(t.transportURL("messages")).
+		Filter(func(request *http.Request) bool {
+			data, err := ioutil.ReadAll(request.Body)
+			if err != nil {
+				return false
+			}
+			request.Body = ioutil.NopCloser(bytes.NewReader(data))
+
+			var snd SendData
+			t.Require().NoError(json.Unmarshal(data, &snd))
+			return t.Assert().Equal(int64(123), snd.Message.Order.ExternalID)
+		}).
+		Reply(http.StatusOK).
+		JSON(
+			MessagesResponse{
+				MessageID: 1,
+				Time:      time.Now(),
+			},
+		)
 
 	data, status, err := c.Messages(snd)
 	t.Require().NoError(err)
