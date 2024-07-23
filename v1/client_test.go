@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/suite"
+	"gopkg.in/h2non/gock.v1"
 )
 
 type MGClientTest struct {
