@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"net/url"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/google/go-querystring/query"
@@ -23,7 +24,7 @@ func New(url string, token string) *MgClient {
 // NewWithClient initializes the MgClient with specified *http.Client.
 func NewWithClient(url string, token string, client *http.Client) *MgClient {
 	return &MgClient{
-		URL:        url,
+		URL:        strings.TrimRight(url, "/"),
 		Token:      token,
 		httpClient: client,
 	}
