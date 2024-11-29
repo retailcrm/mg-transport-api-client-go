@@ -39,6 +39,23 @@ func (t *MGClientTest) transportURL(path string) string {
 	return "/api/transport/v1/" + strings.TrimLeft(path, "/")
 }
 
+func (t *MGClientTest) Test_URLWithTrailingSlash() {
+	c := New("https://mg-test.retailcrm.pro/", "mg_token")
+	c.Debug = true
+
+	defer gock.Off()
+	t.gock().
+		Get(t.transportURL("channels")).
+		Reply(http.StatusOK).
+		JSON([]ChannelListItem{{ID: 1}})
+
+	data, status, err := c.TransportChannels(Channels{Active: true})
+	t.Require().NoError(err)
+	t.Assert().Equal(http.StatusOK, status)
+
+	t.Assert().Len(data, 1)
+}
+
 func (t *MGClientTest) Test_TransportChannels() {
 	c := t.client()
 	chName := "WhatsApp Channel"
