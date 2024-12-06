@@ -24,13 +24,22 @@ func (t *TokensBucketTest) Test_NewTokensBucket() {
 
 func (t *TokensBucketTest) new(
 	maxRPS uint32, unusedTokenTime, checkTokenTime time.Duration, sleeper sleeper) *TokensBucket {
+	shardCount := uint32(runtime.NumCPU() * 2) // Use double the CPU count for sharding
+	shards := make([]*tokenShard, shardCount)
+	for i := range shards {
+		shards[i] = &tokenShard{tokens: make(map[string]*token)}
+	}
+
 	bucket := &TokensBucket{
 		maxRPS:          maxRPS,
-		unusedTokenTime: unusedTokenTime,
+		unusedTokenTime: unusedTokenTime.Nanoseconds(),
 		checkTokenTime:  checkTokenTime,
+		shards:          shards,
+		shardCount:      shardCount,
 		sleep:           sleeper,
 	}
-	runtime.SetFinalizer(bucket, destructBasket)
+
+	runtime.SetFinalizer(bucket, destructBucket)
 	return bucket
 }
 
@@ -46,12 +55,14 @@ func (t *TokensBucketTest) Test_Obtain_NoThrottle() {
 func (t *TokensBucketTest) Test_Obtain_Sleep() {
 	clock := &fakeSleeper{}
 	tb := t.new(100, time.Hour, time.Minute, clock)
+	_, exists := tb.getShard("w").tokens["w"]
+	t.Require().False(exists)
 
 	var wg sync.WaitGroup
 	wg.Add(1)
 	go func() {
 		for i := 0; i < 301; i++ {
-			tb.Obtain("a")
+			tb.Obtain("w")
 		}
 		wg.Done()
 	}()
@@ -63,15 +74,15 @@ func (t *TokensBucketTest) Test_Obtain_Sleep() {
 func (t *TokensBucketTest) Test_Obtain_AddRPS() {
 	clock := clockwork.NewFakeClock()
 	tb := t.new(100, time.Hour, time.Minute, clock)
-	go tb.deleteUnusedToken()
+	go tb.cleanupRoutine()
 	tb.Obtain("a")
 	clock.Advance(time.Minute * 2)
 
-	item, found := tb.tokens.Load("a")
+	item, found := tb.getShard("a").tokens["a"]
 	t.Require().True(found)
-	t.Assert().Equal(1, int(item.(*token).rps.Load()))
+	t.Assert().Equal(1, int(item.rps))
 	tb.Obtain("a")
-	t.Assert().Equal(2, int(item.(*token).rps.Load()))
+	t.Assert().Equal(2, int(item.rps))
 }
 
 type fakeSleeper struct {
