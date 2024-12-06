@@ -8,6 +8,9 @@ import (
 	"time"
 )
 
+// Use double the CPU count for sharding
+const shardsPerCoreMultiplier = 2
+
 var NoopLimiter Limiter = &noopLimiter{}
 
 type token struct {
@@ -38,7 +41,7 @@ type tokenShard struct {
 
 // NewTokensBucket creates a sharded token bucket limiter.
 func NewTokensBucket(maxRPS uint32, unusedTokenTime, checkTokenTime time.Duration) Limiter {
-	shardCount := uint32(runtime.NumCPU() * 2) // Use double the CPU count for sharding
+	shardCount := uint32(runtime.NumCPU() * shardsPerCoreMultiplier)
 	shards := make([]*tokenShard, shardCount)
 	for i := range shards {
 		shards[i] = &tokenShard{tokens: make(map[string]*token)}
