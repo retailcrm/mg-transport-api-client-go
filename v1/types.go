@@ -429,9 +429,11 @@ type MessagesResponse struct {
 // WebhookMessageSentResponse type
 // Consider using this structure while processing webhook request.
 type WebhookMessageSentResponse struct {
-	ExternalMessageID string            `json:"external_message_id"`
-	Error             *MessageSentError `json:"error,omitempty"`
-	Async             bool              `json:"async"`
+	ExternalMessageID  string            `json:"external_message_id"`
+	Error              *MessageSentError `json:"error,omitempty"`
+	Async              bool              `json:"async"`
+	ExternalCustomerID string            `json:"external_customer_id,omitempty"`
+	ExternalChatID     string            `json:"external_chat_id,omitempty"`
 }
 
 // MessageSentError type.
