@@ -120,7 +120,7 @@ func (t *MGClientTest) Test_TransportChannels() {
 						SendingPolicy: SendingPolicy{
 							NewCustomer: ChannelFeatureSendingPolicyTemplate,
 						},
-						Reaction: Reaction{
+						Reactions: Reactions{
 							Dictionary: []string{"👏", "😁", "🤔"},
 							MaxCount:   3,
 						},
@@ -178,7 +178,7 @@ func (t *MGClientTest) Test_ActivateTransportChannel() {
 				Creating: ChannelFeatureBoth,
 				Reaction: ChannelFeatureAny,
 			},
-			Reaction: Reaction{
+			Reactions: Reactions{
 				Dictionary: []string{"👏", "😁", "🤔"},
 				MaxCount:   3,
 			},
@@ -241,7 +241,7 @@ func (t *MGClientTest) Test_ActivateNewTransportChannel() {
 				Creating: ChannelFeatureBoth,
 				Reaction: ChannelFeatureAny,
 			},
-			Reaction: Reaction{
+			Reactions: Reactions{
 				Dictionary: []string{"👏", "😁", "🤔"},
 				MaxCount:   3,
 			},
@@ -321,7 +321,7 @@ func (t *MGClientTest) Test_UpdateTransportChannel() {
 				Creating: ChannelFeatureBoth,
 				Reaction: ChannelFeatureAny,
 			},
-			Reaction: Reaction{
+			Reactions: Reactions{
 				Dictionary: []string{"👏", "😁", "🤔"},
 				MaxCount:   3,
 			},

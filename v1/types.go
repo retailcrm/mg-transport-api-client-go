@@ -104,7 +104,7 @@ type ChannelSettings struct {
 	Order              Order                      `json:"order"`
 	File               ChannelSettingsFilesBase   `json:"file"`
 	Image              ChannelSettingsFilesBase   `json:"image"`
-	Reaction           Reaction                   `json:"reaction"`
+	Reactions          Reactions                  `json:"reactions"`
 	CustomerExternalID string                     `json:"customer_external_id,omitempty"`
 	SendingPolicy      SendingPolicy              `json:"sending_policy,omitempty"`
 	Suggestions        ChannelSettingsSuggestions `json:"suggestions,omitempty"`
@@ -121,7 +121,7 @@ type Product struct {
 	Reaction string `json:"reaction,omitempty"`
 }
 
-type Reaction struct {
+type Reactions struct {
 	Dictionary []string `json:"dictionary,omitempty"`
 	MaxCount   uint16   `json:"max_count,omitempty"`
 }
