@@ -586,6 +586,87 @@ func (c *MgClient) MessagesHistory(request SendHistoryMessageRequest) (MessagesR
 	return resp, status, err
 }
 
+// AddMessageReaction adds reactions to the message.
+//
+// Example:
+//
+//	client := New("https://message-gateway.url", "cb8ccf05e38a47543ad8477d4999be73bff503ea6")
+//
+//	_, status, err := client.AddMessageReaction(ReactionRequest{
+//		ChannelID:      305,
+//		Message: ReactionMessageReference{
+//			ExternalID: "uid_1",
+//		},
+//		Reaction:  "😁",
+//	})
+//	if err != nil {
+//		log.Fatalf("request error: %s (%d)", err, status)
+//	}
+//
+//	log.Printf("status: %d", status)
+func (c *MgClient) AddMessageReaction(request ReactionRequest) (MessageReactionResponse, int, error) {
+	var (
+		resp     MessageReactionResponse
+		outgoing = &bytes.Buffer{}
+	)
+	_ = json.NewEncoder(outgoing).Encode(request)
+
+	data, status, err := c.PostRequest("/messages/reaction", outgoing)
+	if err != nil {
+		return resp, status, err
+	}
+
+	if e := json.Unmarshal(data, &resp); e != nil {
+		return resp, status, e
+	}
+
+	if status != http.StatusOK {
+		return resp, status, NewAPIClientError(data)
+	}
+
+	return resp, status, err
+}
+
+// DeleteMessagesReaction removes reactions to the message.
+// The reaction field is optional. If it is passed, the specific reaction will be deleted.
+// If it is not passed - the first found reaction from the user to the message will be deleted.
+//
+// Example:
+//
+//	client := New("https://message-gateway.url", "cb8ccf05e38a47543ad8477d4999be73bff503ea6")
+//
+//	_, status, err := client.DeleteMessagesReaction(ReactionRequest{
+//		ChannelID:      305,
+//		Message: ReactionMessageReference{
+//			ExternalID: "uid_1",
+//		},
+//		Reaction:  "😁",
+//	})
+//	if err != nil {
+//		log.Fatalf("request error: %s (%d)", err, status)
+//	}
+//
+//	log.Printf("status: %d", status)
+func (c *MgClient) DeleteMessagesReaction(request ReactionRequest) (MessageReactionResponse, int, error) {
+	var resp MessageReactionResponse
+	outgoing, _ := json.Marshal(&request)
+
+	data, status, err := c.DeleteRequest("/messages/reaction", outgoing)
+	if err != nil {
+		return resp, status, err
+	}
+
+	if e := json.Unmarshal(data, &resp); e != nil {
+		return resp, status, e
+	}
+
+	if status != http.StatusOK {
+		return resp, status, NewAPIClientError(data)
+	}
+
+	return resp, status, err
+}
+
 // UpdateMessages edits existing message. Only text messages are supported.
 //
 // Example:

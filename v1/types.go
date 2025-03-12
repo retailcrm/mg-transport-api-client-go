@@ -104,6 +104,7 @@ type ChannelSettings struct {
 	Order              Order                      `json:"order"`
 	File               ChannelSettingsFilesBase   `json:"file"`
 	Image              ChannelSettingsFilesBase   `json:"image"`
+	Reactions          Reactions                  `json:"reactions"`
 	CustomerExternalID string                     `json:"customer_external_id,omitempty"`
 	SendingPolicy      SendingPolicy              `json:"sending_policy,omitempty"`
 	Suggestions        ChannelSettingsSuggestions `json:"suggestions,omitempty"`
@@ -117,6 +118,12 @@ type Product struct {
 	Creating string `json:"creating,omitempty"`
 	Editing  string `json:"editing,omitempty"`
 	Deleting string `json:"deleting,omitempty"`
+	Reaction string `json:"reaction,omitempty"`
+}
+
+type Reactions struct {
+	Dictionary []string `json:"dictionary,omitempty"`
+	MaxCount   uint16   `json:"max_count,omitempty"`
 }
 
 // Order type.
@@ -124,6 +131,7 @@ type Order struct {
 	Creating string `json:"creating,omitempty"`
 	Editing  string `json:"editing,omitempty"`
 	Deleting string `json:"deleting,omitempty"`
+	Reaction string `json:"reaction,omitempty"`
 }
 
 // Status struct.
@@ -138,6 +146,7 @@ type ChannelSettingsText struct {
 	Editing       string `json:"editing,omitempty"`
 	Quoting       string `json:"quoting,omitempty"`
 	Deleting      string `json:"deleting,omitempty"`
+	Reaction      string `json:"reaction,omitempty"`
 	MaxCharsCount uint16 `json:"max_chars_count,omitempty"`
 }
 
@@ -147,6 +156,7 @@ type ChannelSettingsFilesBase struct {
 	Editing           string  `json:"editing,omitempty"`
 	Quoting           string  `json:"quoting,omitempty"`
 	Deleting          string  `json:"deleting,omitempty"`
+	Reaction          string  `json:"reaction,omitempty"`
 	Max               uint64  `json:"max_items_count,omitempty"`
 	NoteMaxCharsCount *uint16 `json:"note_max_chars_count,omitempty"`
 	MaxItemSize       *uint64 `json:"max_item_size,omitempty"`
@@ -157,6 +167,7 @@ type ChannelSettingsAudio struct {
 	Creating      string  `json:"creating,omitempty"`
 	Quoting       string  `json:"quoting,omitempty"`
 	Deleting      string  `json:"deleting,omitempty"`
+	Reaction      string  `json:"reaction,omitempty"`
 	MaxItemsCount uint64  `json:"max_items_count,omitempty"`
 	MaxItemSize   *uint64 `json:"max_item_size,omitempty"`
 }
@@ -346,6 +357,16 @@ type SendHistoryMessageRequest struct {
 	ReplyDeadline  *time.Time                `json:"reply_deadline,omitempty"`
 }
 
+type ReactionRequest struct {
+	ChannelID uint64                   `json:"channel_id"`
+	Message   ReactionMessageReference `json:"message"`
+	Reaction  string                   `json:"reaction,omitempty"`
+}
+
+type ReactionMessageReference struct {
+	ExternalID string `json:"external_id"`
+}
+
 type SendMessageRequestMessage struct {
 	Type       string     `json:"type"`
 	ExternalID string     `json:"external_id,omitempty"`
@@ -381,6 +402,8 @@ type SendMessageRequestQuote struct {
 
 // MarkMessageReadResponse type.
 type MarkMessageReadResponse struct{}
+
+type MessageReactionResponse struct{}
 
 // MarkMessageReadRequest type.
 type MarkMessageReadRequest struct {
@@ -460,6 +483,20 @@ type MessageWebhookData struct {
 	Template          *TemplateInfo       `json:"template,omitempty"`
 	Attachments       *Attachments        `json:"attachments,omitempty"`
 	InAppID           int32               `json:"in_app_id,omitempty"`
+}
+
+type ReactionWebhookData struct {
+	ExternalUserID    string         `json:"external_user_id"`
+	ExternalChatID    string         `json:"external_chat_id"`
+	ChannelID         uint64         `json:"channel_id"`
+	ExternalMessageID string         `json:"external_message_id"`
+	NewReaction       string         `json:"new_reaction,omitempty"`
+	OldReaction       string         `json:"old_reaction,omitempty"`
+	AllReactions      []ReactionInfo `json:"all_reactions,omitempty"`
+}
+
+type ReactionInfo struct {
+	Reaction string `json:"reaction"`
 }
 
 type Attachments struct {
