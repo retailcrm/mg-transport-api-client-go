@@ -358,9 +358,9 @@ type SendHistoryMessageRequest struct {
 }
 
 type ReactionRequest struct {
-	ChannelID uint64                   `json:"channel_id"`
-	Message   ReactionMessageReference `json:"message"`
-	Reaction  string                   `json:"reaction,omitempty"`
+	Channel  uint64                   `json:"channel"`
+	Message  ReactionMessageReference `json:"message"`
+	Reaction string                   `json:"reaction,omitempty"`
 }
 
 type ReactionMessageReference struct {
