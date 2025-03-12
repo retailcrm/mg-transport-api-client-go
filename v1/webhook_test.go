@@ -15,6 +15,12 @@ func TestWebhookRequest_IsMessageWebhook(t *testing.T) {
 	assert.False(t, WebhookRequest{}.IsMessageWebhook())
 }
 
+func TestWebhookRequest_IsReactionWebhook(t *testing.T) {
+	assert.True(t, WebhookRequest{Type: ReactionAddWebhookType}.IsReactionWebhook())
+	assert.True(t, WebhookRequest{Type: ReactionDeleteWebhookType}.IsReactionWebhook())
+	assert.False(t, WebhookRequest{}.IsReactionWebhook())
+}
+
 func TestWebhookRequest_IsTemplateWebhook(t *testing.T) {
 	assert.True(t, WebhookRequest{Type: TemplateCreateWebhookType}.IsTemplateWebhook())
 	assert.True(t, WebhookRequest{Type: TemplateUpdateWebhookType}.IsTemplateWebhook())
@@ -35,6 +41,32 @@ func TestWebhookData_MessageWebhookData(t *testing.T) {
 		}),
 	}.MessageWebhookData()
 	assert.Equal(t, "test", wh.Content)
+}
+
+func TestWebhookData_ReactionWebhookData(t *testing.T) {
+	wh := WebhookRequest{
+		Type: ReactionAddWebhookType,
+		Data: mustMarshalJSON(ReactionWebhookData{
+			ExternalUserID:    "1",
+			ExternalChatID:    "1",
+			ChannelID:         1,
+			ExternalMessageID: "1",
+			NewReaction:       "👍",
+			OldReaction:       "🤔",
+			AllReactions: []ReactionInfo{
+				{
+					Reaction: "👏",
+				},
+				{
+					Reaction: "😱",
+				},
+			},
+		}),
+	}.ReactionWebhookData()
+	assert.Equal(t, "👍", wh.NewReaction)
+	assert.Equal(t, "🤔", wh.OldReaction)
+	assert.Equal(t, "👏", wh.AllReactions[0].Reaction)
+	assert.Equal(t, "😱", wh.AllReactions[1].Reaction)
 }
 
 func TestWebhookData_TemplateCreateWebhookData(t *testing.T) {

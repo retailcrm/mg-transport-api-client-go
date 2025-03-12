@@ -83,14 +83,17 @@ func (t *MGClientTest) Test_TransportChannels() {
 							Quoting:       ChannelFeatureBoth,
 							Deleting:      ChannelFeatureReceive,
 							MaxCharsCount: 4096,
+							Reaction:      ChannelFeatureAny,
 						},
 						Product: Product{
 							Creating: ChannelFeatureReceive,
 							Editing:  ChannelFeatureReceive,
+							Reaction: ChannelFeatureAny,
 						},
 						Order: Order{
 							Creating: ChannelFeatureReceive,
 							Editing:  ChannelFeatureReceive,
+							Reaction: ChannelFeatureAny,
 						},
 						File: ChannelSettingsFilesBase{
 							Creating: ChannelFeatureBoth,
@@ -98,6 +101,7 @@ func (t *MGClientTest) Test_TransportChannels() {
 							Quoting:  ChannelFeatureBoth,
 							Deleting: ChannelFeatureReceive,
 							Max:      1,
+							Reaction: ChannelFeatureAny,
 						},
 						Image: ChannelSettingsFilesBase{
 							Creating: ChannelFeatureBoth,
@@ -105,6 +109,7 @@ func (t *MGClientTest) Test_TransportChannels() {
 							Quoting:  ChannelFeatureBoth,
 							Deleting: ChannelFeatureReceive,
 							Max:      1, // nolint:gomnd
+							Reaction: ChannelFeatureAny,
 						},
 						Suggestions: ChannelSettingsSuggestions{
 							Text:  ChannelFeatureBoth,
@@ -114,6 +119,10 @@ func (t *MGClientTest) Test_TransportChannels() {
 						CustomerExternalID: ChannelFeatureCustomerExternalIDPhone,
 						SendingPolicy: SendingPolicy{
 							NewCustomer: ChannelFeatureSendingPolicyTemplate,
+						},
+						Reaction: Reaction{
+							Dictionary: []string{"👏", "😁", "🤔"},
+							MaxCount:   3,
 						},
 					},
 					CreatedAt:     createdAt,
@@ -149,20 +158,29 @@ func (t *MGClientTest) Test_ActivateTransportChannel() {
 				Quoting:       ChannelFeatureReceive,
 				Deleting:      ChannelFeatureBoth,
 				MaxCharsCount: 2000,
+				Reaction:      ChannelFeatureAny,
 			},
 			Product: Product{
 				Creating: ChannelFeatureSend,
 				Deleting: ChannelFeatureSend,
+				Reaction: ChannelFeatureAny,
 			},
 			Order: Order{
 				Creating: ChannelFeatureBoth,
 				Deleting: ChannelFeatureSend,
+				Reaction: ChannelFeatureAny,
 			},
 			Image: ChannelSettingsFilesBase{
 				Creating: ChannelFeatureBoth,
+				Reaction: ChannelFeatureAny,
 			},
 			File: ChannelSettingsFilesBase{
 				Creating: ChannelFeatureBoth,
+				Reaction: ChannelFeatureAny,
+			},
+			Reaction: Reaction{
+				Dictionary: []string{"👏", "😁", "🤔"},
+				MaxCount:   3,
 			},
 		},
 	}
@@ -203,20 +221,29 @@ func (t *MGClientTest) Test_ActivateNewTransportChannel() {
 				Editing:  ChannelFeatureSend,
 				Quoting:  ChannelFeatureBoth,
 				Deleting: ChannelFeatureSend,
+				Reaction: ChannelFeatureAny,
 			},
 			Product: Product{
 				Creating: ChannelFeatureSend,
 				Deleting: ChannelFeatureSend,
+				Reaction: ChannelFeatureAny,
 			},
 			Order: Order{
 				Creating: ChannelFeatureBoth,
 				Deleting: ChannelFeatureSend,
+				Reaction: ChannelFeatureAny,
 			},
 			Image: ChannelSettingsFilesBase{
 				Creating: ChannelFeatureBoth,
+				Reaction: ChannelFeatureAny,
 			},
 			File: ChannelSettingsFilesBase{
 				Creating: ChannelFeatureBoth,
+				Reaction: ChannelFeatureAny,
+			},
+			Reaction: Reaction{
+				Dictionary: []string{"👏", "😁", "🤔"},
+				MaxCount:   3,
 			},
 		},
 	}
@@ -274,20 +301,29 @@ func (t *MGClientTest) Test_UpdateTransportChannel() {
 				Editing:  ChannelFeatureBoth,
 				Quoting:  ChannelFeatureBoth,
 				Deleting: ChannelFeatureBoth,
+				Reaction: ChannelFeatureAny,
 			},
 			Product: Product{
 				Creating: ChannelFeatureSend,
 				Deleting: ChannelFeatureSend,
+				Reaction: ChannelFeatureAny,
 			},
 			Order: Order{
 				Creating: ChannelFeatureBoth,
 				Deleting: ChannelFeatureSend,
+				Reaction: ChannelFeatureAny,
 			},
 			Image: ChannelSettingsFilesBase{
 				Creating: ChannelFeatureBoth,
+				Reaction: ChannelFeatureAny,
 			},
 			File: ChannelSettingsFilesBase{
 				Creating: ChannelFeatureBoth,
+				Reaction: ChannelFeatureAny,
+			},
+			Reaction: Reaction{
+				Dictionary: []string{"👏", "😁", "🤔"},
+				MaxCount:   3,
 			},
 		},
 	}
@@ -848,6 +884,52 @@ func (t *MGClientTest) Test_MessagesHistory() {
 	t.Assert().Equal(http.StatusOK, status)
 	t.Assert().NotEmpty(data.Time.String())
 	t.Assert().Equal(1, data.MessageID)
+}
+
+func (t *MGClientTest) Test_AddMessageReaction() {
+	c := t.client()
+
+	snd := ReactionRequest{
+		ChannelID: 1,
+		Message: ReactionMessageReference{
+			ExternalID: "external_1",
+		},
+		Reaction: "😁",
+	}
+
+	defer gock.Off()
+	t.gock().
+		Post(t.transportURL("messages/reaction")).
+		Reply(http.StatusOK).
+		JSON(MessageReactionResponse{})
+
+	_, status, err := c.AddMessageReaction(snd)
+	t.Require().NoError(err)
+	t.Assert().Equal(http.StatusOK, status)
+	t.Assert().Empty(gock.GetUnmatchedRequests())
+}
+
+func (t *MGClientTest) Test_DeleteMessagesReaction() {
+	c := t.client()
+
+	snd := ReactionRequest{
+		ChannelID: 1,
+		Message: ReactionMessageReference{
+			ExternalID: "external_1",
+		},
+		Reaction: "😁",
+	}
+
+	defer gock.Off()
+	t.gock().
+		Delete(t.transportURL("messages/reaction")).
+		Reply(http.StatusOK).
+		JSON(MessageReactionResponse{})
+
+	_, status, err := c.DeleteMessagesReaction(snd)
+	t.Require().NoError(err)
+	t.Assert().Equal(http.StatusOK, status)
+	t.Assert().Empty(gock.GetUnmatchedRequests())
 }
 
 func (t *MGClientTest) Test_MarkMessageReadAndDelete() {
