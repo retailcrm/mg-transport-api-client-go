@@ -890,7 +890,7 @@ func (t *MGClientTest) Test_AddMessageReaction() {
 	c := t.client()
 
 	snd := ReactionRequest{
-		ChannelID: 1,
+		Channel: 1,
 		Message: ReactionMessageReference{
 			ExternalID: "external_1",
 		},
@@ -913,7 +913,7 @@ func (t *MGClientTest) Test_DeleteMessagesReaction() {
 	c := t.client()
 
 	snd := ReactionRequest{
-		ChannelID: 1,
+		Channel: 1,
 		Message: ReactionMessageReference{
 			ExternalID: "external_1",
 		},

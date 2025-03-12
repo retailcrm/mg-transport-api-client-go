@@ -593,11 +593,11 @@ func (c *MgClient) MessagesHistory(request SendHistoryMessageRequest) (MessagesR
 //	client := New("https://message-gateway.url", "cb8ccf05e38a47543ad8477d4999be73bff503ea6")
 //
 //	_, status, err := client.AddMessageReaction(ReactionRequest{
-//		ChannelID:      305,
+//		Channel: 305,
 //		Message: ReactionMessageReference{
 //			ExternalID: "uid_1",
 //		},
-//		Reaction:  "😁",
+//		Reaction: "😁",
 //	})
 //	if err != nil {
 //		log.Fatalf("request error: %s (%d)", err, status)
@@ -636,11 +636,11 @@ func (c *MgClient) AddMessageReaction(request ReactionRequest) (MessageReactionR
 //	client := New("https://message-gateway.url", "cb8ccf05e38a47543ad8477d4999be73bff503ea6")
 //
 //	_, status, err := client.DeleteMessagesReaction(ReactionRequest{
-//		ChannelID:      305,
+//		ChannelID: 305,
 //		Message: ReactionMessageReference{
 //			ExternalID: "uid_1",
 //		},
-//		Reaction:  "😁",
+//		Reaction: "😁",
 //	})
 //	if err != nil {
 //		log.Fatalf("request error: %s (%d)", err, status)
