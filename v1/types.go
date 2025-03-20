@@ -403,8 +403,6 @@ type SendMessageRequestQuote struct {
 // MarkMessageReadResponse type.
 type MarkMessageReadResponse struct{}
 
-type MessageReactionResponse struct{}
-
 // MarkMessageReadRequest type.
 type MarkMessageReadRequest struct {
 	Message   MarkMessageReadRequestMessage `json:"message"`
