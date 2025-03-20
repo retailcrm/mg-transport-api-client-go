@@ -592,7 +592,7 @@ func (c *MgClient) MessagesHistory(request SendHistoryMessageRequest) (MessagesR
 //
 //	client := New("https://message-gateway.url", "cb8ccf05e38a47543ad8477d4999be73bff503ea6")
 //
-//	_, status, err := client.AddMessageReaction(ReactionRequest{
+//	status, err := client.AddMessageReaction(ReactionRequest{
 //		Channel: 305,
 //		Message: ReactionMessageReference{
 //			ExternalID: "uid_1",
@@ -604,27 +604,20 @@ func (c *MgClient) MessagesHistory(request SendHistoryMessageRequest) (MessagesR
 //	}
 //
 //	log.Printf("status: %d", status)
-func (c *MgClient) AddMessageReaction(request ReactionRequest) (MessageReactionResponse, int, error) {
-	var (
-		resp     MessageReactionResponse
-		outgoing = &bytes.Buffer{}
-	)
+func (c *MgClient) AddMessageReaction(request ReactionRequest) (int, error) {
+	var outgoing = &bytes.Buffer{}
 	_ = json.NewEncoder(outgoing).Encode(request)
 
 	data, status, err := c.PostRequest("/messages/reaction", outgoing)
 	if err != nil {
-		return resp, status, err
-	}
-
-	if e := json.Unmarshal(data, &resp); e != nil {
-		return resp, status, e
+		return status, err
 	}
 
 	if status != http.StatusOK {
-		return resp, status, NewAPIClientError(data)
+		return status, NewAPIClientError(data)
 	}
 
-	return resp, status, err
+	return status, err
 }
 
 // DeleteMessagesReaction removes reactions to the message.
@@ -635,7 +628,7 @@ func (c *MgClient) AddMessageReaction(request ReactionRequest) (MessageReactionR
 //
 //	client := New("https://message-gateway.url", "cb8ccf05e38a47543ad8477d4999be73bff503ea6")
 //
-//	_, status, err := client.DeleteMessagesReaction(ReactionRequest{
+//	status, err := client.DeleteMessagesReaction(ReactionRequest{
 //		ChannelID: 305,
 //		Message: ReactionMessageReference{
 //			ExternalID: "uid_1",
@@ -647,24 +640,19 @@ func (c *MgClient) AddMessageReaction(request ReactionRequest) (MessageReactionR
 //	}
 //
 //	log.Printf("status: %d", status)
-func (c *MgClient) DeleteMessagesReaction(request ReactionRequest) (MessageReactionResponse, int, error) {
-	var resp MessageReactionResponse
+func (c *MgClient) DeleteMessagesReaction(request ReactionRequest) (int, error) {
 	outgoing, _ := json.Marshal(&request)
 
 	data, status, err := c.DeleteRequest("/messages/reaction", outgoing)
 	if err != nil {
-		return resp, status, err
-	}
-
-	if e := json.Unmarshal(data, &resp); e != nil {
-		return resp, status, e
+		return status, err
 	}
 
 	if status != http.StatusOK {
-		return resp, status, NewAPIClientError(data)
+		return status, NewAPIClientError(data)
 	}
 
-	return resp, status, err
+	return status, err
 }
 
 // UpdateMessages edits existing message. Only text messages are supported.

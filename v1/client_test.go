@@ -901,11 +901,35 @@ func (t *MGClientTest) Test_AddMessageReaction() {
 	t.gock().
 		Post(t.transportURL("messages/reaction")).
 		Reply(http.StatusOK).
-		JSON(MessageReactionResponse{})
+		JSON(``)
 
-	_, status, err := c.AddMessageReaction(snd)
+	status, err := c.AddMessageReaction(snd)
 	t.Require().NoError(err)
 	t.Assert().Equal(http.StatusOK, status)
+	t.Assert().Empty(gock.GetUnmatchedRequests())
+}
+
+func (t *MGClientTest) Test_AddMessageReaction_error() {
+	c := t.client()
+
+	snd := ReactionRequest{
+		Channel: 1,
+		Message: ReactionMessageReference{
+			ExternalID: "external_1",
+		},
+		Reaction: "😁",
+	}
+
+	defer gock.Off()
+	t.gock().
+		Post(t.transportURL("messages/reaction")).
+		Reply(http.StatusBadRequest).
+		JSON(`{"errors": ["problems"]}`)
+
+	status, err := c.AddMessageReaction(snd)
+	t.Assert().Equal(http.StatusBadRequest, status)
+	t.Assert().Error(err)
+	t.Assert().Equal("problems", err.Error())
 	t.Assert().Empty(gock.GetUnmatchedRequests())
 }
 
@@ -924,11 +948,35 @@ func (t *MGClientTest) Test_DeleteMessagesReaction() {
 	t.gock().
 		Delete(t.transportURL("messages/reaction")).
 		Reply(http.StatusOK).
-		JSON(MessageReactionResponse{})
+		JSON(``)
 
-	_, status, err := c.DeleteMessagesReaction(snd)
+	status, err := c.DeleteMessagesReaction(snd)
 	t.Require().NoError(err)
 	t.Assert().Equal(http.StatusOK, status)
+	t.Assert().Empty(gock.GetUnmatchedRequests())
+}
+
+func (t *MGClientTest) Test_DeleteMessagesReaction_error() {
+	c := t.client()
+
+	snd := ReactionRequest{
+		Channel: 1,
+		Message: ReactionMessageReference{
+			ExternalID: "external_1",
+		},
+		Reaction: "😁",
+	}
+
+	defer gock.Off()
+	t.gock().
+		Delete(t.transportURL("messages/reaction")).
+		Reply(http.StatusBadRequest).
+		JSON(`{"errors": ["problems"]}`)
+
+	status, err := c.DeleteMessagesReaction(snd)
+	t.Assert().Equal(http.StatusBadRequest, status)
+	t.Assert().Error(err)
+	t.Assert().Equal("problems", err.Error())
 	t.Assert().Empty(gock.GetUnmatchedRequests())
 }
 
