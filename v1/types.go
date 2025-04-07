@@ -459,8 +459,9 @@ type WebhookMessageSentResponse struct {
 
 // MessageSentError type.
 type MessageSentError struct {
-	Code    ErrorType `json:"code"`
-	Message string    `json:"message"`
+	Code         ErrorType `json:"code"`
+	Message      string    `json:"message"`
+	ExternalCode string    `json:"external_code,omitempty"`
 }
 
 // MessageWebhookData request data.
