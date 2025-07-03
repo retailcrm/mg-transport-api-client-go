@@ -89,11 +89,13 @@ func (t *MGClientTest) Test_TransportChannels() {
 							Creating: ChannelFeatureReceive,
 							Editing:  ChannelFeatureReceive,
 							Reaction: ChannelFeatureAny,
+							Quoting:  ChannelFeatureReceive,
 						},
 						Order: Order{
 							Creating: ChannelFeatureReceive,
 							Editing:  ChannelFeatureReceive,
 							Reaction: ChannelFeatureAny,
+							Quoting:  ChannelFeatureReceive,
 						},
 						File: ChannelSettingsFilesBase{
 							Creating: ChannelFeatureBoth,
@@ -164,6 +166,7 @@ func (t *MGClientTest) Test_ActivateTransportChannel() {
 				Creating: ChannelFeatureSend,
 				Deleting: ChannelFeatureSend,
 				Reaction: ChannelFeatureAny,
+				Quoting:  ChannelFeatureSend,
 			},
 			Order: Order{
 				Creating: ChannelFeatureBoth,
@@ -232,6 +235,7 @@ func (t *MGClientTest) Test_ActivateNewTransportChannel() {
 				Creating: ChannelFeatureBoth,
 				Deleting: ChannelFeatureSend,
 				Reaction: ChannelFeatureAny,
+				Quoting:  ChannelFeatureBoth,
 			},
 			Image: ChannelSettingsFilesBase{
 				Creating: ChannelFeatureBoth,
@@ -307,11 +311,13 @@ func (t *MGClientTest) Test_UpdateTransportChannel() {
 				Creating: ChannelFeatureSend,
 				Deleting: ChannelFeatureSend,
 				Reaction: ChannelFeatureAny,
+				Quoting:  ChannelFeatureReceive,
 			},
 			Order: Order{
 				Creating: ChannelFeatureBoth,
 				Deleting: ChannelFeatureSend,
 				Reaction: ChannelFeatureAny,
+				Quoting:  ChannelFeatureReceive,
 			},
 			Image: ChannelSettingsFilesBase{
 				Creating: ChannelFeatureBoth,
