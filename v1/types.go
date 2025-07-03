@@ -119,6 +119,7 @@ type Product struct {
 	Editing  string `json:"editing,omitempty"`
 	Deleting string `json:"deleting,omitempty"`
 	Reaction string `json:"reaction,omitempty"`
+	Quoting  string `json:"quoting,omitempty"`
 }
 
 type Reactions struct {
@@ -132,6 +133,7 @@ type Order struct {
 	Editing  string `json:"editing,omitempty"`
 	Deleting string `json:"deleting,omitempty"`
 	Reaction string `json:"reaction,omitempty"`
+	Quoting  string `json:"quoting,omitempty"`
 }
 
 // Status struct.
