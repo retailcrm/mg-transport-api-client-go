@@ -942,6 +942,43 @@ func (c *MgClient) UploadFileByURL(request UploadFileByUrlRequest) (UploadFileRe
 	return resp, status, err
 }
 
+// RestoreMessage restores deleted message.
+//
+// Example:
+//
+//	client := New("https://message-gateway.url", "cb8ccf05e38a47543ad8477d4999be73bff503ea6")
+//
+//	resp, status, err := client.RestoreMessage(RestoreMessageRequest{
+//		Message: RestoreMessageRequestMessage{
+//			ExternalID: "message_id_1",
+//		},
+//		ChannelID: 305,
+//	})
+//	if err != nil {
+//		log.Fatalf("request error: %s (%d)", err, status)
+//	}
+//
+//	log.Printf("status: %d, message ID: %d", status, resp.MessageID)
+func (c *MgClient) RestoreMessage(request RestoreMessageRequest) (MessagesResponse, int, error) {
+	var resp MessagesResponse
+	outgoing, _ := json.Marshal(&request)
+
+	data, status, err := c.PostRequest("/messages/restore", bytes.NewBuffer(outgoing))
+	if err != nil {
+		return resp, status, err
+	}
+
+	if e := json.Unmarshal(data, &resp); e != nil {
+		return resp, status, e
+	}
+
+	if status != http.StatusOK {
+		return resp, status, NewAPIClientError(data)
+	}
+
+	return resp, status, err
+}
+
 // MakeTimestamp returns current unix timestamp in milliseconds.
 //
 // Example:
