@@ -792,6 +792,58 @@ func (t *MGClientTest) Test_OrderMessages() {
 	t.Assert().Equal(1, data.MessageID)
 }
 
+func (t *MGClientTest) Test_CustomerSecondaryExternalIDs() {
+	c := t.client()
+	expExternalIDs := []string{
+		"external_id_1",
+		"external_id_2",
+	}
+
+	snd := SendData{
+		Message: Message{
+			ExternalID: "external_id",
+			Type:       MsgTypeText,
+			Text:       "hello!",
+		},
+		Originator: OriginatorCustomer,
+		Customer: Customer{
+			ExternalID:           "6",
+			SecondaryExternalIDs: expExternalIDs,
+			Nickname:             "octopus",
+		},
+		Channel:        1,
+		ExternalChatID: "24798237492374",
+	}
+
+	defer gock.Off()
+	t.gock().
+		Post(t.transportURL("messages")).
+		Filter(func(request *http.Request) bool {
+			data, err := ioutil.ReadAll(request.Body)
+			if err != nil {
+				return false
+			}
+			request.Body = ioutil.NopCloser(bytes.NewReader(data))
+
+			var snd SendData
+			t.Require().NoError(json.Unmarshal(data, &snd))
+			return t.Assert().Equal(expExternalIDs, snd.Customer.SecondaryExternalIDs)
+		}).
+		Reply(http.StatusOK).
+		JSON(
+			MessagesResponse{
+				MessageID: 1,
+				Time:      time.Now(),
+			},
+		)
+
+	data, status, err := c.Messages(snd)
+	t.Require().NoError(err)
+	t.Assert().Equal(http.StatusOK, status)
+	t.Assert().NotEmpty(data.Time.String())
+	t.Assert().Equal(1, data.MessageID)
+}
+
 func (t *MGClientTest) Test_UpdateMessages() {
 	c := t.client()
 

@@ -477,6 +477,9 @@ func (c *MgClient) DeactivateTransportChannel(id uint64) (DeleteResponse, int, e
 //		Originator: OriginatorCustomer,
 //		Customer: Customer{
 //			ExternalID: "client_id_1",
+//			SecondaryExternalIDs: []string{
+//				"client_id_2",
+//			},
 //			Nickname:   "customer",
 //			Firstname:  "Tester",
 //			Lastname:   "Tester",
