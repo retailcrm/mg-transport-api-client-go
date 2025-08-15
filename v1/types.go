@@ -296,17 +296,18 @@ type Channels struct {
 
 // Customer struct.
 type Customer struct {
-	ExternalID string `json:"external_id"`
-	Nickname   string `json:"nickname"`
-	Firstname  string `json:"first_name,omitempty"`
-	Lastname   string `json:"last_name,omitempty"`
-	Avatar     string `json:"avatar,omitempty"`
-	ProfileURL string `json:"profile_url,omitempty"`
-	Country    string `json:"country,omitempty"`
-	Language   string `json:"language,omitempty"`
-	Phone      string `json:"phone,omitempty"`
-	Email      string `json:"email,omitempty"`
-	Utm        *Utm   `json:"utm,omitempty"`
+	ExternalID           string   `json:"external_id"`
+	SecondaryExternalIDs []string `json:"secondary_external_ids,omitempty"`
+	Nickname             string   `json:"nickname"`
+	Firstname            string   `json:"first_name,omitempty"`
+	Lastname             string   `json:"last_name,omitempty"`
+	Avatar               string   `json:"avatar,omitempty"`
+	ProfileURL           string   `json:"profile_url,omitempty"`
+	Country              string   `json:"country,omitempty"`
+	Language             string   `json:"language,omitempty"`
+	Phone                string   `json:"phone,omitempty"`
+	Email                string   `json:"email,omitempty"`
+	Utm                  *Utm     `json:"utm,omitempty"`
 }
 
 type Utm struct {
