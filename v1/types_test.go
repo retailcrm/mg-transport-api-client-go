@@ -21,9 +21,7 @@ func TestSendData_MarshalJSON(t *testing.T) {
 				"nickname": ""
 			},
 			"external_chat_id": "",
-			"message": {
-				"external_id": ""
-			}
+			"message": {}
 		}`
 		assert.JSONEq(t, expected, string(data))
 	})
@@ -51,9 +49,7 @@ func TestSendData_MarshalJSON(t *testing.T) {
 				"nickname": ""
 			},
 			"external_chat_id": "",
-			"message": {
-				"external_id": ""
-			}
+			"message": {}
 		}`
 
 		for _, c := range cases {
