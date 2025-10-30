@@ -326,6 +326,7 @@ type Message struct {
 	Note       string              `json:"note,omitempty"`
 	Items      []Item              `json:"items,omitempty"`
 	PageLink   string              `json:"page_link,omitempty"`
+	CreatedAt  *time.Time          `json:"created_at,omitempty"`
 	Product    *MessageDataProduct `json:"product,omitempty"`
 	Order      *MessageDataOrder   `json:"order,omitempty"`
 }

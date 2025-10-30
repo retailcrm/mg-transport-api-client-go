@@ -553,12 +553,14 @@ func (t *MGClientTest) Test_DeactivateTemplate() {
 func (t *MGClientTest) Test_TextMessages() {
 	c := t.client()
 
+	createdAt := time.Now()
 	snd := SendData{
 		Message: Message{
 			ExternalID: "external_id",
 			Type:       MsgTypeText,
 			Text:       "hello!",
 			PageLink:   "https://example.loca/catalog/1",
+			CreatedAt:  &createdAt,
 		},
 		Originator: OriginatorCustomer,
 		Customer: Customer{
@@ -641,11 +643,13 @@ func (t *MGClientTest) Test_ImageMessages() {
 	t.Assert().Equal(http.StatusOK, st)
 	t.Assert().Equal("1", uploadFileResponse.ID)
 
+	createdAt := time.Now()
 	snd := SendData{
 		Message: Message{
 			ExternalID: "file",
 			Type:       MsgTypeImage,
 			Items:      []Item{{ID: uploadFileResponse.ID}},
+			CreatedAt:  &createdAt,
 		},
 		Originator: OriginatorCustomer,
 		Customer: Customer{

@@ -467,12 +467,14 @@ func (c *MgClient) DeactivateTransportChannel(id uint64) (DeleteResponse, int, e
 //		return &deadline
 //	}
 //
+//	createdAt := time.Now()
 //	resp, status, err := client.Messages(SendData{
 //		Message: Message{
 //			ExternalID: "uid_1",
 //			Type:       MsgTypeText,
 //			Text:       "Hello customer!",
 //			PageLink:   "https://example.com",
+//			CreatedAt: 	&createdAt,
 //		},
 //		Originator: OriginatorCustomer,
 //		Customer: Customer{
