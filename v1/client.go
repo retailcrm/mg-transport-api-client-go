@@ -473,6 +473,7 @@ func (c *MgClient) DeactivateTransportChannel(id uint64) (DeleteResponse, int, e
 //			Type:       MsgTypeText,
 //			Text:       "Hello customer!",
 //			PageLink:   "https://example.com",
+//			CreatedAt: 	time.Now(),
 //		},
 //		Originator: OriginatorCustomer,
 //		Customer: Customer{

@@ -559,6 +559,7 @@ func (t *MGClientTest) Test_TextMessages() {
 			Type:       MsgTypeText,
 			Text:       "hello!",
 			PageLink:   "https://example.loca/catalog/1",
+			CreatedAt:  time.Now(),
 		},
 		Originator: OriginatorCustomer,
 		Customer: Customer{
@@ -646,6 +647,7 @@ func (t *MGClientTest) Test_ImageMessages() {
 			ExternalID: "file",
 			Type:       MsgTypeImage,
 			Items:      []Item{{ID: uploadFileResponse.ID}},
+			CreatedAt:  time.Now(),
 		},
 		Originator: OriginatorCustomer,
 		Customer: Customer{
@@ -671,6 +673,7 @@ func (t *MGClientTest) Test_ProductMessages() {
 		Message: Message{
 			ExternalID: "external_id",
 			Type:       MsgTypeProduct,
+			CreatedAt:  time.Now(),
 			Product: &MessageDataProduct{
 				ID:      2,
 				Name:    "Product name",
