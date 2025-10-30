@@ -1179,3 +1179,26 @@ func (t *MGClientTest) Test_SuccessHandleError() {
 	t.Assert().IsType(new(HTTPClientError), err)
 	t.Assert().Equal("Channel not found", err.Error())
 }
+
+func (t *MGClientTest) Test_RestoreMessage() {
+	client := t.client()
+	t.gock().
+		Post(t.transportURL("messages/restore")).
+		Reply(http.StatusOK).
+		JSON(MessagesResponse{
+			MessageID: 1,
+			Time:      time.Now(),
+		})
+
+	data, status, err := client.RestoreMessage(RestoreMessageRequest{
+		ChannelID: 30,
+		Message: RestoreMessageRequestMessage{
+			ExternalID: "external_1",
+		},
+	})
+
+	t.Require().NoError(err)
+	t.Assert().Equal(http.StatusOK, status)
+	t.Assert().NotEmpty(data.Time.String())
+	t.Assert().Equal(1, data.MessageID)
+}

@@ -320,7 +320,8 @@ type Utm struct {
 
 // Message struct.
 type Message struct {
-	ExternalID string              `json:"external_id"`
+	ID         *int64              `json:"id,omitempty"`
+	ExternalID string              `json:"external_id,omitempty"`
 	Type       string              `json:"type,omitempty"`
 	Text       string              `json:"text,omitempty"`
 	Note       string              `json:"note,omitempty"`
@@ -345,7 +346,8 @@ type EditMessageRequest struct {
 
 // EditMessageRequestMessage type.
 type EditMessageRequestMessage struct {
-	ExternalID string `json:"external_id"`
+	ID         *int64 `json:"id,omitempty"`
+	ExternalID string `json:"external_id,omitempty"`
 	Text       string `json:"text"`
 	EditedAt   int64  `json:"edited_at"`
 	PageLink   string `json:"page_link,omitempty"`
@@ -368,7 +370,8 @@ type ReactionRequest struct {
 }
 
 type ReactionMessageReference struct {
-	ExternalID string `json:"external_id"`
+	ID         *int64 `json:"id,omitempty"`
+	ExternalID string `json:"external_id,omitempty"`
 }
 
 type SendMessageRequestMessage struct {
@@ -415,15 +418,23 @@ type MarkMessageReadRequest struct {
 
 // MarkMessageReadRequestMessage type.
 type MarkMessageReadRequestMessage struct {
-	ExternalID string `json:"external_id"`
+	ID         *int64 `json:"id,omitempty"`
+	ExternalID string `json:"external_id,omitempty"`
 }
 
 // AckMessageRequest type.
 type AckMessageRequest struct {
-	ExternalMessageID  string            `json:"external_message_id"`
-	TransportMessageID string            `json:"transport_message_id,omitempty"`
-	Channel            uint64            `json:"channel"`
-	Error              *MessageSentError `json:"error,omitempty"`
+	ExternalMessageID  string                    `json:"external_message_id,omitempty"`
+	TransportMessageID string                    `json:"transport_message_id,omitempty"`
+	Channel            uint64                    `json:"channel"`
+	Error              *MessageSentError         `json:"error,omitempty"`
+	Message            *AckMessageRequestMessage `json:"message,omitempty"`
+}
+
+// AckMessageRequestMessage type.
+type AckMessageRequestMessage struct {
+	ID         *int64 `json:"id,omitempty"`
+	ExternalID string `json:"external_id,omitempty"`
 }
 
 // MarkMessagesReadUntilRequest type.
@@ -442,6 +453,18 @@ type MarkMessagesReadUntilResponse struct {
 type DeleteData struct {
 	Message Message `json:"message"`
 	Channel uint64  `json:"channel"`
+}
+
+// RestoreMessageRequest type.
+type RestoreMessageRequest struct {
+	ChannelID int64                        `json:"channel_id"`
+	Message   RestoreMessageRequestMessage `json:"message"`
+}
+
+// RestoreMessageRequestMessage type.
+type RestoreMessageRequestMessage struct {
+	ID         *int64 `json:"id,omitempty"`
+	ExternalID string `json:"external_id,omitempty"`
 }
 
 // MessagesResponse message event response.
@@ -470,6 +493,7 @@ type MessageSentError struct {
 
 // MessageWebhookData request data.
 type MessageWebhookData struct {
+	ID                int64               `json:"id"`
 	ExternalUserID    string              `json:"external_user_id"`
 	ExternalMessageID string              `json:"external_message_id,omitempty"`
 	ExternalChatID    string              `json:"external_chat_id"`
