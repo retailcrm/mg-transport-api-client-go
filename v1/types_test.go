@@ -204,6 +204,7 @@ func TestTemplateInfoUnmarshal(t *testing.T) {
     ],
     "template": {
       "code": "namespace#BABA_JABA#ru",
+	  "category": "marketing",
       "args": [
         "var0",
         "var1"
@@ -255,6 +256,7 @@ func TestTemplateInfoUnmarshal(t *testing.T) {
 
 	tmpl := wh.Data.Template
 	assert.Equal(t, "namespace#BABA_JABA#ru", tmpl.Code)
+	assert.Equal(t, TemplateCategoryMarketing, tmpl.Category)
 
 	assert.NotNil(t, tmpl.Variables.Header)
 	assert.Empty(t, tmpl.Variables.Header.Args)

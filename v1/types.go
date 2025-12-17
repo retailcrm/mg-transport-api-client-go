@@ -56,6 +56,13 @@ const (
 	// MsgOrderStatusCodeCancel order status group cancel.
 	MsgOrderStatusCodeCancel = "cancel"
 
+	// TemplateCategoryUtility category for utility type templates.
+	TemplateCategoryUtility = "utility"
+	// TemplateCategoryMarketing category for marketing type templates.
+	TemplateCategoryMarketing = "marketing"
+	// TemplateCategoryAuthentication category for authentication type templates.
+	TemplateCategoryAuthentication = "authentication"
+
 	FileSizeLimit = 20 * 1024 * 1024
 )
 
@@ -547,6 +554,7 @@ type Suggestion struct {
 
 type TemplateInfo struct {
 	Code      string            `json:"code"`
+	Category  string            `json:"category"`
 	Variables TemplateArguments `json:"variables,omitempty"`
 }
 
