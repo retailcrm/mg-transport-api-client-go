@@ -574,9 +574,10 @@ type Suggestion struct {
 }
 
 type TemplateInfo struct {
-	Code      string            `json:"code"`
-	Category  string            `json:"category"`
-	Variables TemplateArguments `json:"variables,omitempty"`
+	Code      string                     `json:"code"`
+	Category  string                     `json:"category"`
+	Variables TemplateArguments          `json:"variables,omitempty"`
+	Carousel  *TemplateCarouselArguments `json:"carousel,omitempty"`
 }
 
 type TemplateArguments struct {
@@ -722,6 +723,7 @@ type UpdateTemplateRequest struct {
 	Header             *TemplateHeader            `json:"header,omitempty"`
 	Footer             string                     `json:"footer,omitempty"`
 	Buttons            *TemplateButtons           `json:"buttons,omitempty"`
+	Carousel           *TemplateCarousel          `json:"carousel,omitempty"`
 }
 
 type ActivateTemplateRequest struct {
@@ -816,14 +818,15 @@ type ButtonParam struct {
 }
 
 type TemplateContent struct {
-	Name     string           `json:"name"`
-	Lang     string           `json:"lang"`
-	Category string           `json:"category"`
-	Body     string           `json:"body"`
-	Header   *TemplateHeader  `json:"header,omitempty"`
-	Footer   string           `json:"footer,omitempty"`
-	Buttons  *TemplateButtons `json:"buttons,omitempty"`
-	Example  *TemplateExample `json:"example,omitempty"`
+	Name     string            `json:"name"`
+	Lang     string            `json:"lang"`
+	Category string            `json:"category"`
+	Body     string            `json:"body"`
+	Header   *TemplateHeader   `json:"header,omitempty"`
+	Footer   string            `json:"footer,omitempty"`
+	Buttons  *TemplateButtons  `json:"buttons,omitempty"`
+	Example  *TemplateExample  `json:"example,omitempty"`
+	Carousel *TemplateCarousel `json:"carousel,omitempty"`
 }
 
 type TemplateCreateWebhookData struct {

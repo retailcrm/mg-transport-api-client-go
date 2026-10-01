@@ -10,11 +10,13 @@ type TemplateType uint8
 const (
 	TemplateTypeText TemplateType = iota + 1
 	TemplateTypeMedia
+	TemplateTypeCarousel
 )
 
 var TypeMap = [][]byte{
-	TemplateTypeText:  []byte("text"),
-	TemplateTypeMedia: []byte("media"),
+	TemplateTypeText:     []byte("text"),
+	TemplateTypeMedia:    []byte("media"),
+	TemplateTypeCarousel: []byte("carousel"),
 }
 
 var ErrUnknownTypeValue = errors.New("unknown TemplateType")
