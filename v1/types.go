@@ -860,6 +860,7 @@ const (
 	TemplateStatusNew      TemplateVerificationStatus = "new"
 	TemplateStatusPaused   TemplateVerificationStatus = "paused"
 	TemplateStatusDisabled TemplateVerificationStatus = "disabled"
+	TemplateStatusArchived TemplateVerificationStatus = "archived"
 )
 
 type TemplateQuality string
