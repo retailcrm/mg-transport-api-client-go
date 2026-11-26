@@ -10,6 +10,8 @@ import (
 
 const MaxRPS = 100
 
+const maxRateLimitResponseDrain = 64 << 10
+
 var prefix = "/api/transport/v1"
 
 // GetRequest performs GET request to the provided route.
@@ -23,6 +25,7 @@ func (c *MgClient) GetRequest(url string, parameters []byte) ([]byte, int, error
 }
 
 // PostRequest performs POST request to the provided route.
+// On HTTP 429, it retries only when the request has no body or net/http can recreate it.
 func (c *MgClient) PostRequest(url string, parameters io.Reader) ([]byte, int, error) {
 	return makeRequest(
 		"POST",
@@ -68,31 +71,44 @@ func makeRequest(reqType, url string, buf io.Reader, c *MgClient) ([]byte, int, 
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("X-Transport-Token", c.Token)
 
-	maxAttempt := 1
+	maxRetries := 1
 	if c.limiter != nil && c.Token != "" {
-		maxAttempt = 3
+		maxRetries = 3
 	}
+	canReplay := req.GetBody != nil || req.Body == nil || req.Body == http.NoBody
 
-	attempt := 0
-tryAgain:
-	c.WaitForRateLimit()
-	if c.Debug {
-		if strings.Contains(url, "/files/upload") {
-			c.writeLog("MG TRANSPORT API Request: %s %s %s [file data]", reqType, url, c.Token)
-		} else {
-			c.writeLog("MG TRANSPORT API Request: %s %s %s %v", reqType, url, c.Token, buf)
+	var resp *http.Response
+	for retries := 0; ; retries++ {
+		c.WaitForRateLimit()
+		if c.Debug {
+			if strings.Contains(url, "/files/upload") {
+				c.writeLog("MG TRANSPORT API Request: %s %s %s [file data]", reqType, url, c.Token)
+			} else {
+				c.writeLog("MG TRANSPORT API Request: %s %s %s %v", reqType, url, c.Token, buf)
+			}
 		}
-	}
 
-	resp, err := c.httpClient.Do(req)
-	if err != nil {
-		return res, 0, NewCriticalHTTPError(err)
-	}
+		resp, err = c.httpClient.Do(req)
+		if err != nil {
+			return res, 0, NewCriticalHTTPError(err)
+		}
+		if resp.StatusCode != http.StatusTooManyRequests || retries == maxRetries || !canReplay {
+			break
+		}
 
-	if resp.StatusCode == http.StatusTooManyRequests && attempt < maxAttempt {
-		attempt++
-		c.writeLog("MG TRANSPORT API Request rate limit hit on attempt %d, retrying", attempt)
-		goto tryAgain
+		// Drain small responses so the transport can reuse the connection.
+		_, _ = io.Copy(io.Discard, io.LimitReader(resp.Body, maxRateLimitResponseDrain))
+		_ = resp.Body.Close()
+
+		retry := req.Clone(req.Context())
+		if req.GetBody != nil {
+			retry.Body, err = req.GetBody()
+			if err != nil {
+				return res, 0, NewCriticalHTTPError(err)
+			}
+		}
+		req = retry
+		c.writeLog("MG TRANSPORT API Request rate limit hit on attempt %d, retrying", retries+1)
 	}
 
 	if resp.StatusCode >= http.StatusInternalServerError {
