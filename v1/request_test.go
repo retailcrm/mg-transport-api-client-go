@@ -90,7 +90,7 @@ func TestRequest429Retry(t *testing.T) {
 
 			first := <-requests
 			require.Equal(t, tc.requestBody, first.body)
-			for range tc.requestCount - 1 {
+			for request := 1; request < tc.requestCount; request++ {
 				require.Equal(t, first, <-requests, "retry should replay the body and reuse the connection")
 			}
 		})
